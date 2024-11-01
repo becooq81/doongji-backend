@@ -38,7 +38,7 @@ public class BasicLocationService implements LocationService {
 	public GugunList findGugunBySi(String sido) {
 		List<String> gugunNames = repo.selectGugun(sido);
 		GugunList gugunList = GugunList.builder()
-				.sido(si)
+				.sido(sido)
 				.gugunList(gugunNames)
 				.build();
 		return gugunList;

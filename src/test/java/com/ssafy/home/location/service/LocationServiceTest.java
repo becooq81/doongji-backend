@@ -33,7 +33,7 @@ public class LocationServiceTest {
 		int expectedCount = 87;
 
 		DongList result = service.findDongBySiGugun(si, gugun);
-		Assertions.assertEquals(result.getSi(), si);
+		Assertions.assertEquals(result.getSido(), si);
 		Assertions.assertEquals(result.getGugun(), gugun);
 		Assertions.assertEquals(result.getDongList().size(), expectedCount);
 
@@ -48,7 +48,7 @@ public class LocationServiceTest {
 		int expectedCount = 25;
 		
 		GugunList result = service.findGugunBySi(si);
-		Assertions.assertEquals(result.getSi(), si);
+		Assertions.assertEquals(result.getSido(), si);
 		Assertions.assertEquals(result.getGugunList().size(), expectedCount);
 	}
 	
@@ -63,7 +63,7 @@ public class LocationServiceTest {
 		String expected = "1111010300";
 		
 		DongCode result = service.findDongCode(si, gugun, dong);
-		Assertions.assertEquals(result.getSi(), si);
+		Assertions.assertEquals(result.getSido(), si);
 		Assertions.assertEquals(result.getGugun(), gugun);
 		Assertions.assertEquals(result.getDong(), dong);
 		Assertions.assertEquals(result.getDongcode(), expected);
