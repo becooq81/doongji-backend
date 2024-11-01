@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GugunList {
 
-	private String si;
+	private String sido;
 	private List<String> gugunList;
 }

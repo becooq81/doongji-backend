@@ -21,10 +21,10 @@ public class BasicLocationService implements LocationService {
 	 * 시, 군구에 부합하는 모든 동을 찾는다
 	 */
 	@Override
-	public DongList findDongBySiGugun(String si, String gugun) {
-		List<String> dongNames = repo.selectDong(si, gugun);
+	public DongList findDongBySiGugun(String sido, String gugun) {
+		List<String> dongNames = repo.selectDong(sido, gugun);
 		DongList dongList = DongList.builder()
-				.si(si)
+				.sido(sido)
 				.gugun(gugun)
 				.dongList(dongNames)
 				.build();
@@ -35,10 +35,10 @@ public class BasicLocationService implements LocationService {
 	 * 시에 부합하는 모든 구군을 찾는다
 	 */
 	@Override
-	public GugunList findGugunBySi(String si) {
-		List<String> gugunNames = repo.selectGugun(si);
+	public GugunList findGugunBySi(String sido) {
+		List<String> gugunNames = repo.selectGugun(sido);
 		GugunList gugunList = GugunList.builder()
-				.si(si)
+				.sido(si)
 				.gugunList(gugunNames)
 				.build();
 		return gugunList;
@@ -48,10 +48,10 @@ public class BasicLocationService implements LocationService {
 	 * 시, 구군, 동에 부합하는 동코드를 찾는다
 	 */
 	@Override
-	public DongCode findDongCode(String si, String gugun, String dong) {
-		String dongcodeVal = repo.selectDongCode(si, gugun, dong);
+	public DongCode findDongCode(String sido, String gugun, String dong) {
+		String dongcodeVal = repo.selectDongCode(sido, gugun, dong);
 		DongCode dongcode = DongCode.builder()
-				.si(si)
+				.sido(sido)
 				.gugun(gugun)
 				.dong(dong)
 				.dongcode(dongcodeVal)

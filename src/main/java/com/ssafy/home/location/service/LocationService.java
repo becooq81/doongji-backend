@@ -5,7 +5,7 @@ import com.ssafy.home.location.payload.response.DongList;
 import com.ssafy.home.location.payload.response.GugunList;
 
 public interface LocationService {
-	DongList findDongBySiGugun(String si, String gugun);
-	GugunList findGugunBySi(String si);
-	DongCode findDongCode(String si, String gugun, String dong);
+	DongList findDongBySiGugun(String sido, String gugun);
+	GugunList findGugunBySi(String sido);
+	DongCode findDongCode(String sido, String gugun, String dong);
 }

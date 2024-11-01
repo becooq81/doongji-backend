@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class DongList {
-	private String si;
+	private String sido;
 	private String gugun;
 	private List<String> dongList;
 }
