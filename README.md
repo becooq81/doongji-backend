@@ -23,10 +23,21 @@
 * 추가로 구현한 기능을 표에 추가시키세요.
 </span>
 
-### 실행화면 캡쳐 -
+## 실행화면 캡쳐 -
 TODO: 요구사항 목록에서 완료 처리된 사항의 캡쳐 이미지를 등록하세요.
 
-DB 구축 : select한 결과를 캡쳐해 주세요
+### DB 구축
+1. HouseDeal 테이블
+
+![실행화면캡쳐](./assets/DB_구축_HOUSEDEAL.PNG)
+
+2. HouseInfo 테이블
+
+![실행화면캡쳐](./assets/DB_구축_HOUSEINFO.PNG)
+
+3. DongCode 테이블
+
+![실행화면캡쳐](./assets/DB_구축_DONGCODE.PNG)
 
 구현 기능: FrontEnd + BackEnd(Controller, Model(Dao, Service, Dto)
 ![실행화면캡쳐](./화면캡쳐/화면캡쳐_0001_주택정보_web.png)
