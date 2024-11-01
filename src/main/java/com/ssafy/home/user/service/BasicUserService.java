@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class BasicUserService implements UserService {
@@ -19,22 +20,19 @@ public class BasicUserService implements UserService {
 
     @Override
     public void registerUser(SignUpRequest signUpRequest) {
-        // 사용자 이름 중복 확인
-        if (userRepository.countByUsername(signUpRequest.getUsername()) > 0) {
+
+    	if (userRepository.countByUsername(signUpRequest.getUsername()) > 0) {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        // 이메일 중복 확인
         if (userRepository.countByEmail(signUpRequest.getEmail()) > 0) {
             throw new IllegalArgumentException("Email already exists");
         }
 
-        // 비밀번호와 확인 비밀번호 일치 확인
         if (!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
 
-        // 이름 유효성 검사
         if (signUpRequest.getName() == null || signUpRequest.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty");
         }
@@ -44,9 +42,11 @@ public class BasicUserService implements UserService {
 
     @Override
     public UserResponse getUserProfile(HttpSession session) {
+    	
         String currentUsername = (String) session.getAttribute("username");
+        
         if (currentUsername == null) {
-            throw new SecurityException("User not authenticated");
+            throw new SecurityException("User not logged in");
         }
 
         UserResponse userResponse = userRepository.findByUsername(currentUsername);
@@ -57,13 +57,21 @@ public class BasicUserService implements UserService {
         return userResponse;
     }
 
-
-
     @Override
     public void updateUserProfile(UserUpdateRequest userUpdateRequest, HttpSession session) {
+    	
         String currentUsername = (String) session.getAttribute("username");
+        
         if (currentUsername == null) {
             throw new SecurityException("User not authenticated");
+        }
+
+        if (userUpdateRequest.getEmail() == null || !userUpdateRequest.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        
+        if (userUpdateRequest.getName() == null || userUpdateRequest.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
         }
 
         userRepository.updateUser(currentUsername, userUpdateRequest);
@@ -71,22 +79,34 @@ public class BasicUserService implements UserService {
 
     @Override
     public void deleteUserProfile(HttpSession session) {
+    	
         String currentUsername = (String) session.getAttribute("username");
+        
         if (currentUsername == null) {
-            throw new SecurityException("User not authenticated");
+            throw new SecurityException("User not logged in");
         }
 
         userRepository.deleteUser(currentUsername);
     }
 
     @Override
-    public List<UserSearchResponse> searchUsers(String keyword) {
-        // 키워드 유효성 검사
+    public List<UserSearchResponse> searchUsers(String keyword, HttpSession session) {
+
+    	String currentUsername = (String) session.getAttribute("username");
+    	
+        if (currentUsername == null) {
+            throw new SecurityException("User not logged in");
+        }
+
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid query parameter");
         }
 
-        // 사용자 검색
-        return userRepository.searchUsers(keyword);
+        List<UserSearchResponse> users = userRepository.searchUsers(keyword);
+        if (users.isEmpty()) {
+            throw new NoSuchElementException("No users found with the given keyword");
+        }
+
+        return users;
     }
 }

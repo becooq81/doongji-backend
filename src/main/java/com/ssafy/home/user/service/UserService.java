@@ -8,9 +8,14 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 public interface UserService {
+	
     void registerUser(SignUpRequest signUpRequest);
+    
     UserResponse getUserProfile(HttpSession session);
+    
     void updateUserProfile(UserUpdateRequest userUpdateRequest, HttpSession session);
+    
     void deleteUserProfile(HttpSession session);
-    List<UserSearchResponse> searchUsers(String keyword);
+    
+    List<UserSearchResponse> searchUsers(String keyword, HttpSession session);
 }

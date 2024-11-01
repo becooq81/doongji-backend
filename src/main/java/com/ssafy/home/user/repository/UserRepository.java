@@ -32,8 +32,5 @@ public interface UserRepository {
 
     // 사용자 검색 (사용자 이름 또는 이름으로)
     List<UserSearchResponse> searchUsers(@Param("keyword") String keyword);
-
- // 사용자 이름으로 암호화된 비밀번호 가져오기
-    String getPasswordByUsername(@Param("username") String username);
 }
 
