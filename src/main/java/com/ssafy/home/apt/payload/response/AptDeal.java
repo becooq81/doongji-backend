@@ -20,5 +20,5 @@ public class AptDeal {
 	private double excluUseAr;
 	private String dealAmount;
 	private String address;
-	private String aptName;
+	private String aptNm;
 }

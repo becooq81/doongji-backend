@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.home.apt.repository.AptRepository">
+	
+	<select id="selectAptDealByAptSeq" parameterType="String" resultType="com.ssafy.home.apt.payload.response.AptDeal">
+	    SELECT * FROM housedeals 
+	    WHERE apt_seq = #{aptSeq} 
+	    ORDER BY deal_year DESC, deal_month DESC, deal_day DESC
+	</select>
+	
+	<select id="selectAptDealByDong" parameterType="map" resultType="com.ssafy.home.apt.payload.response.AptDeal">
+	    SELECT * 
+	    FROM housedeals 
+	    JOIN houseinfos ON housedeals.apt_seq = houseinfos.apt_seq 
+	    WHERE sgg_cd = #{sggCd} 
+	      AND umd_cd = #{umdCd}
+	</select>
+	
+	<select id="selectAptSeqByAptNm" parameterType="String" resultType="String">
+	    SELECT apt_seq 
+	    FROM houseinfos 
+	    WHERE apt_nm = #{aptName}
+	</select>
+	
+	<select id="selectAptInfoByAptSeq" parameterType="String" resultType="com.ssafy.home.apt.payload.response.AptInfo">
+	    SELECT * 
+	    FROM houseinfos 
+	    WHERE apt_seq = #{aptSeq}
+	</select>
+	
+	<select id="selectAptDealByAptNm" parameterType="String" resultType="com.ssafy.home.apt.payload.response.AptDeal">
+	    SELECT 
+	    	housedeals.*, 
+       	 	houseinfos.*,
+        	CONCAT(houseinfos.umd_nm, ' ', houseinfos.jibun) AS address
+	    FROM housedeals 
+	    JOIN houseinfos ON houseinfos.apt_seq = housedeals.apt_seq 
+	    WHERE apt_nm LIKE CONCAT('%', #{name}, '%') 
+	</select>
+	
+	
+    
+</mapper>
