@@ -1,5 +1,5 @@
 package com.ssafy.home.user.controller;
 
-public class BasicUserController {
+public class BasicUserController implements UserController {
 
 }
