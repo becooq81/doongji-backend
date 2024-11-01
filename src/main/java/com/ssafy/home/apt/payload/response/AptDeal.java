@@ -21,4 +21,6 @@ public class AptDeal {
 	private String dealAmount;
 	private String address;
 	private String aptNm;
+	private String latitude;
+	private String longitude;
 }
