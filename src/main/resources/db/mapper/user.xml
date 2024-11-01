@@ -52,12 +52,4 @@
            OR name LIKE CONCAT('%', #{keyword}, '%')
     </select>
     
-	<!-- 사용자 이름으로 암호화된 비밀번호 가져오기 -->
-	<select id="getPasswordByUsername" parameterType="string" resultType="string">
-	    SELECT password
-	    FROM users
-	    WHERE username = #{username}
-	</select>
-    
-
 </mapper>
