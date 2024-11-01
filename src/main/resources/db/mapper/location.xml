@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.home.location.repository.LocationRepository">
+	
+    <!-- Method 1: Select dong names based on si and gugun -->
+    <select id="selectDong" resultType="String">
+        SELECT DISTINCT dong_name 
+        FROM dongcodes 
+        WHERE sido_name = #{si} 
+         	AND gugun_name = #{gugun}
+         	AND dong_name IS NOT NULL
+    </select>
+
+    <!-- Method 2: Select gugun names based on si -->
+    <select id="selectGugun" resultType="String">
+        SELECT DISTINCT gugun_name 
+        FROM dongcodes 
+        WHERE sido_name = #{si}
+        	AND gugun_name IS NOT NULL
+    </select>
+
+    <!-- Method 3: Select dong_code based on si, gugun, and dong -->
+    <select id="selectDongCode" resultType="String">
+        SELECT dong_code 
+        FROM dongcodes 
+        WHERE sido_name = #{si} 
+          AND gugun_name = #{gugun} 
+          AND dong_name = #{dong}
+    </select>
+    
+</mapper>
