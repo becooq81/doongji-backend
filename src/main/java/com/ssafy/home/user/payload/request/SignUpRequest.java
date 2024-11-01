@@ -8,5 +8,5 @@ public class SignUpRequest {
     private String email;
     private String password;
     private String confirmPassword;
-    private String name; // 이름 필드 추가
+    private String name;
 }
