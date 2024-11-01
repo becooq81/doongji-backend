@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.home.user.repository.UserRepository">
+
+    <!-- 사용자 이름으로 사용자 찾기 -->
+    <select id="findByUsername" parameterType="string" resultType="com.ssafy.home.user.payload.response.UserResponse">
+        SELECT username, email, name
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <!-- 사용자 이름 중복 확인 -->
+    <select id="countByUsername" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <!-- 사용자 이메일 중복 확인 -->
+    <select id="countByEmail" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <!-- 새로운 사용자 추가 -->
+	<insert id="insertUser" parameterType="com.ssafy.home.user.payload.request.SignUpRequest">
+	    INSERT INTO users (username, email, password, name)
+	    VALUES (#{username}, #{email}, #{password}, #{name})
+	</insert>
+
+    <!-- 사용자 정보 업데이트 -->
+    <update id="updateUser" parameterType="map">
+        UPDATE users
+        SET email = #{request.email}, name = #{request.name}
+        WHERE username = #{username}
+    </update>
+
+    <!-- 사용자 삭제 -->
+    <delete id="deleteUser" parameterType="string">
+        DELETE FROM users WHERE username = #{username}
+    </delete>
+
+    <!-- 사용자 검색 -->
+    <select id="searchUsers" parameterType="string" resultType="com.ssafy.home.user.payload.response.UserSearchResponse">
+        SELECT username, email, name
+        FROM users
+        WHERE username LIKE CONCAT('%', #{keyword}, '%')
+           OR name LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+    
+	<!-- 사용자 이름으로 암호화된 비밀번호 가져오기 -->
+	<select id="getPasswordByUsername" parameterType="string" resultType="string">
+	    SELECT password
+	    FROM users
+	    WHERE username = #{username}
+	</select>
+    
+
+</mapper>

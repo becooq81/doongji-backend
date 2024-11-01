@@ -1,5 +1,9 @@
 package com.ssafy.home.user.payload.request;
 
-public class UserUpdateRequest {
+import lombok.Data;
 
+@Data
+public class UserUpdateRequest {
+    private String email;
+    private String name;
 }
