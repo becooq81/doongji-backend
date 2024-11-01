@@ -30,4 +30,10 @@
           AND dong_name = #{dong}
     </select>
     
+    <!-- Method 4: Select distinct sido names -->
+    <select id="selectSido" resultType="String">
+    	SELECT DISTINCT sido_name
+    	FROM dongcodes
+    </select>
+    
 </mapper>

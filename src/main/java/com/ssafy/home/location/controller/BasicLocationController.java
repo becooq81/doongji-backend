@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.home.location.payload.response.DongCode;
 import com.ssafy.home.location.payload.response.DongList;
 import com.ssafy.home.location.payload.response.GugunList;
+import com.ssafy.home.location.payload.response.SidoList;
 import com.ssafy.home.location.service.LocationService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,11 @@ public class BasicLocationController implements LocationController {
 		return new ResponseEntity<>(dongcode, HttpStatus.OK);
 	}
 
-	
+	@Override
+	public ResponseEntity<SidoList> getSidoList() {
+		SidoList sidoList = service.findSido();
+		return new ResponseEntity<>(sidoList, HttpStatus.OK);
+	}
 	
 
 }

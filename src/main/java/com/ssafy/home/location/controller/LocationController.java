@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ssafy.home.location.payload.response.DongCode;
 import com.ssafy.home.location.payload.response.DongList;
 import com.ssafy.home.location.payload.response.GugunList;
+import com.ssafy.home.location.payload.response.SidoList;
 
 public interface LocationController {
 
@@ -23,5 +24,7 @@ public interface LocationController {
 	@GetMapping("/dongcode")
 	ResponseEntity<DongCode> getDongCode(@RequestParam("sidoName") String sidoName, @RequestParam("gugunName") String gugunName, @RequestParam("dongName") String dongName);
 	
+	@GetMapping("/sido")
+	ResponseEntity<SidoList> getSidoList();
 	
 }

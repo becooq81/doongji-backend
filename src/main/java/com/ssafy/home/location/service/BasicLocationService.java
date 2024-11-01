@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.home.location.payload.response.DongCode;
 import com.ssafy.home.location.payload.response.DongList;
 import com.ssafy.home.location.payload.response.GugunList;
+import com.ssafy.home.location.payload.response.SidoList;
 import com.ssafy.home.location.repository.LocationRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,15 @@ public class BasicLocationService implements LocationService {
 				.dongcode(dongcodeVal)
 				.build();
 		return dongcode;
+	}
+	
+	@Override
+	public SidoList findSido() {
+		List<String> sidoNames = repo.selectSido();
+		SidoList sidoList = SidoList.builder()
+				.sidoList(sidoNames)
+				.build();
+		return sidoList;
 	}
 
 }
