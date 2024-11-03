@@ -11,6 +11,7 @@
         WHERE sido_name = #{si} 
          	AND gugun_name = #{gugun}
          	AND dong_name IS NOT NULL
+        ORDER BY dong_name
     </select>
 
 	<!-- Method 2: Select gugun names based on sido -->
@@ -19,6 +20,7 @@
 	    FROM dongcodes 
 	    WHERE sido_name = #{si} 
 	        AND gugun_name IS NOT NULL
+	   	ORDER BY gugun_name
 	</select>
 
 
