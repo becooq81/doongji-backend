@@ -23,4 +23,14 @@ public class AptDeal {
 	private String aptNm;
 	private String latitude;
 	private String longitude;
+	
+	@Override
+	public String toString() {
+		return "AptDeal [no=" + no + ", aptSeq=" + aptSeq + ", aptDong=" + aptDong + ", floor=" + floor + ", dealYear="
+				+ dealYear + ", dealMonth=" + dealMonth + ", dealDay=" + dealDay + ", excluUseAr=" + excluUseAr
+				+ ", dealAmount=" + dealAmount + ", address=" + address + ", aptNm=" + aptNm + ", latitude=" + latitude
+				+ ", longitude=" + longitude + "]";
+	}
+	
+	
 }
