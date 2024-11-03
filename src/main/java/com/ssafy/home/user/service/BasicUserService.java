@@ -22,7 +22,7 @@ public class BasicUserService implements UserService {
 
     @Override
     public void registerUser(SignUpRequest signUpRequest) {
-
+    	
     	if (userRepository.countByUsername(signUpRequest.getUsername()) > 0) {
             throw new IllegalArgumentException("Username already exists");
         }

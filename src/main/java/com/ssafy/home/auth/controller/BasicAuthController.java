@@ -1,5 +1,7 @@
 package com.ssafy.home.auth.controller;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +26,10 @@ public class BasicAuthController implements AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
     	boolean success = authService.login(loginRequest, session);
         if (success) {
-            return ResponseEntity.ok("User logged in successfully");
+            return ResponseEntity.status(HttpStatus.OK)
+            		.body(Collections.singletonMap("message", "User logged in successfully"));
         } else {
-            return ResponseEntity.status(401).body("Invalid credentials");
+            return ResponseEntity.status(401).body(Collections.singletonMap("message","Invalid credentials"));
         }
     }
 

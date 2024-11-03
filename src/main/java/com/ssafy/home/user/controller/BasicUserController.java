@@ -1,5 +1,6 @@
 package com.ssafy.home.user.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -28,11 +29,12 @@ public class BasicUserController implements UserController {
     @Autowired
     private UserService userService;
 
+    // TODO: make consistent API response
     @Override
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
         userService.registerUser(signUpRequest);
-        return ResponseEntity.status(201).body("User registered successfully");
-    }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Collections.singletonMap("message", "User registered successfully"));    }
 
     @Override
     public ResponseEntity<UserResponse> getUserProfile(HttpSession session) {
@@ -43,7 +45,8 @@ public class BasicUserController implements UserController {
     @Override
     public ResponseEntity<?> updateUserProfile(@RequestBody UserUpdateRequest userUpdateRequest, HttpSession session) {
         userService.updateUserProfile(userUpdateRequest, session);
-        return ResponseEntity.ok("User profile updated successfully");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(Collections.singletonMap("message", "User profile updated successfully"));    
     }
 
     @Override
@@ -60,18 +63,21 @@ public class BasicUserController implements UserController {
     
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<?> handleNoSuchElementException(NoSuchElementException ex) {
+    	return ResponseEntity.status(HttpStatus.NOT_FOUND)
+    			.body(Collections.singletonMap("message", ex.getMessage()));
     }
     
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+    	return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    			.body(Collections.singletonMap("message", ex.getMessage()));
     }
     
     @ExceptionHandler(SecurityException.class)
-    public ResponseEntity<String> handleSecurityException(SecurityException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    public ResponseEntity<?> handleSecurityException(SecurityException ex) {
+    	return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    			.body(Collections.singletonMap("message", ex.getMessage()));
     }
 }
