@@ -13,13 +13,14 @@
          	AND dong_name IS NOT NULL
     </select>
 
-    <!-- Method 2: Select gugun names based on si -->
-    <select id="selectGugun" resultType="String">
-        SELECT DISTINCT gugun_name 
-        FROM dongcodes 
-        WHERE sido_name = #{si}
-        	AND gugun_name IS NOT NULL
-    </select>
+	<!-- Method 2: Select gugun names based on sido -->
+	<select id="selectGugun" resultType="String">
+	    SELECT DISTINCT SUBSTRING_INDEX(gugun_name, ' ', 1) AS gugun_name
+	    FROM dongcodes 
+	    WHERE sido_name = #{si} 
+	        AND gugun_name IS NOT NULL
+	</select>
+
 
     <!-- Method 3: Select dong_code based on si, gugun, and dong -->
     <select id="selectDongCode" resultType="String">
