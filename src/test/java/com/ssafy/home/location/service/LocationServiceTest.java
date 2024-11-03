@@ -9,7 +9,6 @@ import com.ssafy.home.location.payload.response.DongCode;
 import com.ssafy.home.location.payload.response.DongList;
 import com.ssafy.home.location.payload.response.GugunList;
 import com.ssafy.home.location.repository.LocationRepository;
-import com.ssafy.home.location.repository.LocationRepositoryTest;
 
 import lombok.extern.slf4j.Slf4j;
 

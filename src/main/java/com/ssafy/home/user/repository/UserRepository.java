@@ -1,13 +1,14 @@
 package com.ssafy.home.user.repository;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import com.ssafy.home.user.payload.request.SignUpRequest;
 import com.ssafy.home.user.payload.request.UserUpdateRequest;
 import com.ssafy.home.user.payload.response.UserResponse;
 import com.ssafy.home.user.payload.response.UserSearchResponse;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 @Mapper
 public interface UserRepository {

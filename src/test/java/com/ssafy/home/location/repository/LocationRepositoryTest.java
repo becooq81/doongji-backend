@@ -1,6 +1,5 @@
 package com.ssafy.home.location.repository;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

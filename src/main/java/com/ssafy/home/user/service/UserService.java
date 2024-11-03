@@ -1,11 +1,13 @@
 package com.ssafy.home.user.service;
 
+import java.util.List;
+
 import com.ssafy.home.user.payload.request.SignUpRequest;
 import com.ssafy.home.user.payload.request.UserUpdateRequest;
 import com.ssafy.home.user.payload.response.UserResponse;
 import com.ssafy.home.user.payload.response.UserSearchResponse;
+
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 
 public interface UserService {
 	

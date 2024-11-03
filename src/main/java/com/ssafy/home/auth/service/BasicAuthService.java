@@ -1,10 +1,12 @@
 package com.ssafy.home.auth.service;
 
-import com.ssafy.home.auth.payload.request.LoginRequest;
-import com.ssafy.home.auth.repository.AuthRepository;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.ssafy.home.auth.payload.request.LoginRequest;
+import com.ssafy.home.auth.repository.AuthRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class BasicAuthService implements AuthService {
