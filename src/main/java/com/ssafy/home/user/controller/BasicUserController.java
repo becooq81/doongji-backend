@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/v1/member")
 public class BasicUserController implements UserController {
 
     @Autowired
