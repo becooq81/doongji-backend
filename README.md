@@ -95,6 +95,11 @@
 
 ![실행화면캡쳐](./assets/DB_구축_DONGCODE.PNG)
 
+
+### Class Diagram
+![실행화면캡쳐](./assets/ClassDiagram.png)
+
+
 구현 기능: FrontEnd + BackEnd(Controller, Model(Dao, Service, Dto)
 ![실행화면캡쳐](./화면캡쳐/화면캡쳐_0001_주택정보_web.png)
 
