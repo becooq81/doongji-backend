@@ -95,6 +95,8 @@
 
 ![실행화면캡쳐](./assets/DB_구축_DONGCODE.PNG)
 
+4. 회원 테이블
+![실행화면캡쳐](./assets/DB_구축_USERS.PNG)
 
 ### Class Diagram
 ![실행화면캡쳐](./assets/ClassDiagram.png)
