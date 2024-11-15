@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ssafy</groupId>
-	<artifactId>t12s14_framework_ssafyhome_KHJ_KKK</artifactId>
+	<artifactId>doongji-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>t12s14_framework_ssafyhome_KHJ_KKK</name>
 	<description>Demo project for Spring Boot</description>

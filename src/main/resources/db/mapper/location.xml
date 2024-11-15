@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.home.location.repository.LocationRepository">
+<mapper namespace="com.find.doongji.location.repository.LocationRepository">
 	
     <!-- Method 1: Select dong names based on si and gugun -->
     <select id="selectDong" resultType="String">
