@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class T12s14FrameworkSsafyhomeKhjKkkApplication {
+public class DoongjiBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(T12s14FrameworkSsafyhomeKhjKkkApplication.class, args);
+		SpringApplication.run(DoongjiBackendApplication.class, args);
 	}
 
 }
