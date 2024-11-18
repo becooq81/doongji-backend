@@ -22,13 +22,14 @@ public class UserTest {
     @Transactional
     public void registTest() {
 
-        SignUpRequest newUser = new SignUpRequest();
-        newUser.setUsername("kim");
-        newUser.setEmail("kim@naver.com");
-        newUser.setPassword("0000");
-        newUser.setConfirmPassword("0000");
-        newUser.setName("김싸피");
-        
+        SignUpRequest newUser = new SignUpRequest(
+                "kim",
+                "kim@naver.com",
+                "0000",
+                "0000",
+                "김싸피"
+        );
+
         repo.insertUser(newUser);
         
         UserResponse registeredUser = repo.findByUsername("kim");

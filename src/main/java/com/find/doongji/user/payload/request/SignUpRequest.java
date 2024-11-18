@@ -1,8 +1,12 @@
 package com.find.doongji.user.payload.request;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignUpRequest {
     private String username;
     private String email;
