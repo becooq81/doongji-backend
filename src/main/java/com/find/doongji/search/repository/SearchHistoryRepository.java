@@ -1,6 +1,7 @@
 package com.find.doongji.search.repository;
 
-import com.find.doongji.search.payload.SearchHistory;
+import com.find.doongji.search.payload.request.SearchHistoryRequest;
+import com.find.doongji.search.payload.response.SearchHistoryResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,16 +12,16 @@ public interface SearchHistoryRepository {
 
     /**
      * Insert a new search history record.
-     * @param searchHistory The SearchHistory object containing search details.
+     * @param searchHistoryRequest The SearchHistory object containing search details.
      */
-    void insertSearchHistory(SearchHistory searchHistory);
+    void insertSearchHistory(SearchHistoryRequest searchHistoryRequest);
 
     /**
      * Retrieve search history for a specific username.
      * @param username The username for which to retrieve search history.
      * @return A list of SearchHistory records.
      */
-    List<SearchHistory> getSearchHistoryByUsername(String username);
+    List<SearchHistoryResponse> getSearchHistoryByUsername(String username);
 
     /**
      * Delete a search history record by its ID.
@@ -34,5 +35,5 @@ public interface SearchHistoryRepository {
      * @param query
      * @return SearchHistory IF a duplicate record is found, otherwise null.
      */
-    Optional<SearchHistory> findDuplicateSearchHistory(String username, String query);
+    Optional<SearchHistoryResponse> findDuplicateSearchHistory(String username, String query);
 }

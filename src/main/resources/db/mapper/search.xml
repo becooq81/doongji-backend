@@ -6,13 +6,13 @@
 <mapper namespace="com.find.doongji.search.repository.SearchHistoryRepository">
 
     <!-- Insert a search history record -->
-    <insert id="insertSearchHistory" parameterType="com.find.doongji.search.payload.SearchHistory">
+    <insert id="insertSearchHistory" parameterType="com.find.doongji.search.payload.request.SearchHistoryRequest">
         INSERT INTO search_history (username, query, created_at)
         VALUES (#{username}, #{query}, NOW());
     </insert>
 
     <!-- Get search history by username -->
-    <select id="getSearchHistoryByUsername" parameterType="string" resultType="com.find.doongji.search.payload.SearchHistory">
+    <select id="getSearchHistoryByUsername" parameterType="string" resultType="com.find.doongji.search.payload.response.SearchHistoryResponse">
         SELECT id, username, query, created_at
         FROM search_history
         WHERE username = #{username}
@@ -26,7 +26,7 @@
     </delete>
 
     <!-- Find duplicate search history -->
-    <select id="findDuplicateSearchHistory" parameterType="map" resultType="com.find.doongji.search.payload.SearchHistory">
+    <select id="findDuplicateSearchHistory" parameterType="map" resultType="com.find.doongji.search.payload.response.SearchHistoryResponse">
         SELECT id, username, query, created_at
         FROM search_history
         WHERE username = #{username}

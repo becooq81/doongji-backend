@@ -1,4 +1,4 @@
-package com.find.doongji.search.payload;
+package com.find.doongji.search.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchHistory {
+public class SearchHistoryRequest {
 
     private String username;
     private String query;

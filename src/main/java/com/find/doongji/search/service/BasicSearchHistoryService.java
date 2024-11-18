@@ -1,6 +1,7 @@
 package com.find.doongji.search.service;
 
-import com.find.doongji.search.payload.SearchHistory;
+import com.find.doongji.search.payload.request.SearchHistoryRequest;
+import com.find.doongji.search.payload.response.SearchHistoryResponse;
 import com.find.doongji.search.repository.SearchHistoryRepository;
 import com.find.doongji.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,20 +22,20 @@ public class BasicSearchHistoryService implements SearchHistoryService{
     /**
      * Adds a new search history entry to the database.
      *
-     * @param searchHistory the search history entry to be added
+     * @param searchHistoryRequest the search history entry to be added
      */
     @Override
     @Transactional
-    public void addSearchHistory(SearchHistory searchHistory) {
-        if (!userRepository.existsByUsername(searchHistory.getUsername())) {
+    public void addSearchHistory(SearchHistoryRequest searchHistoryRequest) {
+        if (!userRepository.existsByUsername(searchHistoryRequest.getUsername())) {
             throw new IllegalArgumentException("User does not exist");
         }
 
-        if (isDuplicateSearch(searchHistory)) {
+        if (isDuplicateSearch(searchHistoryRequest)) {
             throw new IllegalArgumentException("Duplicate search detected within a short period");
         }
 
-        searchHistoryRepository.insertSearchHistory(searchHistory);
+        searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
     }
 
     /**
@@ -44,7 +45,7 @@ public class BasicSearchHistoryService implements SearchHistoryService{
      * @return list of search history entries for the specified user
      */
     @Override
-    public List<SearchHistory> getSearchHistory(String username) {
+    public List<SearchHistoryResponse> getSearchHistory(String username) {
         return searchHistoryRepository.getSearchHistoryByUsername(username);
     }
 
@@ -58,10 +59,10 @@ public class BasicSearchHistoryService implements SearchHistoryService{
         searchHistoryRepository.deleteSearchHistoryById(id);
     }
 
-    private boolean isDuplicateSearch(SearchHistory searchHistory) {
-        Optional<SearchHistory> existingSearch = searchHistoryRepository.findDuplicateSearchHistory(
-                searchHistory.getUsername(),
-                searchHistory.getQuery()
+    private boolean isDuplicateSearch(SearchHistoryRequest searchHistoryRequest) {
+        Optional<SearchHistoryResponse> existingSearch = searchHistoryRepository.findDuplicateSearchHistory(
+                searchHistoryRequest.getUsername(),
+                searchHistoryRequest.getQuery()
         );
         return existingSearch.isPresent();
     }

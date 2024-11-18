@@ -1,14 +1,15 @@
 package com.find.doongji.search.service;
 
-import com.find.doongji.search.payload.SearchHistory;
+import com.find.doongji.search.payload.request.SearchHistoryRequest;
+import com.find.doongji.search.payload.response.SearchHistoryResponse;
 
 import java.util.List;
 
 public interface SearchHistoryService {
 
-    void addSearchHistory(SearchHistory searchHistory);
+    void addSearchHistory(SearchHistoryRequest searchHistoryRequest);
 
-    List<SearchHistory> getSearchHistory(String username);
+    List<SearchHistoryResponse> getSearchHistory(String username);
 
     void removeSearchHistory(Long id);
 }
