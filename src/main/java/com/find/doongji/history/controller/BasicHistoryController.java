@@ -23,10 +23,4 @@ public class BasicHistoryController implements HistoryController {
         return new ResponseEntity<>(searchHistories, HttpStatus.OK);
     }
 
-    @Override
-    @DeleteMapping("/{username}/{id}")
-    public ResponseEntity<Void> deleteHistoryById(@PathVariable String username, @PathVariable Long id) {
-        service.removeHistory(username, id);
-        return ResponseEntity.ok().build();
-    }
 }

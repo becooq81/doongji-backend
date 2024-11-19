@@ -13,11 +13,4 @@ public interface HistoryController {
      */
     ResponseEntity<?> getHistoryByUsername(String username);
 
-    /**
-     * Deletes a specific search history record by its unique ID.
-     *
-     * @param id The ID of the search history record to be deleted.
-     * @return ResponseEntity with status code 200 (OK) upon successful deletion.
-     */
-    ResponseEntity<Void> deleteHistoryById(String username, Long id);
 }
