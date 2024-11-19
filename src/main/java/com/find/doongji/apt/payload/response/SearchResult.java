@@ -1,6 +1,13 @@
 package com.find.doongji.apt.payload.response;
 
-public class SearchResult extends AptInfo {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SearchResult  {
 
     private int hoCnt; // 호 수
     private String kaptCode; // 단지 코드
@@ -16,4 +23,6 @@ public class SearchResult extends AptInfo {
     private String subwayLine;
     private String subwayStation;
 
+    private double longitude;
+    private double latitude;
 }
