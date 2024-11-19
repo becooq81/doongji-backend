@@ -5,7 +5,7 @@ import com.find.doongji.apt.payload.response.SearchResult;
 
 import java.util.List;
 
-public interface ApiClient {
+public interface AptClient {
 
     List<DanjiCode> getDanjiCodeList(String bjdCode) throws Exception;
 

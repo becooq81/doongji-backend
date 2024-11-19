@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class AptDetailInvoker implements ApiInvoker{
+public class AptDetailClient implements AptClient {
 
     @Value("${apt.danji-code-url}")
     private String DANJI_CODE_URL;
