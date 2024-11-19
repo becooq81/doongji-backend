@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchHistoryRequest {
 
+
     private String username;
     private String query;
 

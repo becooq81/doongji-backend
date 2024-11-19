@@ -43,6 +43,5 @@ public class BasicLocationController implements LocationController {
 		SidoList sidoList = service.findSido();
 		return new ResponseEntity<>(sidoList, HttpStatus.OK);
 	}
-	
 
 }
