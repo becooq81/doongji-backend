@@ -33,9 +33,12 @@ public interface SearchHistoryRepository {
 
     /**
      * Find a duplicate search history record.
-     * @param username
-     * @param query
-     * @return SearchHistory IF a duplicate record is found, otherwise null.
+     * @param username The username to check for duplicates
+     * @param query The search query to check for duplicates
+     * @return Optional containing the duplicate SearchHistoryResponse if found
      */
-    Optional<SearchHistoryResponse> findDuplicateSearchHistory(String username, String query);
+    Optional<SearchHistoryResponse> findDuplicateSearchHistory(
+        @Param("username") String username,
+        @Param("query") String query
+    );
 }
