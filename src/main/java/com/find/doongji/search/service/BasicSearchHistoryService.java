@@ -27,13 +27,11 @@ public class BasicSearchHistoryService implements SearchHistoryService{
     @Override
     @Transactional
     public void addSearchHistory(SearchHistoryRequest searchHistoryRequest) {
-        if (!userRepository.existsByUsername(searchHistoryRequest.getUsername())) {
-            throw new IllegalArgumentException("User does not exist");
+        if (searchHistoryRequest == null || searchHistoryRequest.getUsername() == null || searchHistoryRequest.getQuery() == null) {
+            throw new IllegalArgumentException("Search history request and its fields must not be null");
         }
 
-        if (isDuplicateSearch(searchHistoryRequest)) {
-            throw new IllegalArgumentException("Duplicate search detected within a short period");
-        }
+        validateRequest(searchHistoryRequest);
 
         searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
     }
@@ -68,5 +66,15 @@ public class BasicSearchHistoryService implements SearchHistoryService{
                 searchHistoryRequest.getQuery()
         );
         return existingSearch.isPresent();
+    }
+
+    private void validateRequest(SearchHistoryRequest request) {
+        if (!userRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+
+        if (isDuplicateSearch(request)) {
+            throw new IllegalArgumentException("Duplicate search detected within a short period");
+        }
     }
 }
