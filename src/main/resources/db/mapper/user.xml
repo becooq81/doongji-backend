@@ -51,5 +51,13 @@
         WHERE username LIKE CONCAT('%', #{keyword}, '%')
            OR name LIKE CONCAT('%', #{keyword}, '%')
     </select>
-    
+
+    <!-- 사용자 이름 존재 여부 확인 -->
+    <select id="existsByUsername" parameterType="string" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM users
+            WHERE username = #{username}
+        )
+    </select>
 </mapper>

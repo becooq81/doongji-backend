@@ -33,5 +33,8 @@ public interface UserRepository {
 
     // 사용자 검색 (사용자 이름 또는 이름으로)
     List<UserSearchResponse> searchUsers(@Param("keyword") String keyword);
+
+    // 사용자 이름으로 사용자 존재 여부 확인
+    boolean existsByUsername(@Param("username") String username);
 }
 
