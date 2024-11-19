@@ -49,9 +49,12 @@
 	</select>
 
 	<select id="checkIfMappingTableExists" resultType="int">
-		SELECT COUNT(*)
-		FROM address_mapping;
+		SELECT CASE
+			WHEN EXISTS (SELECT 1 FROM address_mapping LIMIT 1) THEN 1
+			ELSE 0
+		END;
 	</select>
+
 
 	<insert id="bulkInsertAddressMapping" parameterType="list">
 		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code)
