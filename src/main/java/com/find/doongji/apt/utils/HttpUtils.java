@@ -1,4 +1,4 @@
-package com.find.doongji.utils;
+package com.find.doongji.apt.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,6 +36,5 @@ public class HttpUtils {
 
         return sb.toString();
     }
-
 
 }
