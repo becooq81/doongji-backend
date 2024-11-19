@@ -13,4 +13,5 @@ public class AddressMapping {
     private String jibun;
     private String aptSeq;
     private int danjiId;
+    private String bjdCode;
 }

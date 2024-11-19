@@ -62,10 +62,6 @@ public interface AptRepository {
 	 */
 	void bulkInsertAddressMapping(@Param("list") List<AddressMapping> mappings);
 
-	/**
-	 * @param aptSeq
-	 * @return aptSeq에 해당하는 맵핑정보 존재 여부 반환
-	 */
-	boolean existsByAptSeq(String aptSeq);
+	String selectBjdCodeByDanjiId(int danjiId);
 
 }

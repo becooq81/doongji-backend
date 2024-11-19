@@ -52,7 +52,7 @@ public class AddressMappingLoader implements CommandLineRunner {
 
                 List<AptInfo> aptInfoList = aptRepository.selectAptInfoByUmdNmAndJibun(umdNm, jibun);
                 for (AptInfo aptInfo : aptInfoList) {
-                    mappings.add(new AddressMapping(oldAddress, umdNm, jibun, aptInfo.getAptSeq(), danjiId));
+                    mappings.add(new AddressMapping(oldAddress, umdNm, jibun, aptInfo.getAptSeq(), danjiId, aptInfo.getSggCd() + aptInfo.getUmdCd()));
                     if (mappings.size() == BATCH_SIZE) {
                         aptRepository.bulkInsertAddressMapping(mappings);
                         System.out.println("Inserted " + mappings.size() + " records into 'address_mapping'.");

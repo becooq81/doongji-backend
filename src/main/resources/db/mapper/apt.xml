@@ -54,17 +54,18 @@
 	</select>
 
 	<insert id="bulkInsertAddressMapping" parameterType="list">
-		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id)
+		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code)
 		VALUES
 		<foreach collection="list" item="mapping" separator=",">
-			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId})
+			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId}, #{mapping.bjdCode})
 		</foreach>
 	</insert>
 
-	<select id="existsByAptSeq" resultType="boolean">
-		SELECT COUNT(1) > 0
+	<select id="selectBjdCodeByDanjiId" parameterType="int" resultType="String">
+		SELECT bjd_code
 		FROM address_mapping
-		WHERE apt_seq = #{aptSeq}
+		WHERE danji_id = #{danjiId}
+		LIMIT 1
 	</select>
 
 
