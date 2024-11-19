@@ -2,7 +2,7 @@ package com.find.doongji.search.service;
 
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.DanjiCode;
-import com.find.doongji.apt.payload.response.SearchResult;
+import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.service.HistoryService;
