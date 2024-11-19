@@ -2,6 +2,7 @@ package com.find.doongji.search.controller;
 
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.service.SearchService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/search")
+@RequestMapping("/api/v1/search")
 @RequiredArgsConstructor
 public class BasicSearchController {
 
     private final SearchService searchService;
 
     @PostMapping
-    public ResponseEntity<?> search(@RequestBody SearchRequest searchRequest) {
+    public ResponseEntity<?> search(@Valid @RequestBody SearchRequest searchRequest) {
         try {
             return ResponseEntity.ok(searchService.search(searchRequest));
         } catch (Exception e) {
