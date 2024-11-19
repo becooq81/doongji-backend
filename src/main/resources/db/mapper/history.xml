@@ -3,16 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.find.doongji.search.repository.SearchHistoryRepository">
+<mapper namespace="com.find.doongji.history.repository.HistoryRepository">
 
     <!-- Insert a search history record -->
-    <insert id="insertSearchHistory" parameterType="com.find.doongji.search.payload.request.SearchHistoryRequest">
+    <insert id="insertSearchHistory" parameterType="com.find.doongji.history.payload.request.HistoryRequest">
         INSERT INTO search_history (username, query, created_at)
         VALUES (#{username}, #{query}, NOW());
     </insert>
 
     <!-- Get search history by username -->
-    <select id="getSearchHistoryByUsername" parameterType="string" resultType="com.find.doongji.search.payload.response.SearchHistoryResponse">
+    <select id="getSearchHistoryByUsername" parameterType="string" resultType="com.find.doongji.history.payload.response.HistoryResponse">
         SELECT id, username, query, created_at
         FROM search_history
         WHERE username = #{username}
@@ -26,7 +26,7 @@
     </delete>
 
     <!-- Find duplicate search history -->
-    <select id="findDuplicateSearchHistory" parameterType="map" resultType="com.find.doongji.search.payload.response.SearchHistoryResponse">
+    <select id="findDuplicateSearchHistory" parameterType="map" resultType="com.find.doongji.history.payload.response.HistoryResponse">
         SELECT id, username, query, created_at
         FROM search_history
         WHERE username = #{username}

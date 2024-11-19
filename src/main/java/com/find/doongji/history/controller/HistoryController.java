@@ -1,17 +1,17 @@
 package com.find.doongji.search.controller;
 
 import com.find.doongji.search.payload.request.SearchHistoryRequest;
+import com.find.doongji.search.payload.request.SearchRequest;
 import org.springframework.http.ResponseEntity;
 
-public interface SearchHistoryController {
+public interface SearchController {
+
 
     /**
-     * Adds a new search history record for the given user.
-     * @param username The username of the user who made the search.
-     * @param searchHistoryRequest
-     * @return ResponseEntity with status code 201 (Created) upon successful creation.
+     * Searches for recommendations based on the given query.
+     * @param SearchRequest The search query.
      */
-    ResponseEntity<?> addSearchHistory(String username, SearchHistoryRequest searchHistoryRequest);
+    ResponseEntity<?> search(SearchRequest request);
 
     /**
      * Retrieves all search history records for a specific user, ordered by the most recent search.

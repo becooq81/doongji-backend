@@ -1,6 +1,8 @@
 package com.find.doongji.search.controller;
 
+import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.payload.request.SearchHistoryRequest;
+import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.SearchHistoryResponse;
 import com.find.doongji.search.service.SearchHistoryService;
 import jakarta.validation.Valid;
@@ -14,19 +16,15 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/search")
 @RequiredArgsConstructor
-public class BasicSearchHistoryController implements SearchHistoryController{
+public class BasicSearchController implements SearchController {
 
     private final SearchHistoryService service;
+    private final RecommendClient client;
+
 
     @Override
-    @PostMapping("/{username}")
-    public ResponseEntity<Void> addSearchHistory(@PathVariable String username,
-                                              @RequestBody @Valid SearchHistoryRequest searchHistoryRequest) {
-        if (!username.equals(searchHistoryRequest.getUsername())) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        service.addSearchHistory(searchHistoryRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<?> search(@RequestBody @Valid SearchRequest request) {
+        return null;
     }
 
     @Override

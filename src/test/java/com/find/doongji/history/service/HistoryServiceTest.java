@@ -1,8 +1,8 @@
-package com.find.doongji.search.service;
+package com.find.doongji.history.service;
 
-import com.find.doongji.search.payload.request.SearchHistoryRequest;
-import com.find.doongji.search.payload.response.SearchHistoryResponse;
-import com.find.doongji.search.repository.SearchHistoryRepository;
+import com.find.doongji.history.payload.request.HistoryRequest;
+import com.find.doongji.history.payload.response.HistoryResponse;
+import com.find.doongji.history.repository.HistoryRepository;
 import com.find.doongji.user.payload.request.SignUpRequest;
 import com.find.doongji.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class SearchHistoryServiceTest {
     SearchHistoryService service;
 
     @Autowired
-    SearchHistoryRepository repo;
+    HistoryRepository repo;
 
     @Autowired
     UserRepository userRepository;
@@ -48,13 +48,13 @@ public class SearchHistoryServiceTest {
         // Given
         String username = "testuser";
         String query = "New search query";
-        SearchHistoryRequest searchHistoryRequest = new SearchHistoryRequest(username, query);
+        HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
 
         // When
         service.addSearchHistory(searchHistoryRequest);
 
         // Then
-        List<SearchHistoryResponse> searchHistories = repo.getSearchHistoryByUsername(username);
+        List<HistoryResponse> searchHistories = repo.getSearchHistoryByUsername(username);
         assertNotNull(searchHistories);
         assertFalse(searchHistories.isEmpty());
         assertEquals(query, searchHistories.get(0).getQuery());
@@ -65,7 +65,7 @@ public class SearchHistoryServiceTest {
         // Given
         String username = "testuser";
         String query = "Duplicate search query";
-        SearchHistoryRequest searchHistoryRequest = new SearchHistoryRequest(username, query);
+        HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
 
         // Add the first search history
         service.addSearchHistory(searchHistoryRequest);
@@ -83,11 +83,11 @@ public class SearchHistoryServiceTest {
     void getSearchHistoryTest() {
         // Given
         String username = "testuser";
-        service.addSearchHistory(new SearchHistoryRequest(username, "First search"));
-        service.addSearchHistory(new SearchHistoryRequest(username, "Second search"));
+        service.addSearchHistory(new HistoryRequest(username, "First search"));
+        service.addSearchHistory(new HistoryRequest(username, "Second search"));
 
         // When
-        List<SearchHistoryResponse> searchHistories = service.getSearchHistory(username);
+        List<HistoryResponse> searchHistories = service.getSearchHistory(username);
 
         // Then
         assertNotNull(searchHistories);

@@ -1,7 +1,7 @@
-package com.find.doongji.search.repository;
+package com.find.doongji.history.repository;
 
-import com.find.doongji.search.payload.request.SearchHistoryRequest;
-import com.find.doongji.search.payload.response.SearchHistoryResponse;
+import com.find.doongji.history.payload.request.HistoryRequest;
+import com.find.doongji.history.payload.response.HistoryResponse;
 import com.find.doongji.user.payload.request.SignUpRequest;
 import com.find.doongji.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -41,10 +41,10 @@ public class SearchHistoryRepositoryTest {
         );
         userRepository.insertUser(signUpRequest);
 
-        SearchHistoryRequest searchHistoryRequest = new SearchHistoryRequest(username, query);
+        HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
         searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
 
-        List<SearchHistoryResponse> searchHistories = searchHistoryRepository.getSearchHistoryByUsername(username);
+        List<HistoryResponse> searchHistories = searchHistoryRepository.getSearchHistoryByUsername(username);
         Assertions.assertNotNull(searchHistories);
         Assertions.assertFalse(searchHistories.isEmpty());
         Assertions.assertEquals(query, searchHistories.get(0).getQuery());
@@ -64,14 +64,14 @@ public class SearchHistoryRepositoryTest {
         );
         userRepository.insertUser(signUpRequest);
 
-        SearchHistoryRequest searchHistoryRequest = new SearchHistoryRequest(
+        HistoryRequest searchHistoryRequest = new HistoryRequest(
                 username,
                 query
         );
 
         searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
 
-        Optional<SearchHistoryResponse> duplicateSearchHistory = searchHistoryRepository.findDuplicateSearchHistory(username, query);
+        Optional<HistoryResponse> duplicateSearchHistory = searchHistoryRepository.findDuplicateSearchHistory(username, query);
         Assertions.assertNotNull(duplicateSearchHistory);
     }
 
@@ -88,13 +88,13 @@ public class SearchHistoryRepositoryTest {
         );
         userRepository.insertUser(signUpRequest);
 
-        searchHistoryRepository.insertSearchHistory(new SearchHistoryRequest(username, "First search"));
-        searchHistoryRepository.insertSearchHistory(new SearchHistoryRequest(username, "Second search"));
+        searchHistoryRepository.insertSearchHistory(new HistoryRequest(username, "First search"));
+        searchHistoryRepository.insertSearchHistory(new HistoryRequest(username, "Second search"));
 
-        List<SearchHistoryResponse> searchHistories = searchHistoryRepository.getSearchHistoryByUsername(username);
+        List<HistoryResponse> searchHistories = searchHistoryRepository.getSearchHistoryByUsername(username);
 
         Assertions.assertNotNull(searchHistories);
-        for (SearchHistoryResponse sh : searchHistories) {
+        for (HistoryResponse sh : searchHistories) {
             log.info("Search history: {}", sh);
         }
         Assertions.assertEquals(2, searchHistories.size());

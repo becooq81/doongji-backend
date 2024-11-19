@@ -1,8 +1,8 @@
-package com.find.doongji.search.service;
+package com.find.doongji.history.service;
 
-import com.find.doongji.search.payload.request.SearchHistoryRequest;
-import com.find.doongji.search.payload.response.SearchHistoryResponse;
-import com.find.doongji.search.repository.SearchHistoryRepository;
+import com.find.doongji.history.payload.request.HistoryRequest;
+import com.find.doongji.history.payload.response.HistoryResponse;
+import com.find.doongji.history.repository.HistoryRepository;
 import com.find.doongji.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BasicSearchHistoryService implements SearchHistoryService{
 
-    private final SearchHistoryRepository searchHistoryRepository;
+    private final HistoryRepository historyRepository;
     private final UserRepository userRepository;
 
 
@@ -26,14 +26,14 @@ public class BasicSearchHistoryService implements SearchHistoryService{
      */
     @Override
     @Transactional
-    public void addSearchHistory(SearchHistoryRequest searchHistoryRequest) {
+    public void addSearchHistory(HistoryRequest searchHistoryRequest) {
         if (searchHistoryRequest == null || searchHistoryRequest.getUsername() == null || searchHistoryRequest.getQuery() == null) {
             throw new IllegalArgumentException("Search history request and its fields must not be null");
         }
 
         validateRequest(searchHistoryRequest);
 
-        searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
+        historyRepository.insertSearchHistory(searchHistoryRequest);
     }
 
     /**
@@ -43,8 +43,8 @@ public class BasicSearchHistoryService implements SearchHistoryService{
      * @return list of search history entries for the specified user
      */
     @Override
-    public List<SearchHistoryResponse> getSearchHistory(String username) {
-        return searchHistoryRepository.getSearchHistoryByUsername(username);
+    public List<HistoryResponse> getSearchHistory(String username) {
+        return historyRepository.getSearchHistoryByUsername(username);
     }
 
     /**
@@ -57,18 +57,18 @@ public class BasicSearchHistoryService implements SearchHistoryService{
         if (!userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("User does not exist");
         }
-        searchHistoryRepository.deleteSearchHistoryByUsernameAndId(username, id);
+        historyRepository.deleteSearchHistoryByUsernameAndId(username, id);
     }
 
-    private boolean isDuplicateSearch(SearchHistoryRequest searchHistoryRequest) {
-        Optional<SearchHistoryResponse> existingSearch = searchHistoryRepository.findDuplicateSearchHistory(
+    private boolean isDuplicateSearch(HistoryRequest searchHistoryRequest) {
+        Optional<HistoryResponse> existingSearch = historyRepository.findDuplicateSearchHistory(
                 searchHistoryRequest.getUsername(),
                 searchHistoryRequest.getQuery()
         );
         return existingSearch.isPresent();
     }
 
-    private void validateRequest(SearchHistoryRequest request) {
+    private void validateRequest(HistoryRequest request) {
         if (!userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("User does not exist");
         }
