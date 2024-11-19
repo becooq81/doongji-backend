@@ -12,4 +12,5 @@ public class AddressMapping {
     private String umdNm;
     private String jibun;
     private String aptSeq;
+    private int danjiId;
 }

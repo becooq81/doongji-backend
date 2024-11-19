@@ -31,7 +31,7 @@ public class AddressMappingLoader implements CommandLineRunner {
     }
 
     private void processCsvAndInsertMappings() {
-        String filePath = "src/main/resources/unique_old_addresses.csv";
+        String filePath = "src/main/resources/unique_danji_id.csv";
         List<AddressMapping> mappings = new ArrayList<>();
 
         System.out.println("START Timestamp loading csv: " + System.currentTimeMillis());
@@ -41,7 +41,8 @@ public class AddressMappingLoader implements CommandLineRunner {
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] columns = line.split(",");
-                String oldAddress = columns[0];
+                String oldAddress = columns[1];
+                int danjiId = Integer.parseInt(columns[0]);
 
                 String[] addressParts = oldAddress.split(" ");
                 if (addressParts.length < 2) continue;
@@ -51,7 +52,7 @@ public class AddressMappingLoader implements CommandLineRunner {
 
                 List<AptInfo> aptInfoList = aptRepository.selectAptInfoByUmdNmAndJibun(umdNm, jibun);
                 for (AptInfo aptInfo : aptInfoList) {
-                    mappings.add(new AddressMapping(oldAddress, umdNm, jibun, aptInfo.getAptSeq()));
+                    mappings.add(new AddressMapping(oldAddress, umdNm, jibun, aptInfo.getAptSeq(), danjiId));
                     if (mappings.size() == BATCH_SIZE) {
                         aptRepository.bulkInsertAddressMapping(mappings);
                         System.out.println("Inserted " + mappings.size() + " records into 'address_mapping'.");

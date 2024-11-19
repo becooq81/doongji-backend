@@ -54,10 +54,10 @@
 	</select>
 
 	<insert id="bulkInsertAddressMapping" parameterType="list">
-		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq)
+		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id)
 		VALUES
 		<foreach collection="list" item="mapping" separator=",">
-			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq})
+			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId})
 		</foreach>
 	</insert>
 
