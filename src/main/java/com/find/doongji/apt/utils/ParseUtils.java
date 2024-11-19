@@ -20,7 +20,10 @@ import java.util.Map;
 
 public class ParseUtils {
 
-    public static List<Map<String, String>> parseXML(String path, String responseBody, String... keys) throws Exception{
+    public static List<Map<String, String>> parseXML(String path, String responseBody, String... keys) throws Exception {
+        if (path == null || path.isEmpty()) {
+            throw new Exception("XPath Expression cannot be empty.");
+        }
         List<Map<String, String>> result = new ArrayList<>();
 
         try {
