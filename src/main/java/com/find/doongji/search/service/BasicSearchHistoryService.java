@@ -55,8 +55,11 @@ public class BasicSearchHistoryService implements SearchHistoryService{
      * @param id the ID of the search history entry to be removed
      */
     @Override
-    public void removeSearchHistory(Long id) {
-        searchHistoryRepository.deleteSearchHistoryById(id);
+    public void removeSearchHistory(String username, Long id) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        searchHistoryRepository.deleteSearchHistoryByUsernameAndId(username, id);
     }
 
     private boolean isDuplicateSearch(SearchHistoryRequest searchHistoryRequest) {
