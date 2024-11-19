@@ -11,5 +11,5 @@ public interface SearchHistoryService {
 
     List<SearchHistoryResponse> getSearchHistory(String username);
 
-    void removeSearchHistory(Long id);
+    void removeSearchHistory(String username, Long id);
 }

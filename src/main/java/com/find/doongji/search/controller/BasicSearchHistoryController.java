@@ -20,22 +20,26 @@ public class BasicSearchHistoryController implements SearchHistoryController{
 
     @Override
     @PostMapping("/{username}")
-    public ResponseEntity<?> addSearchHistory(@PathVariable String username,
+    public ResponseEntity<Void> addSearchHistory(@PathVariable String username,
                                               @RequestBody @Valid SearchHistoryRequest searchHistoryRequest) {
+        if (!username.equals(searchHistoryRequest.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         service.addSearchHistory(searchHistoryRequest);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override
     @GetMapping("/{username}")
-    public ResponseEntity<?> getSearchHistoryByUsername(@PathVariable String username) {
+    public ResponseEntity<List<SearchHistoryResponse>> getSearchHistoryByUsername(@PathVariable String username) {
         List<SearchHistoryResponse> searchHistories = service.getSearchHistory(username);
         return new ResponseEntity<>(searchHistories, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Void> deleteSearchHistoryById(Long id) {
-        service.removeSearchHistory(id);
+    @DeleteMapping("/{username}/{id}")
+    public ResponseEntity<Void> deleteSearchHistoryById(@PathVariable String username, @PathVariable Long id) {
+        service.removeSearchHistory(username, id);
         return ResponseEntity.ok().build();
     }
 }

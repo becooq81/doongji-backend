@@ -26,5 +26,5 @@ public interface SearchHistoryController {
      * @param id The ID of the search history record to be deleted.
      * @return ResponseEntity with status code 200 (OK) upon successful deletion.
      */
-    ResponseEntity<Void> deleteSearchHistoryById(Long id);
+    ResponseEntity<Void> deleteSearchHistoryById(String username, Long id);
 }

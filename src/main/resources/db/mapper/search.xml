@@ -19,10 +19,10 @@
         ORDER BY created_at DESC;
     </select>
 
-    <!-- Delete search history by ID -->
-    <delete id="deleteSearchHistoryById" parameterType="long">
+    <!-- Delete search history by username and ID -->
+    <delete id="deleteSearchHistoryByUsernameAndId" parameterType="map">
         DELETE FROM search_history
-        WHERE id = #{id};
+        WHERE username = #{username} AND id = #{id};
     </delete>
 
     <!-- Find duplicate search history -->
