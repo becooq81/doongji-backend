@@ -46,19 +46,15 @@ public class RecommendClient {
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
 
-            // Extract the results array from the JSON response
             JSONArray resultDataArray = jsonResponse.getJSONArray("results");
 
             for (int i = 0; i < resultDataArray.length(); i++) {
                 JSONObject item = resultDataArray.getJSONObject(i);
 
-                // Extract danji_id and similarity from the JSON object
                 int danjiId = item.getInt("danji_id");
                 float similarity = (float) item.getDouble("similarity");
 
-                // Create a RecommendResponse object and add it to the result list
                 result.add(new RecommendResponse(danjiId, similarity));
-                System.out.println(result.get(result.size()-1));
             }
 
         } catch (Exception e) {
