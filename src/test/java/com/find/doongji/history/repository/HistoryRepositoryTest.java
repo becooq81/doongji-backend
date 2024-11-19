@@ -6,23 +6,27 @@ import com.find.doongji.user.payload.request.SignUpRequest;
 import com.find.doongji.user.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
+
 @Slf4j
 @Transactional
-public class SearchHistoryRepositoryTest {
+@SpringBootTest
+public class HistoryRepositoryTest {
 
 
     @Autowired
-    SearchHistoryRepository searchHistoryRepository;
+    HistoryRepository historyRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -42,9 +46,9 @@ public class SearchHistoryRepositoryTest {
         userRepository.insertUser(signUpRequest);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
-        searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
+        historyRepository.insertHistory(searchHistoryRequest);
 
-        List<HistoryResponse> searchHistories = searchHistoryRepository.getSearchHistoryByUsername(username);
+        List<HistoryResponse> searchHistories = historyRepository.getHistoryByUsername(username);
         Assertions.assertNotNull(searchHistories);
         Assertions.assertFalse(searchHistories.isEmpty());
         Assertions.assertEquals(query, searchHistories.get(0).getQuery());
@@ -69,9 +73,9 @@ public class SearchHistoryRepositoryTest {
                 query
         );
 
-        searchHistoryRepository.insertSearchHistory(searchHistoryRequest);
+        historyRepository.insertHistory(searchHistoryRequest);
 
-        Optional<HistoryResponse> duplicateSearchHistory = searchHistoryRepository.findDuplicateSearchHistory(username, query);
+        Optional<HistoryResponse> duplicateSearchHistory = historyRepository.findDuplicateHistory(username, query);
         Assertions.assertNotNull(duplicateSearchHistory);
     }
 
@@ -88,10 +92,10 @@ public class SearchHistoryRepositoryTest {
         );
         userRepository.insertUser(signUpRequest);
 
-        searchHistoryRepository.insertSearchHistory(new HistoryRequest(username, "First search"));
-        searchHistoryRepository.insertSearchHistory(new HistoryRequest(username, "Second search"));
+        historyRepository.insertHistory(new HistoryRequest(username, "First search"));
+        historyRepository.insertHistory(new HistoryRequest(username, "Second search"));
 
-        List<HistoryResponse> searchHistories = searchHistoryRepository.getSearchHistoryByUsername(username);
+        List<HistoryResponse> searchHistories = historyRepository.getHistoryByUsername(username);
 
         Assertions.assertNotNull(searchHistories);
         for (HistoryResponse sh : searchHistories) {

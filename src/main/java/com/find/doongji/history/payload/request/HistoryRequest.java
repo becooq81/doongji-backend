@@ -1,4 +1,4 @@
-package com.find.doongji.search.payload.request;
+package com.find.doongji.history.payload.request;
 
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchHistoryRequest {
+public class HistoryRequest {
 
     @Size(min = 1, message = "Username cannot be blank")
     @Size(max = 50, message = "Username must not exceed 50 characters")

@@ -5,11 +5,11 @@ import com.find.doongji.history.payload.response.HistoryResponse;
 
 import java.util.List;
 
-public interface SearchHistoryService {
+public interface HistoryService {
 
-    void addSearchHistory(HistoryRequest searchHistoryRequest);
+    void addHistory(HistoryRequest searchHistoryRequest);
 
-    List<HistoryResponse> getSearchHistory(String username);
+    List<HistoryResponse> getAllHistory(String username);
 
-    void removeSearchHistory(String username, Long id);
+    void removeHistory(String username, Long id);
 }

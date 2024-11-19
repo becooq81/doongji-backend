@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BasicSearchHistoryService implements SearchHistoryService{
+public class BasicHistoryService implements HistoryService {
 
     private final HistoryRepository historyRepository;
     private final UserRepository userRepository;
@@ -22,18 +22,18 @@ public class BasicSearchHistoryService implements SearchHistoryService{
     /**
      * Adds a new search history entry to the database.
      *
-     * @param searchHistoryRequest the search history entry to be added
+     * @param request the search history entry to be added
      */
     @Override
     @Transactional
-    public void addSearchHistory(HistoryRequest searchHistoryRequest) {
-        if (searchHistoryRequest == null || searchHistoryRequest.getUsername() == null || searchHistoryRequest.getQuery() == null) {
+    public void addHistory(HistoryRequest request) {
+        if (request == null || request.getUsername() == null || request.getQuery() == null) {
             throw new IllegalArgumentException("Search history request and its fields must not be null");
         }
 
-        validateRequest(searchHistoryRequest);
+        validateRequest(request);
 
-        historyRepository.insertSearchHistory(searchHistoryRequest);
+        historyRepository.insertHistory(request);
     }
 
     /**
@@ -43,8 +43,8 @@ public class BasicSearchHistoryService implements SearchHistoryService{
      * @return list of search history entries for the specified user
      */
     @Override
-    public List<HistoryResponse> getSearchHistory(String username) {
-        return historyRepository.getSearchHistoryByUsername(username);
+    public List<HistoryResponse> getAllHistory(String username) {
+        return historyRepository.getHistoryByUsername(username);
     }
 
     /**
@@ -53,28 +53,18 @@ public class BasicSearchHistoryService implements SearchHistoryService{
      * @param id the ID of the search history entry to be removed
      */
     @Override
-    public void removeSearchHistory(String username, Long id) {
+    public void removeHistory(String username, Long id) {
         if (!userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("User does not exist");
         }
-        historyRepository.deleteSearchHistoryByUsernameAndId(username, id);
+        historyRepository.deleteHistoryByUsernameAndId(username, id);
     }
 
-    private boolean isDuplicateSearch(HistoryRequest searchHistoryRequest) {
-        Optional<HistoryResponse> existingSearch = historyRepository.findDuplicateSearchHistory(
-                searchHistoryRequest.getUsername(),
-                searchHistoryRequest.getQuery()
-        );
-        return existingSearch.isPresent();
-    }
 
     private void validateRequest(HistoryRequest request) {
         if (!userRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("User does not exist");
         }
 
-        if (isDuplicateSearch(request)) {
-            throw new IllegalArgumentException("Duplicate search detected within a short period");
-        }
     }
 }

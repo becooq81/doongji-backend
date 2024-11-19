@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Slf4j
 @Transactional
-public class SearchHistoryServiceTest {
+public class HistoryServiceTest {
 
     @Autowired
-    SearchHistoryService service;
+    HistoryService service;
 
     @Autowired
     HistoryRepository repo;
@@ -51,10 +51,10 @@ public class SearchHistoryServiceTest {
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
 
         // When
-        service.addSearchHistory(searchHistoryRequest);
+        service.addHistory(searchHistoryRequest);
 
         // Then
-        List<HistoryResponse> searchHistories = repo.getSearchHistoryByUsername(username);
+        List<HistoryResponse> searchHistories = repo.getHistoryByUsername(username);
         assertNotNull(searchHistories);
         assertFalse(searchHistories.isEmpty());
         assertEquals(query, searchHistories.get(0).getQuery());
@@ -68,11 +68,11 @@ public class SearchHistoryServiceTest {
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
 
         // Add the first search history
-        service.addSearchHistory(searchHistoryRequest);
+        service.addHistory(searchHistoryRequest);
 
         // When: Trying to add the same search history again
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.addSearchHistory(searchHistoryRequest);
+            service.addHistory(searchHistoryRequest);
         });
 
         // Then
@@ -83,11 +83,11 @@ public class SearchHistoryServiceTest {
     void getSearchHistoryTest() {
         // Given
         String username = "testuser";
-        service.addSearchHistory(new HistoryRequest(username, "First search"));
-        service.addSearchHistory(new HistoryRequest(username, "Second search"));
+        service.addHistory(new HistoryRequest(username, "First search"));
+        service.addHistory(new HistoryRequest(username, "Second search"));
 
         // When
-        List<HistoryResponse> searchHistories = service.getSearchHistory(username);
+        List<HistoryResponse> searchHistories = service.getAllHistory(username);
 
         // Then
         assertNotNull(searchHistories);
