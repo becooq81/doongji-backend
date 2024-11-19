@@ -16,11 +16,40 @@ public class SearchResult  {
     private int kaptdaCnt; // 세대 수
 
     // 상세 정보 API
+    /**
+     * Comma-separated list of convenient facilities
+     * Example: "편의점,주차장,놀이터"
+     */
     private String convenientFacility;
+
+    /**
+     * Comma-separated list of educational facilities
+     * Example: "초등학교,중학교"
+     */
     private String educationFacility;
-    private String kaptdWtimebus;
-    private String kaptdWtimesub;
+
+    /**
+     * Bus station walking time in minutes
+     * Format: "n분"
+     */
+    private String busWalkingTime;
+
+    /**
+     * Subway station walking time in minutes
+     * Format: "n분"
+     */
+    private String subwayWalkingTime;
+
+    /**
+     * Subway line number or name
+     * Example: "2호선", "분당선"
+     */
     private String subwayLine;
+
+    /**
+     * Name of the nearest subway station
+     * Example: "강남역"
+     */
     private String subwayStation;
 
     private double longitude;
