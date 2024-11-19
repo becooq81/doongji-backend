@@ -1,7 +1,9 @@
 package com.find.doongji.apt.repository;
 
 import java.util.List;
+import java.util.Map;
 
+import com.find.doongji.apt.payload.request.AddressMapping;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -42,4 +44,28 @@ public interface AptRepository {
 
 	 */
 	List<AptDeal> selectAptDealByAptNm(String aptNm);
+
+	/**
+	 * @param umdNm
+	 * @param jibun
+	 * @return umdNm(읍면동명)과 jibun(지번)에 해당하는 아파트 정보 반환
+	 */
+	List<AptInfo> selectAptInfoByUmdNmAndJibun(@Param("umdNm") String umdNm, @Param("jibun") String jibun);
+
+	/**
+	 * @return 맵핑 테이블 존재 여부 반환
+	 */
+	int checkIfMappingTableExists();
+
+	/**
+	 * @return 맵핑 테이블 생성
+	 */
+	void bulkInsertAddressMapping(@Param("list") List<AddressMapping> mappings);
+
+	/**
+	 * @param aptSeq
+	 * @return aptSeq에 해당하는 맵핑정보 존재 여부 반환
+	 */
+	boolean existsByAptSeq(String aptSeq);
+
 }
