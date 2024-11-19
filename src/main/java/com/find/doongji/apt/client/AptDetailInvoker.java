@@ -20,7 +20,7 @@ public class AptDetailInvoker implements ApiInvoker{
     @Value("${apt.basic-info-url}")
     private String BASIC_INFO_URL;
 
-    @Value("${apt.specific-info-url")
+    @Value("${apt.specific-info-url}")
     private String SPECIFIC_INFO_URL;
 
     @Value("${apt.geocoder-url}")
