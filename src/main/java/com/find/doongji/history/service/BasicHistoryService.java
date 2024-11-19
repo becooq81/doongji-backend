@@ -20,15 +20,15 @@ public class BasicHistoryService implements HistoryService {
 
 
     /**
-     * Adds a new search history entry to the database.
+     * Adds a new history entry to the database.
      *
-     * @param request the search history entry to be added
+     * @param request the history entry to be added
      */
     @Override
     @Transactional
     public void addHistory(HistoryRequest request) {
         if (request == null || request.getUsername() == null || request.getQuery() == null) {
-            throw new IllegalArgumentException("Search history request and its fields must not be null");
+            throw new IllegalArgumentException("History request and its fields must not be null");
         }
 
         validateRequest(request);
@@ -37,10 +37,10 @@ public class BasicHistoryService implements HistoryService {
     }
 
     /**
-     * Retrieves search history entries for a specific user.
+     * Retrieves history entries for a specific user.
      *
      * @param username the username for which to retrieve search history
-     * @return list of search history entries for the specified user
+     * @return list of history entries for the specified user
      */
     @Override
     public List<HistoryResponse> getAllHistory(String username) {
@@ -48,9 +48,9 @@ public class BasicHistoryService implements HistoryService {
     }
 
     /**
-     * Removes a search history entry by its ID.
+     * Removes a history entry by its ID.
      *
-     * @param id the ID of the search history entry to be removed
+     * @param id the ID of the history entry to be removed
      */
     @Override
     public void removeHistory(String username, Long id) {
