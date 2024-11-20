@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -25,60 +26,65 @@ public class BasicMemberService implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void registerUser(SignUpRequest signUpRequest) {
+    @Transactional
+    public void registerMember(SignUpRequest signUpRequest) {
         validateSignUpRequest(signUpRequest);
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
-        Member member = Member.builder()
+        MemberEntity memberEntity = MemberEntity.builder()
                 .username(signUpRequest.getUsername())
                 .password(encodedPassword)
                 .email(signUpRequest.getEmail())
                 .name(signUpRequest.getName())
-                .role(Role.ROLE_USER)
+                .role(signUpRequest.getRole() != null ? signUpRequest.getRole().getKey() : Role.ROLE_USER.getKey())
                 .build();
 
-        memberRepository.insertUser(member);
+        System.out.println(memberEntity.getRole());
+
+        memberRepository.insertMember(memberEntity);
     }
 
     @Override
-    public MemberResponse getUserProfile() {
+    @Transactional(readOnly = true)
+    public MemberResponse getMemberProfile() {
         String currentUsername = getAuthenticatedUsername();
-        Member member =  memberRepository.findByUsername(currentUsername);
+        MemberEntity memberEntity =  memberRepository.findByUsername(currentUsername);
         return MemberResponse.builder()
-                .username(member.getUsername())
-                .email(member.getEmail())
-                .name(member.getName())
+                .username(memberEntity.getUsername())
+                .email(memberEntity.getEmail())
+                .name(memberEntity.getName())
                 .build();
     }
 
     @Override
-    public void updateUserProfile(MemberUpdateRequest memberUpdateRequest) {
+    @Transactional
+    public void updateMemberProfile(MemberUpdateRequest memberUpdateRequest) {
         String currentUsername = getAuthenticatedUsername();
 
-        memberRepository.updateUser(currentUsername, memberUpdateRequest);
+        memberRepository.updateMember(currentUsername, memberUpdateRequest);
     }
 
     @Override
-    public void deleteUserProfile() {
+    @Transactional
+    public void deleteMemberProfile() {
         String currentUsername = getAuthenticatedUsername();
-        memberRepository.deleteUser(currentUsername);
+        memberRepository.deleteMember(currentUsername);
     }
 
     @Override
-    public List<MemberSearchResponse> searchUsers(String keyword) {
+    @Transactional(readOnly = true)
+    public List<MemberSearchResponse> searchMembers(String keyword) {
         if (!StringUtils.hasText(keyword)) {
             throw new IllegalArgumentException("Invalid query parameter");
         }
 
-        List<MemberSearchResponse> users = memberRepository.searchUsers(keyword);
+        List<MemberSearchResponse> users = memberRepository.searchMembers(keyword);
         if (users.isEmpty()) {
             throw new NoSuchElementException("No users found with the given keyword");
         }
 
         return users;
     }
-
-    // Helper methods
 
     private String getAuthenticatedUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

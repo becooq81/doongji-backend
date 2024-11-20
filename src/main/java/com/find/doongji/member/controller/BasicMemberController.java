@@ -6,30 +6,27 @@ import java.util.NoSuchElementException;
 
 import com.find.doongji.member.payload.response.MemberResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.find.doongji.member.payload.request.SignUpRequest;
 import com.find.doongji.member.payload.request.MemberUpdateRequest;
-import com.find.doongji.member.payload.response.Member;
 import com.find.doongji.member.payload.response.MemberSearchResponse;
 import com.find.doongji.member.service.MemberService;
 
-import jakarta.servlet.http.HttpSession;
-
 @RestController
 @RequestMapping("/api/v1/member")
+@RequiredArgsConstructor
 public class BasicMemberController implements MemberController {
 
-    @Autowired
-    private MemberService userService;
+    private final MemberService memberService;
 
     @Override
     @PostMapping
     public ResponseEntity<?> registerMember(@Valid @RequestBody SignUpRequest signUpRequest) {
-        userService.registerUser(signUpRequest);
+        memberService.registerMember(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap("message", "User registered successfully"));
     }
@@ -37,14 +34,14 @@ public class BasicMemberController implements MemberController {
     @Override
     @GetMapping("/my")
     public ResponseEntity<MemberResponse> getMemberProfile() {
-        MemberResponse member = userService.getUserProfile();
+        MemberResponse member = memberService.getMemberProfile();
         return ResponseEntity.ok(member);
     }
 
     @Override
     @PutMapping("/my")
     public ResponseEntity<?> updateMemberProfile(@RequestBody @Valid MemberUpdateRequest memberUpdateRequest) {
-        userService.updateUserProfile(memberUpdateRequest);
+        memberService.updateMemberProfile(memberUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(Collections.singletonMap("message", "User profile updated successfully"));    
     }
@@ -52,14 +49,14 @@ public class BasicMemberController implements MemberController {
     @Override
     @DeleteMapping("/my")
     public ResponseEntity<?> deleteMemberProfile() {
-        userService.deleteUserProfile();
+        memberService.deleteMemberProfile();
         return ResponseEntity.noContent().build();
     }
 
     @Override
     @GetMapping("/search")
     public ResponseEntity<List<MemberSearchResponse>> searchMembers(@RequestParam String keyword) {
-        List<MemberSearchResponse> users = userService.searchUsers(keyword);
+        List<MemberSearchResponse> users = memberService.searchMembers(keyword);
         return ResponseEntity.ok(users);
     }
     

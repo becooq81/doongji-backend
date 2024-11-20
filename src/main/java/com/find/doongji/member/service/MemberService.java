@@ -4,21 +4,18 @@ import java.util.List;
 
 import com.find.doongji.member.payload.request.SignUpRequest;
 import com.find.doongji.member.payload.request.MemberUpdateRequest;
-import com.find.doongji.member.payload.response.Member;
 import com.find.doongji.member.payload.response.MemberResponse;
 import com.find.doongji.member.payload.response.MemberSearchResponse;
 
-import jakarta.servlet.http.HttpSession;
-
 public interface MemberService {
 	
-    void registerUser(SignUpRequest signUpRequest);
+    void registerMember(SignUpRequest signUpRequest);
     
-    MemberResponse getUserProfile();
+    MemberResponse getMemberProfile();
     
-    void updateUserProfile(MemberUpdateRequest memberUpdateRequest);
+    void updateMemberProfile(MemberUpdateRequest memberUpdateRequest);
     
-    void deleteUserProfile();
+    void deleteMemberProfile();
     
-    List<MemberSearchResponse> searchUsers(String keyword);
+    List<MemberSearchResponse> searchMembers(String keyword);
 }
