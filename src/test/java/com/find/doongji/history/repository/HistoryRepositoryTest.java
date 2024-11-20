@@ -29,21 +29,21 @@ public class HistoryRepositoryTest {
     HistoryRepository historyRepository;
 
     @Autowired
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @Test
     public void addSearchHistoryTest() {
         String username = "testuser";
         String query = "Test search query";
 
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        Member member = Member.builder()
+                .username(username)
+                .email("test@gmail.com")
+                .name("Test User")
+                .role(Role.ROLE_USER)
+                .password("password")
+                .build();
+        memberRepository.insertUser(member);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
         historyRepository.insertHistory(searchHistoryRequest);
@@ -59,14 +59,14 @@ public class HistoryRepositoryTest {
         String username = "testuser2";
         String query = "Duplicate search query";
 
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        Member member = Member.builder()
+                .username(username)
+                .email("test@gmail.com")
+                .name("Test User")
+                .role(Role.ROLE_USER)
+                .password("password")
+                .build();
+        memberRepository.insertUser(member);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(
                 username,
@@ -83,14 +83,14 @@ public class HistoryRepositoryTest {
     public void findSearchHistoryByUsernameTest() {
         String username = "testuser3";
 
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        Member member = Member.builder()
+                .username(username)
+                .email("test@gmail.com")
+                .name("Test User")
+                .role(Role.ROLE_USER)
+                .password("password")
+                .build();
+        memberRepository.insertUser(member);
 
         historyRepository.insertHistory(new HistoryRequest(username, "First search"));
         historyRepository.insertHistory(new HistoryRequest(username, "Second search"));

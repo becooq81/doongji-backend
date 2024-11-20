@@ -1,114 +1,105 @@
-package com.find.doongji.user.service;
+package com.find.doongji.member.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.find.doongji.auth.enums.Role;
+import com.find.doongji.member.payload.request.SignUpRequest;
+import com.find.doongji.member.payload.request.MemberUpdateRequest;
+import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.payload.response.MemberResponse;
+import com.find.doongji.member.payload.response.MemberSearchResponse;
+import com.find.doongji.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.find.doongji.user.payload.request.SignUpRequest;
-import com.find.doongji.user.payload.request.UserUpdateRequest;
-import com.find.doongji.user.payload.response.UserResponse;
-import com.find.doongji.user.payload.response.UserSearchResponse;
-import com.find.doongji.user.repository.UserRepository;
-
-import jakarta.servlet.http.HttpSession;
+import org.springframework.util.StringUtils;
 
 @Service
-public class BasicUserService implements UserService {
+@RequiredArgsConstructor
+public class BasicMemberService implements MemberService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(SignUpRequest signUpRequest) {
-    	
-    	if (userRepository.countByUsername(signUpRequest.getUsername()) > 0) {
-            throw new IllegalArgumentException("Username already exists");
-        }
+        validateSignUpRequest(signUpRequest);
 
-        if (userRepository.countByEmail(signUpRequest.getEmail()) > 0) {
-            throw new IllegalArgumentException("Email already exists");
-        }
+        String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+        Member member = Member.builder()
+                .username(signUpRequest.getUsername())
+                .password(encodedPassword)
+                .email(signUpRequest.getEmail())
+                .name(signUpRequest.getName())
+                .role(Role.ROLE_USER)
+                .build();
 
-        if (!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-
-        if (signUpRequest.getName() == null || signUpRequest.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-
-        userRepository.insertUser(signUpRequest);
+        memberRepository.insertUser(member);
     }
 
     @Override
-    public UserResponse getUserProfile(HttpSession session) {
-    	
-        String currentUsername = (String) session.getAttribute("username");
-        
-        if (currentUsername == null) {
-            throw new SecurityException("User not logged in");
-        }
-
-        UserResponse userResponse = userRepository.findByUsername(currentUsername);
-        if (userResponse == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-
-        return userResponse;
+    public MemberResponse getUserProfile() {
+        String currentUsername = getAuthenticatedUsername();
+        Member member =  memberRepository.findByUsername(currentUsername);
+        return MemberResponse.builder()
+                .username(member.getUsername())
+                .email(member.getEmail())
+                .name(member.getName())
+                .build();
     }
 
     @Override
-    public void updateUserProfile(UserUpdateRequest userUpdateRequest, HttpSession session) {
-    	
-        String currentUsername = (String) session.getAttribute("username");
-        
-        if (currentUsername == null) {
-            throw new SecurityException("User not authenticated");
-        }
+    public void updateUserProfile(MemberUpdateRequest memberUpdateRequest) {
+        String currentUsername = getAuthenticatedUsername();
 
-        if (userUpdateRequest.getEmail() == null || !userUpdateRequest.getEmail().contains("@")) {
-            throw new IllegalArgumentException("Invalid email format");
-        }
-        
-        if (userUpdateRequest.getName() == null || userUpdateRequest.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-
-        userRepository.updateUser(currentUsername, userUpdateRequest);
+        memberRepository.updateUser(currentUsername, memberUpdateRequest);
     }
 
     @Override
-    public void deleteUserProfile(HttpSession session) {
-    	
-        String currentUsername = (String) session.getAttribute("username");
-        
-        if (currentUsername == null) {
-            throw new SecurityException("User not logged in");
-        }
-
-        userRepository.deleteUser(currentUsername);
+    public void deleteUserProfile() {
+        String currentUsername = getAuthenticatedUsername();
+        memberRepository.deleteUser(currentUsername);
     }
 
     @Override
-    public List<UserSearchResponse> searchUsers(String keyword, HttpSession session) {
-
-    	String currentUsername = (String) session.getAttribute("username");
-    	
-        if (currentUsername == null) {
-            throw new SecurityException("User not logged in");
-        }
-
-        if (keyword == null || keyword.trim().isEmpty()) {
+    public List<MemberSearchResponse> searchUsers(String keyword) {
+        if (!StringUtils.hasText(keyword)) {
             throw new IllegalArgumentException("Invalid query parameter");
         }
 
-        List<UserSearchResponse> users = userRepository.searchUsers(keyword);
+        List<MemberSearchResponse> users = memberRepository.searchUsers(keyword);
         if (users.isEmpty()) {
             throw new NoSuchElementException("No users found with the given keyword");
         }
 
         return users;
     }
+
+    // Helper methods
+
+    private String getAuthenticatedUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new SecurityException("User not authenticated");
+        }
+        return authentication.getName();
+    }
+
+    private void validateSignUpRequest(SignUpRequest signUpRequest) {
+        if (!signUpRequest.getPassword().equals(signUpRequest.getConfirmPassword())) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
+        if (memberRepository.existsByUsername(signUpRequest.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (memberRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
 }

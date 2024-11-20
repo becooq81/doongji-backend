@@ -1,38 +1,38 @@
-package com.find.doongji.user.repository;
+package com.find.doongji.member.repository;
 
+import com.find.doongji.auth.enums.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.find.doongji.user.payload.request.SignUpRequest;
-import com.find.doongji.user.payload.response.UserResponse;
+import com.find.doongji.member.payload.request.SignUpRequest;
+import com.find.doongji.member.payload.response.Member;
 
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Slf4j
-public class UserTest {
+@Transactional
+public class MemberTest {
     
     @Autowired
-    UserRepository repo;
+    MemberRepository repo;
     
     @Test
-    @Transactional
     public void registTest() {
 
-        SignUpRequest newUser = new SignUpRequest(
-                "kim",
-                "kim@naver.com",
-                "0000",
-                "0000",
-                "김싸피"
-        );
-
-        repo.insertUser(newUser);
+        Member member = Member.builder()
+                        .username("kim")
+                        .email("kim@naver.com")
+                        .name("김싸피")
+                        .role(Role.ROLE_USER)
+                        .password("1234")
+                        .build();
+        repo.insertUser(member);
         
-        UserResponse registeredUser = repo.findByUsername("kim");
+        Member registeredUser = repo.findByUsername("kim");
         
         Assertions.assertNotNull(registeredUser, "User should be registered successfully");
         Assertions.assertEquals("kim", registeredUser.getUsername());

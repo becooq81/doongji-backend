@@ -7,7 +7,7 @@
 
     <!-- 사용자 이름으로 사용자 찾기 -->
     <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.response.Member">
-        SELECT username, email, name
+        SELECT *
         FROM users
         WHERE username = #{username}
     </select>
@@ -27,9 +27,9 @@
     </select>
 
     <!-- 새로운 사용자 추가 -->
-	<insert id="insertUser" parameterType="com.find.doongji.member.payload.request.SignUpRequest">
-	    INSERT INTO users (username, email, password, name)
-	    VALUES (#{username}, #{email}, #{password}, #{name})
+	<insert id="insertUser" parameterType="com.find.doongji.member.payload.response.Member">
+	    INSERT INTO users (username, email, password, name, role)
+	    VALUES (#{username}, #{email}, #{password}, #{name}, #{role})
 	</insert>
 
     <!-- 사용자 정보 업데이트 -->
@@ -46,7 +46,7 @@
 
     <!-- 사용자 검색 -->
     <select id="searchUsers" parameterType="string" resultType="com.find.doongji.member.payload.response.MemberSearchResponse">
-        SELECT username, email, name
+        SELECT username, email, name, password, role
         FROM users
         WHERE username LIKE CONCAT('%', #{keyword}, '%')
            OR name LIKE CONCAT('%', #{keyword}, '%')
@@ -58,6 +58,15 @@
             SELECT 1
             FROM users
             WHERE username = #{username}
+        )
+    </select>
+
+    <!-- 사용자 이메일 존재 여부 확인 -->
+    <select id="existsByEmail" parameterType="string" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM users
+            WHERE email = #{email}
         )
     </select>
 </mapper>
