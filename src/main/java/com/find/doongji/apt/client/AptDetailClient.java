@@ -74,13 +74,8 @@ public class AptDetailClient implements AptClient {
         if (address.equals("")) {
             return null;
         }
-        StringBuilder geocoderUrlBuilder = new StringBuilder(GEOCODER_URL)
-                .append(GEOCODER_KEY)
-                .append("&address=").append(URLEncoder.encode(address, StandardCharsets.UTF_8));
 
-        String geocoderResponseBody = HttpUtils.fetchDataFromUrl(geocoderUrlBuilder.toString());
-
-        Map<String, String> geocoderResult = ParseUtils.parseXML("/response/result/point", geocoderResponseBody, "x", "y").get(0);
+        Map<String, String> geocoderResult = getCoordinatesFromDoroJuso(address);
 
         return new SearchResult(
                 basicInfoResult.get("kaptName"),
@@ -99,4 +94,15 @@ public class AptDetailClient implements AptClient {
                 geocoderResult.get("y")
         );
     }
+
+    @Override
+    public Map<String, String> getCoordinatesFromDoroJuso(String doroJuso) throws Exception {
+        StringBuilder geocoderUrlBuilder = new StringBuilder(GEOCODER_URL)
+                .append(GEOCODER_KEY)
+                .append("&address=").append(URLEncoder.encode(doroJuso, StandardCharsets.UTF_8));
+        String geocoderResponseBody = HttpUtils.fetchDataFromUrl(geocoderUrlBuilder.toString());
+        return ParseUtils.parseXML("/response/result/point", geocoderResponseBody, "x", "y").get(0);
+    }
+
+
 }
