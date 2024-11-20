@@ -25,9 +25,11 @@ public class RecommendClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         RestTemplate restTemplate = new RestTemplate();
 
-        String requestBody = String.format("{\"query\": \"%s\", \"top_k\": %d}", query, topK);
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("query", query);
+        requestBody.put("top_k", topK);
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity(AI_URL, requestEntity, String.class);
 
