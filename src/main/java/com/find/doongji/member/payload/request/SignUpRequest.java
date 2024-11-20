@@ -1,5 +1,6 @@
-package com.find.doongji.user.payload.request;
+package com.find.doongji.member.payload.request;
 
+import com.find.doongji.auth.enums.Role;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -26,4 +27,6 @@ public class SignUpRequest {
     private String confirmPassword;
 
     private String name;
+
+    private Role role;
 }
