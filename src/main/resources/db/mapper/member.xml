@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.find.doongji.memberEntity.repository.MemberRepository">
+<mapper namespace="com.find.doongji.member.repository.MemberRepository">
 
     <!-- 사용자 이름으로 사용자 찾기 -->
     <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.request.MemberEntity">
