@@ -1,5 +1,6 @@
 package com.find.doongji.classification;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/classification")
+@RequiredArgsConstructor
 public class ClassificationController {
 
     @PostMapping("/upload")
@@ -24,6 +26,7 @@ public class ClassificationController {
         try {
             String fastApiUrl = "http://localhost:8000/predict";
 
+            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -32,7 +35,6 @@ public class ClassificationController {
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.postForEntity(fastApiUrl, requestEntity, String.class);
 
             return ResponseEntity.ok(response.getBody());
