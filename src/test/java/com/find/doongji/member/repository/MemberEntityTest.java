@@ -27,10 +27,10 @@ public class MemberTest {
                         .username("kim")
                         .email("kim@naver.com")
                         .name("김싸피")
-                        .role(Role.ROLE_USER)
+                        .role(Role.ROLE_USER.getKey())
                         .password("1234")
                         .build();
-        repo.insertUser(member);
+        repo.insertMember(member);
         
         Member registeredUser = repo.findByUsername("kim");
         

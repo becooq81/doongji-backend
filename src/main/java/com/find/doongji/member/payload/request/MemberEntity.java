@@ -1,6 +1,5 @@
 package com.find.doongji.member.payload.response;
 
-import com.find.doongji.auth.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Member {
+public class MemberEntity {
     private String username;
     private String email;
     private String password;
     private String name;
-    private Role role;
+    private String role;
 }
