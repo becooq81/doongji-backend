@@ -1,22 +1,25 @@
 package com.find.doongji.history.service;
 
+import com.find.doongji.auth.service.CustomUserDetailsService;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
 import com.find.doongji.history.repository.HistoryRepository;
-import com.find.doongji.user.repository.UserRepository;
+import com.find.doongji.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BasicHistoryService implements HistoryService {
 
     private final HistoryRepository historyRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
+    private final CustomUserDetailsService customUserDetailsService;
 
 
     /**
@@ -43,7 +46,17 @@ public class BasicHistoryService implements HistoryService {
      * @return list of history entries for the specified user
      */
     @Override
+    @Transactional(readOnly = true)
     public List<HistoryResponse> getAllHistory(String username) {
+        if (!memberRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("User does not exist");
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUsername = authentication.getName();
+        if (!authenticatedUsername.equals(username)) {
+            throw new IllegalArgumentException("User is not authorized to view this history");
+        }
+
         return historyRepository.getHistoryByUsername(username);
     }
 
@@ -54,7 +67,7 @@ public class BasicHistoryService implements HistoryService {
      */
     @Override
     public void removeHistory(String username, Long id) {
-        if (!userRepository.existsByUsername(username)) {
+        if (!memberRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("User does not exist");
         }
         historyRepository.deleteHistoryByUsernameAndId(username, id);
@@ -62,7 +75,7 @@ public class BasicHistoryService implements HistoryService {
 
 
     private void validateRequest(HistoryRequest request) {
-        if (!userRepository.existsByUsername(request.getUsername())) {
+        if (!memberRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("User does not exist");
         }
 
