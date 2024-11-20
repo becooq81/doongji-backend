@@ -23,11 +23,13 @@ public enum SimilarityScore {
     }
 
     public static SimilarityScore classify(double score) {
+        if (score < 0) {
+            throw new IllegalArgumentException("Score must be non-negative");
+        }
         for (SimilarityScore level : SimilarityScore.values()) {
             if (score >= level.getLowerBound() && score < level.getUpperBound()) {
                 return level;
             }
         }
-        return null;
-    }
+        throw new IllegalArgumentException("Score " + score + " is out of valid range");    }
 }
