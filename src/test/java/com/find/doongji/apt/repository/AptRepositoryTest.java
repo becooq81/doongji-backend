@@ -11,9 +11,11 @@ import com.find.doongji.apt.payload.response.AptDeal;
 import com.find.doongji.apt.payload.response.AptInfo;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Slf4j
+@Transactional
 public class AptRepositoryTest {
 
 	@Autowired
@@ -74,6 +76,7 @@ public class AptRepositoryTest {
 	/*
 	 * 아파트 번호로 아파트 정보 조회
 	 */
+	@Test
 	public void selectAptDealByAptNmTest() {
 		String aptNm = "경희궁";
 		int expectedCount = 672;
