@@ -1,18 +1,17 @@
 package com.find.doongji.history.repository;
 
+import com.find.doongji.auth.enums.Role;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
-import com.find.doongji.user.payload.request.SignUpRequest;
-import com.find.doongji.user.repository.UserRepository;
+import com.find.doongji.member.payload.request.SignUpRequest;
+import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
