@@ -29,11 +29,4 @@ public class AuthUser implements UserDetails {
     public String getUsername() {
         return member.getUsername();
     }
-
-    @Override
-    public String toString() {
-        return "AuthUser{" +
-                "member=" + member +
-                '}';
-    }
 }
