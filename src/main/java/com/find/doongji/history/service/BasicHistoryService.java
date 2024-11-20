@@ -52,12 +52,7 @@ public class BasicHistoryService implements HistoryService {
         if (!memberRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("User does not exist");
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUsername = authentication.getName();
-        if (!authenticatedUsername.equals(username)) {
-            throw new IllegalArgumentException("User is not authorized to view this history");
-        }
-
+        validateAuthenticatedUser(username);
         return historyRepository.getHistoryByUsername(username);
     }
 
@@ -83,6 +78,16 @@ public class BasicHistoryService implements HistoryService {
         if (!authService.isAuthenticated() || !SecurityContextHolder.getContext().getAuthentication().getName().equals(request.getUsername())) {
             throw new IllegalArgumentException("User is not authorized to add history for another user");
         }
+    }
 
+    private void validateAuthenticatedUser(String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+        String authenticatedUsername = authentication.getName();
+        if (!authenticatedUsername.equals(username)) {
+            throw new IllegalArgumentException("User is not authorized for this operation");
+        }
     }
 }
