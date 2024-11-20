@@ -57,10 +57,10 @@
 
 
 	<insert id="bulkInsertAddressMapping" parameterType="list">
-		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code)
+		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, road_nm, road_nm_bonbun, road_nm_bubun)
 		VALUES
 		<foreach collection="list" item="mapping" separator=",">
-			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId}, #{mapping.bjdCode})
+			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId}, #{mapping.bjdCode}, #{mapping.roadNm}, #{mapping.roadNmBonbun}, #{mapping.roadNmBubun})
 		</foreach>
 	</insert>
 
@@ -71,6 +71,18 @@
 		LIMIT 1
 	</select>
 
+	<insert id="insertAddressMapping" parameterType="com.find.doongji.apt.payload.request.AddressMapping">
+		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, road_nm, road_nm_bonbun, road_nm_bubun)
+		VALUES (#{oldAddress}, #{umdNm}, #{jibun}, #{aptSeq}, #{danjiId}, #{bjdCode}, #{roadNm}, #{roadNmBonbun}, #{roadNmBubun})
+	</insert>
+
+	<select id="selectAddressMappingByDoroJuso" parameterType="map" resultType="com.find.doongji.apt.payload.request.AddressMapping">
+		SELECT old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, road_nm, road_nm_bonbun, road_nm_bubun
+		FROM address_mapping
+		WHERE road_nm = #{roadNm}
+		AND road_nm_bonbun = #{roadNmBonbun}
+		AND road_nm_bubun = #{roadNmBubun}
+	</select>
 
 
 </mapper>
