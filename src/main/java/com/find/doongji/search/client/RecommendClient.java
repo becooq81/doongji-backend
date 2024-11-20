@@ -22,7 +22,7 @@ public class RecommendClient {
     private final RestTemplate restTemplate;
 
     @Value("${rec.ai-url}")
-    private String AI_URL;
+    private String RECOMMEND_URL;
 
     public List<RecommendResponse> getRecommendation(String query, int topK) {
         HttpHeaders headers = new HttpHeaders();
@@ -34,7 +34,7 @@ public class RecommendClient {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(AI_URL, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(RECOMMEND_URL, requestEntity, String.class);
 
         try {
             return parseJson(response.getBody());
