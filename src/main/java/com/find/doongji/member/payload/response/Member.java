@@ -16,15 +16,4 @@ public class Member {
     private String password;
     private String name;
     private Role role;
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", role=" + role +
-                '}';
-    }
 }
