@@ -7,15 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.find.doongji.member.payload.request.SignUpRequest;
-import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.payload.request.MemberEntity;
 
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Slf4j
 @Transactional
-public class MemberTest {
+public class MemberEntityTest {
     
     @Autowired
     MemberRepository repo;
@@ -23,16 +22,16 @@ public class MemberTest {
     @Test
     public void registTest() {
 
-        Member member = Member.builder()
+        MemberEntity memberEntity = MemberEntity.builder()
                         .username("kim")
                         .email("kim@naver.com")
                         .name("김싸피")
                         .role(Role.ROLE_USER.getKey())
                         .password("1234")
                         .build();
-        repo.insertMember(member);
+        repo.insertMember(memberEntity);
         
-        Member registeredUser = repo.findByUsername("kim");
+        MemberEntity registeredUser = repo.findByUsername("kim");
         
         Assertions.assertNotNull(registeredUser, "User should be registered successfully");
         Assertions.assertEquals("kim", registeredUser.getUsername());

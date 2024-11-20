@@ -3,8 +3,7 @@ package com.find.doongji.history.repository;
 import com.find.doongji.auth.enums.Role;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
-import com.find.doongji.member.payload.request.SignUpRequest;
-import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.payload.request.MemberEntity;
 import com.find.doongji.member.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,14 +34,14 @@ public class HistoryRepositoryTest {
         String username = "testuser";
         String query = "Test search query";
 
-        Member member = Member.builder()
+        MemberEntity memberEntity = MemberEntity.builder()
                 .username(username)
                 .email("test@gmail.com")
                 .name("Test User")
-                .role(Role.ROLE_USER)
+                .role(Role.ROLE_USER.getKey())
                 .password("password")
                 .build();
-        memberRepository.insertUser(member);
+        memberRepository.insertMember(memberEntity);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
         historyRepository.insertHistory(searchHistoryRequest);
@@ -58,14 +57,14 @@ public class HistoryRepositoryTest {
         String username = "testuser2";
         String query = "Duplicate search query";
 
-        Member member = Member.builder()
+        MemberEntity memberEntity = MemberEntity.builder()
                 .username(username)
                 .email("test@gmail.com")
                 .name("Test User")
-                .role(Role.ROLE_USER)
+                .role(Role.ROLE_USER.getKey())
                 .password("password")
                 .build();
-        memberRepository.insertUser(member);
+        memberRepository.insertMember(memberEntity);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(
                 username,
@@ -82,14 +81,14 @@ public class HistoryRepositoryTest {
     public void findSearchHistoryByUsernameTest() {
         String username = "testuser3";
 
-        Member member = Member.builder()
+        MemberEntity memberEntity = MemberEntity.builder()
                 .username(username)
                 .email("test@gmail.com")
                 .name("Test User")
-                .role(Role.ROLE_USER)
+                .role(Role.ROLE_USER.getKey())
                 .password("password")
                 .build();
-        memberRepository.insertUser(member);
+        memberRepository.insertMember(memberEntity);
 
         historyRepository.insertHistory(new HistoryRequest(username, "First search"));
         historyRepository.insertHistory(new HistoryRequest(username, "Second search"));

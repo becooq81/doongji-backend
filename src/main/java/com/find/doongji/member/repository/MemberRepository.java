@@ -5,16 +5,15 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.find.doongji.member.payload.request.SignUpRequest;
 import com.find.doongji.member.payload.request.MemberUpdateRequest;
-import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.payload.request.MemberEntity;
 import com.find.doongji.member.payload.response.MemberSearchResponse;
 
 @Mapper
 public interface MemberRepository {
 
     // 사용자 이름으로 사용자 찾기
-    Member findByUsername(@Param("username") String username);
+    MemberEntity findByUsername(@Param("username") String username);
 
     // 사용자 이름 중복 확인
     int countByUsername(@Param("username") String username);

@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import com.find.doongji.auth.enums.Role;
 import com.find.doongji.member.payload.request.SignUpRequest;
 import com.find.doongji.member.payload.request.MemberUpdateRequest;
-import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.payload.request.MemberEntity;
 import com.find.doongji.member.payload.response.MemberResponse;
 import com.find.doongji.member.payload.response.MemberSearchResponse;
 import com.find.doongji.member.repository.MemberRepository;

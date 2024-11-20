@@ -1,7 +1,6 @@
 package com.find.doongji.auth.payload.response;
 
-import com.find.doongji.member.payload.response.Member;
-import lombok.AllArgsConstructor;
+import com.find.doongji.member.payload.request.MemberEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,12 +10,12 @@ import java.util.List;
 
 public class AuthUser implements UserDetails {
 
-    private final Member member;
+    private final MemberEntity memberEntity;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public AuthUser(Member member) {
-        this.member = member;
-        this.authorities = List.of(new SimpleGrantedAuthority(member.getRole().name()));
+    public AuthUser(MemberEntity memberEntity) {
+        this.memberEntity = memberEntity;
+        this.authorities = List.of(new SimpleGrantedAuthority(memberEntity.getRole()));
     }
 
     @Override
@@ -26,11 +25,11 @@ public class AuthUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return memberEntity.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getUsername();
+        return memberEntity.getUsername();
     }
 }

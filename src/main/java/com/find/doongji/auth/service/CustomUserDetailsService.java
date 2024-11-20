@@ -1,7 +1,7 @@
 package com.find.doongji.auth.service;
 
 import com.find.doongji.auth.payload.response.AuthUser;
-import com.find.doongji.member.payload.response.Member;
+import com.find.doongji.member.payload.request.MemberEntity;
 import com.find.doongji.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +17,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUsername(username);
-        if (member == null) {
+        MemberEntity memberEntity = memberRepository.findByUsername(username);
+        if (memberEntity == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new AuthUser(member);
+        return new AuthUser(memberEntity);
     }
 }

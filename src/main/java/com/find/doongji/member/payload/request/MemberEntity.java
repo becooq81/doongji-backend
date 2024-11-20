@@ -1,4 +1,4 @@
-package com.find.doongji.member.payload.response;
+package com.find.doongji.member.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

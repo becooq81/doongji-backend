@@ -3,10 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.find.doongji.member.repository.MemberRepository">
+<mapper namespace="com.find.doongji.memberEntity.repository.MemberRepository">
 
     <!-- 사용자 이름으로 사용자 찾기 -->
-    <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.response.Member">
+    <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.request.MemberEntity">
         SELECT *
         FROM users
         WHERE username = #{username}
@@ -27,25 +27,25 @@
     </select>
 
     <!-- 새로운 사용자 추가 -->
-	<insert id="insertUser" parameterType="com.find.doongji.member.payload.response.Member">
+	<insert id="insertMember" parameterType="com.find.doongji.member.payload.request.MemberEntity">
 	    INSERT INTO users (username, email, password, name, role)
 	    VALUES (#{username}, #{email}, #{password}, #{name}, #{role})
 	</insert>
 
     <!-- 사용자 정보 업데이트 -->
-    <update id="updateUser" parameterType="map">
+    <update id="updateMember" parameterType="map">
         UPDATE users
         SET email = #{request.email}, name = #{request.name}
         WHERE username = #{username}
     </update>
 
     <!-- 사용자 삭제 -->
-    <delete id="deleteUser" parameterType="string">
+    <delete id="deleteMember" parameterType="string">
         DELETE FROM users WHERE username = #{username}
     </delete>
 
     <!-- 사용자 검색 -->
-    <select id="searchUsers" parameterType="string" resultType="com.find.doongji.member.payload.response.MemberSearchResponse">
+    <select id="searchMembers" parameterType="string" resultType="com.find.doongji.member.payload.response.MemberSearchResponse">
         SELECT username, email, name, password, role
         FROM users
         WHERE username LIKE CONCAT('%', #{keyword}, '%')
