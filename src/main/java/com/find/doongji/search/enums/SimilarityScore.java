@@ -1,4 +1,4 @@
-package com.find.doongji.search.payload.response;
+package com.find.doongji.search.enums;
 
 public enum SimilarityScore {
 
