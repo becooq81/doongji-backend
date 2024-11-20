@@ -2,6 +2,7 @@ package com.find.doongji.search.service;
 
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.DanjiCode;
+import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.search.payload.response.SearchResponse;
 import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.repository.AptRepository;
@@ -10,8 +11,9 @@ import com.find.doongji.history.service.HistoryService;
 import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.RecommendResponse;
-import com.find.doongji.search.payload.response.SimilarityScore;
+import com.find.doongji.search.enums.SimilarityScore;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +26,11 @@ public class BasicSearchService implements SearchService {
 
     private final RecommendClient aiClient;
     private final AptDetailClient aptClient;
+
     private final AptRepository aptRepository;
+
     private final HistoryService historyService;
+    private final AuthService authService;
 
     private static final int TOP_K = 10;
 
@@ -49,7 +54,10 @@ public class BasicSearchService implements SearchService {
                 }
             }
         }
-        historyService.addHistory(new HistoryRequest(searchRequest.getUsername(), searchRequest.getQuery()));
+        if (authService.isAuthenticated()) {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            historyService.addHistory(new HistoryRequest(username, searchRequest.getQuery()));
+        }
         return searchResults;
     }
 }
