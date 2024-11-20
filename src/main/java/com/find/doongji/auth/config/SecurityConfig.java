@@ -60,7 +60,6 @@ public class SecurityConfig {
 
                 .formLogin(form -> form.disable()) // Disable default form login
 
-
                 .exceptionHandling((exceptionConfig) ->
                         exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
                 );

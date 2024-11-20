@@ -1,5 +1,6 @@
 package com.find.doongji.history.service;
 
+import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.auth.service.CustomUserDetailsService;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
@@ -19,6 +20,7 @@ public class BasicHistoryService implements HistoryService {
 
     private final HistoryRepository historyRepository;
     private final MemberRepository memberRepository;
+    private final AuthService authService;
 
 
     /**
@@ -76,6 +78,10 @@ public class BasicHistoryService implements HistoryService {
     private void validateRequest(HistoryRequest request) {
         if (!memberRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("User does not exist");
+        }
+
+        if (!authService.isAuthenticated() || !SecurityContextHolder.getContext().getAuthentication().getName().equals(request.getUsername())) {
+            throw new IllegalArgumentException("User is not authorized to add history for another user");
         }
 
     }
