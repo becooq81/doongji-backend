@@ -39,8 +39,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/auth/logout").authenticated()
 
                                 // member
-                                .requestMatchers("/api/v1/member").permitAll()
-                                .requestMatchers("/api/v1/member/my").authenticated()
+                                .requestMatchers("/api/v1/member/**").authenticated()
 
                                 // history
                                 .requestMatchers("/api/v1/history/**").authenticated()
