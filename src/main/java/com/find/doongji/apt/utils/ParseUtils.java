@@ -20,7 +20,10 @@ import java.util.Map;
 
 public class ParseUtils {
 
-    public static List<Map<String, String>> parseXML(String responseBody, String... keys) throws Exception{
+    public static List<Map<String, String>> parseXML(String path, String responseBody, String... keys) throws Exception {
+        if (path == null || path.isEmpty()) {
+            throw new Exception("XPath Expression cannot be empty.");
+        }
         List<Map<String, String>> result = new ArrayList<>();
 
         try {
@@ -28,14 +31,18 @@ public class ParseUtils {
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new InputSource(new StringReader(responseBody)));
             XPath xPath = XPathFactory.newInstance().newXPath();
-            NodeList items = (NodeList) xPath.evaluate("/response/body/items/item", doc, XPathConstants.NODESET);
+            NodeList items = (NodeList) xPath.evaluate(path, doc, XPathConstants.NODESET);
 
             for (int i = 0; i < items.getLength(); i++) {
                 result.add(new HashMap<>());
 
                 Element item = (Element) items.item(i);
                 for (String key : keys) {
-                    result.get(i).put(key, item.getElementsByTagName(key).item(0).getTextContent());
+                    if (item.getElementsByTagName(key).item(0) != null) {
+                        result.get(i).put(key, item.getElementsByTagName(key).item(0).getTextContent());
+                    } else {
+                        result.get(i).put(key, "");
+                    }
                 }
             }
         } catch (Exception e) {

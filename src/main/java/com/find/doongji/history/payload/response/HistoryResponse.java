@@ -1,4 +1,4 @@
-package com.find.doongji.search.payload.response;
+package com.find.doongji.history.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchHistoryResponse {
+public class HistoryResponse {
     private Long id;
     private String username;
     private String query;

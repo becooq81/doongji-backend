@@ -1,18 +1,20 @@
 package com.find.doongji.apt.client;
 
 import com.find.doongji.apt.payload.response.DanjiCode;
-import com.find.doongji.apt.payload.response.SearchResult;
+import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.utils.HttpUtils;
 import com.find.doongji.apt.utils.ParseUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Component
-public class AptDetailInvoker implements ApiInvoker{
+public class AptDetailClient implements AptClient {
 
     @Value("${apt.danji-code-url}")
     private String DANJI_CODE_URL;
@@ -29,8 +31,9 @@ public class AptDetailInvoker implements ApiInvoker{
     @Value("${apt.public-data-key}")
     private String PUBLIC_DATA_KEY;
 
-    @Value("${apt.geocoder-key}")
+    @Value("${GEOCODER_SERVICE_KEY}")
     private String GEOCODER_KEY;
+
 
     @Override
     public List<DanjiCode> getDanjiCodeList(String bjdCode) throws Exception {
@@ -38,11 +41,9 @@ public class AptDetailInvoker implements ApiInvoker{
                 .append("?ServiceKey=").append(PUBLIC_DATA_KEY)
                 .append("&bjdCode=").append(bjdCode);
 
-        System.out.println(dataUrlBuilder.toString());
-
         String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder.toString());
 
-        List<Map<String, String>> result = ParseUtils.parseXML(responseBody, "kaptCode", "kaptName");
+        List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "kaptCode", "kaptName");
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
         for (Map<String, String> map : result) {
@@ -63,33 +64,39 @@ public class AptDetailInvoker implements ApiInvoker{
         String basicInfoResponseBody = HttpUtils.fetchDataFromUrl(basicInfoUrlBuilder.toString());
         String specificInfoResponseBody = HttpUtils.fetchDataFromUrl(specificInfoUrlBuilder.toString());
 
-        Map<String, String> basicInfoResult = ParseUtils.parseXML(basicInfoResponseBody, "hoCnt", "kaptCode", "kaptDongCnt", "kaptAddr", "kaptdaCnt")
+
+        Map<String, String> basicInfoResult = ParseUtils.parseXML("/response/body/item", basicInfoResponseBody, "kaptName", "hoCnt", "kaptCode", "kaptDongCnt", "doroJuso", "kaptdaCnt")
                 .get(0);
-        Map<String, String> specificInfoResult = ParseUtils.parseXML(specificInfoResponseBody, "convenientFacility", "educationFacility", "kaptdWtimebus", "kaptdWtimesub", "subwayLine", "subwayStation")
+        Map<String, String> specificInfoResult = ParseUtils.parseXML("/response/body/item", specificInfoResponseBody, "convenientFacility", "educationFacility", "kaptdWtimebus", "kaptdWtimesub", "subwayLine", "subwayStation")
                 .get(0);
 
-        String address = basicInfoResult.get("kaptAddr");
+        String address = basicInfoResult.get("doroJuso");
+        if (address.equals("")) {
+            return null;
+        }
         StringBuilder geocoderUrlBuilder = new StringBuilder(GEOCODER_URL)
-                .append("?accessToken=").append(GEOCODER_KEY)
-                .append("&address=").append(address);
+                .append(GEOCODER_KEY)
+                .append("&address=").append(URLEncoder.encode(address, StandardCharsets.UTF_8));
 
         String geocoderResponseBody = HttpUtils.fetchDataFromUrl(geocoderUrlBuilder.toString());
-        Map<String, String> geocoderResult = ParseUtils.parseJson(geocoderResponseBody, "X", "Y").get(0);
+
+        Map<String, String> geocoderResult = ParseUtils.parseXML("/response/result/point", geocoderResponseBody, "x", "y").get(0);
 
         return new SearchResult(
-                Integer.parseInt(basicInfoResult.get("hoCnt")),
+                basicInfoResult.get("kaptName"),
+                basicInfoResult.get("hoCnt"),
                 basicInfoResult.get("kaptCode"),
-                Integer.parseInt(basicInfoResult.get("kaptDongCnt")),
-                basicInfoResult.get("kaptAddr"),
-                Integer.parseInt(basicInfoResult.get("kaptdaCnt")),
+                basicInfoResult.get("kaptDongCnt"),
+                basicInfoResult.get("doroJuso"),
+                basicInfoResult.get("kaptdaCnt"),
                 specificInfoResult.get("convenientFacility"),
                 specificInfoResult.get("educationFacility"),
                 specificInfoResult.get("kaptdWtimebus"),
                 specificInfoResult.get("kaptdWtimesub"),
                 specificInfoResult.get("subwayLine"),
                 specificInfoResult.get("subwayStation"),
-                Double.parseDouble(geocoderResult.get("X")),
-                Double.parseDouble(geocoderResult.get("Y"))
+                geocoderResult.get("x"),
+                geocoderResult.get("y")
         );
     }
 }

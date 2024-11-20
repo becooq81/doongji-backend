@@ -1,4 +1,4 @@
-package com.find.doongji.apt.payload.response;
+package com.find.doongji.search.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SearchResult  {
 
-    private int hoCnt; // 호 수
+    private String kaptName; // 단지 이름
+    private String hoCnt; // 호 수
     private String kaptCode; // 단지 코드
-    private int kaptDongCnt; // 동 수
+    private String kaptDongCnt; // 동 수
     private String kaptAddr; // 법정동 주소 full ver
-    private int kaptdaCnt; // 세대 수
+    private String kaptdaCnt; // 세대 수
 
     // 상세 정보 API
     /**
@@ -52,6 +53,6 @@ public class SearchResult  {
      */
     private String subwayStation;
 
-    private double longitude;
-    private double latitude;
+    private String longitude;
+    private String latitude;
 }
