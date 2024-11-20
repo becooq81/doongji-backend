@@ -2,41 +2,50 @@ package com.find.doongji.auth.controller;
 
 import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.find.doongji.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import com.find.doongji.auth.payload.request.LoginRequest;
-import com.find.doongji.auth.service.AuthService;
 
 import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
 public class BasicAuthController implements AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     @Override
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpSession session) {
-    	boolean success = authService.login(loginRequest, session);
-        if (success) {
-            return ResponseEntity.status(HttpStatus.OK)
-            		.body(Collections.singletonMap("message", "User logged in successfully"));
-        } else {
-            return ResponseEntity.status(401).body(Collections.singletonMap("message","Invalid credentials"));
-        }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
+        Authentication authentication = authService.authenticateUser(loginRequest);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 현재 로그인 유저
+        System.out.println("AuthController: "+SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
+        return ResponseEntity.ok(Collections.singletonMap("message", "Login successful"));
     }
 
     @Override
-    public ResponseEntity<?> logout(HttpSession session) {
-        authService.logout(session);
-        return ResponseEntity.noContent().build();
+    @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(Collections.singletonMap("message", "Logout successful"));
     }
     
     @ExceptionHandler(SecurityException.class)

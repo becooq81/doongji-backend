@@ -1,17 +1,14 @@
 package com.find.doongji.auth.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import com.find.doongji.auth.payload.request.LoginRequest;
 
-import jakarta.servlet.http.HttpSession;
 
 public interface AuthController {
 	
-	@PostMapping("/login")
-    ResponseEntity<?> login(LoginRequest loginRequest, HttpSession session);
+    ResponseEntity<?> login(LoginRequest loginRequest);
 	
-    @PostMapping("/logout")
-    ResponseEntity<?> logout(HttpSession session);
+    ResponseEntity<?> logout(HttpServletRequest request);
 }
