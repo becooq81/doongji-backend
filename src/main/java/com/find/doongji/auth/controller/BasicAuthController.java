@@ -30,9 +30,6 @@ public class BasicAuthController implements AuthController {
         Authentication authentication = authService.authenticateUser(loginRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 현재 로그인 유저
-        System.out.println("AuthController: "+SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
         return ResponseEntity.ok(Collections.singletonMap("message", "Login successful"));
     }
 
