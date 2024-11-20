@@ -1,4 +1,7 @@
 package com.find.doongji.listing.repository;
 
-public class ListingRepository {
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface ListingRepository {
 }
