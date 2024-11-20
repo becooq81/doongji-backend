@@ -19,7 +19,6 @@ public class BasicHistoryService implements HistoryService {
 
     private final HistoryRepository historyRepository;
     private final MemberRepository memberRepository;
-    private final CustomUserDetailsService customUserDetailsService;
 
 
     /**
