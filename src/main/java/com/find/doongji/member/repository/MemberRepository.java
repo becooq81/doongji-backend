@@ -15,11 +15,6 @@ public interface MemberRepository {
     // 사용자 이름으로 사용자 찾기
     MemberEntity findByUsername(@Param("username") String username);
 
-    // 사용자 이름 중복 확인
-    int countByUsername(@Param("username") String username);
-
-    // 사용자 이메일 중복 확인
-    int countByEmail(@Param("email") String email);
 
     // 새로운 사용자 추가
     int insertMember(MemberEntity memberEntity);
