@@ -34,13 +34,7 @@ public class HistoryRepositoryTest {
         String username = "testuser";
         String query = "Test search query";
 
-        MemberEntity memberEntity = MemberEntity.builder()
-                .username(username)
-                .email("test@gmail.com")
-                .name("Test User")
-                .role(Role.ROLE_USER.getKey())
-                .password("password")
-                .build();
+        MemberEntity memberEntity = createMemberEntity(username);
         memberRepository.insertMember(memberEntity);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
@@ -57,13 +51,7 @@ public class HistoryRepositoryTest {
         String username = "testuser2";
         String query = "Duplicate search query";
 
-        MemberEntity memberEntity = MemberEntity.builder()
-                .username(username)
-                .email("test@gmail.com")
-                .name("Test User")
-                .role(Role.ROLE_USER.getKey())
-                .password("password")
-                .build();
+        MemberEntity memberEntity = createMemberEntity(username);
         memberRepository.insertMember(memberEntity);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(
@@ -81,13 +69,7 @@ public class HistoryRepositoryTest {
     public void findSearchHistoryByUsernameTest() {
         String username = "testuser3";
 
-        MemberEntity memberEntity = MemberEntity.builder()
-                .username(username)
-                .email("test@gmail.com")
-                .name("Test User")
-                .role(Role.ROLE_USER.getKey())
-                .password("password")
-                .build();
+        MemberEntity memberEntity = createMemberEntity(username);
         memberRepository.insertMember(memberEntity);
 
         historyRepository.insertHistory(new HistoryRequest(username, "First search"));
@@ -102,6 +84,16 @@ public class HistoryRepositoryTest {
         Assertions.assertEquals(2, searchHistories.size());
         Assertions.assertTrue(searchHistories.stream().anyMatch(sh -> "First search".equals(sh.getQuery())));
         Assertions.assertTrue(searchHistories.stream().anyMatch(sh -> "Second search".equals(sh.getQuery())));
+    }
+
+    private MemberEntity createMemberEntity(String username) {
+        return MemberEntity.builder()
+                .username(username)
+                .email("test@gmail.com")
+                .name("Test User")
+                .role(Role.ROLE_USER.getKey())
+                .password("password")
+                .build();
     }
 
 }
