@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchRequest {
 
-    @Size(min = 1, max = 50, message = "Username must be between 1 and 50 characters")
-    private String username;
-
     @Size(min = 1, max = 255, message = "Search query must be between 1 and 255 characters")
     private String query;
 
