@@ -2,6 +2,7 @@ package com.find.doongji.search.service;
 
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.DanjiCode;
+import com.find.doongji.search.payload.response.SearchResponse;
 import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.history.payload.request.HistoryRequest;
@@ -9,6 +10,7 @@ import com.find.doongji.history.service.HistoryService;
 import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.RecommendResponse;
+import com.find.doongji.search.payload.response.SimilarityScore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +31,9 @@ public class BasicSearchService implements SearchService {
 
     @Override
     @Transactional
-    public List<SearchResult> search(SearchRequest searchRequest) throws Exception {
+    public List<SearchResponse> search(SearchRequest searchRequest) throws Exception {
         List<RecommendResponse> recommendResponses = aiClient.getRecommendation(searchRequest.getQuery(), TOP_K);
-        List<SearchResult> searchResults = new ArrayList<>();
+        List<SearchResponse> searchResults = new ArrayList<>();
 
         outerLoop:
         for (RecommendResponse recommendResponse : recommendResponses) {
@@ -40,7 +42,7 @@ public class BasicSearchService implements SearchService {
             for (DanjiCode danjiCode : danjiCodes) {
                 SearchResult searchResult = aptClient.getAptDetail(danjiCode.getKaptCode());
                 if (searchResult != null) {
-                    searchResults.add(searchResult);
+                    searchResults.add(new SearchResponse(searchResult, SimilarityScore.classify(recommendResponse.getSimilarity())));
                     if (searchResults.size() >= TOP_K) {
                         break outerLoop;
                     }
