@@ -32,6 +32,8 @@ public class BasicSearchService implements SearchService {
     public List<SearchResult> search(SearchRequest searchRequest) throws Exception {
         List<RecommendResponse> recommendResponses = aiClient.getRecommendation(searchRequest.getQuery(), TOP_K);
         List<SearchResult> searchResults = new ArrayList<>();
+
+        outerLoop:
         for (RecommendResponse recommendResponse : recommendResponses) {
             String bjdCode = aptRepository.selectBjdCodeByDanjiId(recommendResponse.getDanjiId());
             List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
@@ -40,7 +42,7 @@ public class BasicSearchService implements SearchService {
                 if (searchResult != null) {
                     searchResults.add(searchResult);
                     if (searchResults.size() >= TOP_K) {
-                        break;
+                        break outerLoop;
                     }
                 }
             }
