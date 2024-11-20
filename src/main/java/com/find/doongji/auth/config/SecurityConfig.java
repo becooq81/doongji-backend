@@ -37,6 +37,9 @@ public class SecurityConfig {
                                 // auth
                                 .requestMatchers("/api/v1/auth/login").permitAll()
                                 .requestMatchers("/api/v1/auth/logout").authenticated()
+                                
+                                // sign up
+                                .requestMatchers("/api/v1/member").permitAll()
 
                                 // member
                                 .requestMatchers("/api/v1/member/**").authenticated()
