@@ -1,4 +1,4 @@
-package com.find.doongji.user.payload.response;
+package com.find.doongji.member.payload.response;
 
 import lombok.Data;
 

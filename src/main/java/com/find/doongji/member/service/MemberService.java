@@ -1,11 +1,11 @@
-package com.find.doongji.user.service;
+package com.find.doongji.member.service;
 
 import java.util.List;
 
-import com.find.doongji.user.payload.request.SignUpRequest;
-import com.find.doongji.user.payload.request.UserUpdateRequest;
-import com.find.doongji.user.payload.response.UserResponse;
-import com.find.doongji.user.payload.response.UserSearchResponse;
+import com.find.doongji.member.payload.request.SignUpRequest;
+import com.find.doongji.member.payload.request.UserUpdateRequest;
+import com.find.doongji.member.payload.response.UserResponse;
+import com.find.doongji.member.payload.response.UserSearchResponse;
 
 import jakarta.servlet.http.HttpSession;
 
