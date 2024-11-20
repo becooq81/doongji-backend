@@ -21,12 +21,13 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ClassificationController {
 
+    private final RestTemplate restTemplate;
+
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             String fastApiUrl = "http://localhost:8000/predict";
 
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 

@@ -1,6 +1,7 @@
 package com.find.doongji.search.client;
 
 import com.find.doongji.search.payload.response.RecommendResponse;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class RecommendClient {
+
+    private final RestTemplate restTemplate;
 
     @Value("${rec.ai-url}")
     private String AI_URL;
@@ -23,7 +27,6 @@ public class RecommendClient {
     public List<RecommendResponse> getRecommendation(String query, int topK) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
 
         JSONObject requestBody = new JSONObject();
         requestBody.put("query", query);
