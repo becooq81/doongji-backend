@@ -1,10 +1,11 @@
 package com.find.doongji.history.service;
 
+import com.find.doongji.auth.enums.Role;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
 import com.find.doongji.history.repository.HistoryRepository;
-import com.find.doongji.user.payload.request.SignUpRequest;
-import com.find.doongji.user.repository.UserRepository;
+import com.find.doongji.member.payload.request.MemberEntity;
+import com.find.doongji.member.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,19 +29,19 @@ public class HistoryServiceTest {
     HistoryRepository repo;
 
     @Autowired
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
         String username = "testuser";
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        MemberEntity memberEntity = MemberEntity.builder()
+                .username(username)
+                .email("test@gmail.com")
+                .name("Test User")
+                .role(Role.ROLE_USER.getKey())
+                .password("password")
+                .build();
+        memberRepository.insertMember(memberEntity);
     }
 
     @Test

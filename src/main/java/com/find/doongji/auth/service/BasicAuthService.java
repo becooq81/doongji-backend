@@ -1,39 +1,31 @@
 package com.find.doongji.auth.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.find.doongji.auth.payload.request.LoginRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.find.doongji.auth.payload.request.LoginRequest;
-import com.find.doongji.auth.repository.AuthRepository;
-
-import jakarta.servlet.http.HttpSession;
-
+@RequiredArgsConstructor
 @Service
-public class BasicAuthService implements AuthService {
+public class BasicAuthService implements AuthService{
 
-    @Autowired
-    private AuthRepository authRepository;
+    private final AuthenticationManager authenticationManager;
 
     @Override
-    public boolean login(LoginRequest loginRequest, HttpSession session) {
-
-        String storedPassword = authRepository.getPasswordByUsername(loginRequest.getUsername());
-
-        if (storedPassword != null && storedPassword.equals(loginRequest.getPassword())) {
-            session.setAttribute("username", loginRequest.getUsername());
-            return true;
-        } else {
-            return false;
-        }
+    public Authentication authenticateUser(LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+        );
+        return authentication;
     }
 
     @Override
-    public void logout(HttpSession session) {
-
-        if (session.getAttribute("username") == null) {
-            throw new SecurityException("User is not logged in");
-        }
-        session.invalidate();
+    public boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
     }
-
 }

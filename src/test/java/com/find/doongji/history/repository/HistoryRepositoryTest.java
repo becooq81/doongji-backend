@@ -1,18 +1,16 @@
 package com.find.doongji.history.repository;
 
+import com.find.doongji.auth.enums.Role;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
-import com.find.doongji.user.payload.request.SignUpRequest;
-import com.find.doongji.user.repository.UserRepository;
+import com.find.doongji.member.payload.request.MemberEntity;
+import com.find.doongji.member.repository.MemberRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,21 +27,15 @@ public class HistoryRepositoryTest {
     HistoryRepository historyRepository;
 
     @Autowired
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @Test
     public void addSearchHistoryTest() {
         String username = "testuser";
         String query = "Test search query";
 
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        MemberEntity memberEntity = createMemberEntity(username);
+        memberRepository.insertMember(memberEntity);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(username, query);
         historyRepository.insertHistory(searchHistoryRequest);
@@ -59,14 +51,8 @@ public class HistoryRepositoryTest {
         String username = "testuser2";
         String query = "Duplicate search query";
 
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        MemberEntity memberEntity = createMemberEntity(username);
+        memberRepository.insertMember(memberEntity);
 
         HistoryRequest searchHistoryRequest = new HistoryRequest(
                 username,
@@ -83,14 +69,8 @@ public class HistoryRepositoryTest {
     public void findSearchHistoryByUsernameTest() {
         String username = "testuser3";
 
-        SignUpRequest signUpRequest = new SignUpRequest(
-                username,
-                "test@gmail.com",
-                "password",
-                "password",
-                "Test User"
-        );
-        userRepository.insertUser(signUpRequest);
+        MemberEntity memberEntity = createMemberEntity(username);
+        memberRepository.insertMember(memberEntity);
 
         historyRepository.insertHistory(new HistoryRequest(username, "First search"));
         historyRepository.insertHistory(new HistoryRequest(username, "Second search"));
@@ -104,6 +84,16 @@ public class HistoryRepositoryTest {
         Assertions.assertEquals(2, searchHistories.size());
         Assertions.assertTrue(searchHistories.stream().anyMatch(sh -> "First search".equals(sh.getQuery())));
         Assertions.assertTrue(searchHistories.stream().anyMatch(sh -> "Second search".equals(sh.getQuery())));
+    }
+
+    private MemberEntity createMemberEntity(String username) {
+        return MemberEntity.builder()
+                .username(username)
+                .email("test@gmail.com")
+                .name("Test User")
+                .role(Role.ROLE_USER.getKey())
+                .password("password")
+                .build();
     }
 
 }

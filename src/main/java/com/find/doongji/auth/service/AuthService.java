@@ -1,10 +1,11 @@
 package com.find.doongji.auth.service;
 
 import com.find.doongji.auth.payload.request.LoginRequest;
-
-import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 
 public interface AuthService {
-    boolean login(LoginRequest loginRequest, HttpSession session);
-    void logout(HttpSession session);
+
+    Authentication authenticateUser(LoginRequest loginRequest);
+
+    boolean isAuthenticated();
 }
