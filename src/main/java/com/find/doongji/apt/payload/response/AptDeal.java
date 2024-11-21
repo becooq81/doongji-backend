@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class AptDeal {
 	private int no;
 	private String aptSeq;

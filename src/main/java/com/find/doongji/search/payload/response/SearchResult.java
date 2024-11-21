@@ -1,12 +1,14 @@
 package com.find.doongji.search.payload.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class SearchResult  {
 
     private String kaptName; // 단지 이름
@@ -15,6 +17,7 @@ public class SearchResult  {
     private String kaptDongCnt; // 동 수
     private String kaptAddr; // 법정동 주소 full ver
     private String kaptdaCnt; // 세대 수
+    private String doroJuso; // 도로명 주소
 
     // 상세 정보 API
     /**

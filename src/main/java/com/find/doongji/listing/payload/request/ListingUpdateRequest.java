@@ -8,17 +8,19 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class ListingUpdateRequest {
 
     @NotBlank
     private Long id;
 
-    private MultipartFile image;
-    private String address;
+    private String oldAddress;
+    private String roadAddress;
+
     private String aptDong;
+    private String aptHo;
     private String description;
 
 }
