@@ -81,6 +81,10 @@
 		ORDER BY housedeals.deal_year DESC, housedeals.deal_month DESC, housedeals.deal_day DESC
 	</select>
 
+	<select id="findAllAptInfos" resultType="com.find.doongji.apt.payload.response.AptInfo">
+		SELECT *
+		FROM houseinfos
+	</select>
 
 
 </mapper>

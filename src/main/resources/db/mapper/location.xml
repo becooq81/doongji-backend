@@ -38,5 +38,10 @@
     	SELECT DISTINCT sido_name
     	FROM dongcodes
     </select>
-    
+
+    <select id="selectDongCodeByDongcode" resultType="com.find.doongji.location.payload.response.DongCode" parameterType="String">
+        SELECT *
+        FROM dongcodes
+        WHERE dong_code = #{dongCode}
+    </select>
 </mapper>

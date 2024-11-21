@@ -2,6 +2,7 @@ package com.find.doongji.location.repository;
 
 import java.util.List;
 
+import com.find.doongji.location.payload.response.DongCode;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -18,5 +19,8 @@ public interface LocationRepository {
 	
 	// 모든 시도 값을 찾는다
 	List<String> selectSido();
+
+	// 법정동 코드로 시도, 구군, 동 값 조회
+	DongCode selectDongCodeByDongcode(String dongcode);
 	
 }
