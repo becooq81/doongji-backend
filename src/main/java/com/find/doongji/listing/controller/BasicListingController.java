@@ -55,9 +55,10 @@ public class BasicListingController implements ListingController {
     }
 
     @Override
-    @GetMapping("/{address}")
+    @GetMapping
     public ResponseEntity<?> getListings(@RequestParam("address") String address) {
-        return null;
+
+        return ResponseEntity.status(200).body(listingService.getListingsForRoadAddress(address));
     }
 
 
