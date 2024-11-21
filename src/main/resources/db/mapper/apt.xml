@@ -19,7 +19,7 @@
 	      AND umd_cd = #{umdCd}
 	</select>
 
-	<select id="selectAptDealByDong" parameterType="map" resultType="com.find.doongji.apt.payload.response.AptInfo">
+	<select id="selectAptInfoByDong" parameterType="map" resultType="com.find.doongji.apt.payload.response.AptInfo">
 		SELECT *
 		FROM housedeals
 		JOIN houseinfos ON housedeals.apt_seq = houseinfos.apt_seq
