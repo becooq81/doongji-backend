@@ -1,4 +1,4 @@
-package com.find.doongji.apt.payload.request;
+package com.find.doongji.address.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AddressMapping {
+    private Long id;
     private String oldAddress;
+    private String roadAddress;
     private String umdNm;
     private String jibun;
     private String aptSeq;
