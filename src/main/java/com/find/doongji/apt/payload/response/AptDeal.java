@@ -19,18 +19,30 @@ public class AptDeal {
 	private int dealDay;
 	private double excluUseAr;
 	private String dealAmount;
-	private String address;
+	private String roadAddress;
+	private String oldAddress;
 	private String aptNm;
 	private String latitude;
 	private String longitude;
-	
+
+
 	@Override
 	public String toString() {
-		return "AptDeal [no=" + no + ", aptSeq=" + aptSeq + ", aptDong=" + aptDong + ", floor=" + floor + ", dealYear="
-				+ dealYear + ", dealMonth=" + dealMonth + ", dealDay=" + dealDay + ", excluUseAr=" + excluUseAr
-				+ ", dealAmount=" + dealAmount + ", address=" + address + ", aptNm=" + aptNm + ", latitude=" + latitude
-				+ ", longitude=" + longitude + "]";
+		return "AptDeal{" +
+				"no=" + no +
+				", aptSeq='" + aptSeq + '\'' +
+				", aptDong='" + aptDong + '\'' +
+				", floor='" + floor + '\'' +
+				", dealYear=" + dealYear +
+				", dealMonth=" + dealMonth +
+				", dealDay=" + dealDay +
+				", excluUseAr=" + excluUseAr +
+				", dealAmount='" + dealAmount + '\'' +
+				", roadAddress='" + roadAddress + '\'' +
+				", oldAddress='" + oldAddress + '\'' +
+				", aptNm='" + aptNm + '\'' +
+				", latitude='" + latitude + '\'' +
+				", longitude='" + longitude + '\'' +
+				'}';
 	}
-	
-	
 }
