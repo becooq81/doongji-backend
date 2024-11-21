@@ -63,11 +63,15 @@ public class RoadAddressUtil {
         }
 
         String cleanedAddress = address.replaceAll("\\s*\\([^)]*\\)", "").trim();
+
+        if (cleanedAddress.contains("서울시")) {
+            cleanedAddress = cleanedAddress.replace("서울시", "서울특별시");
+        }
         return cleanedAddress;
     }
 
     public static void main(String[] args) {
-        String input = "서울특별시 종로구 창신길 140-10 (창신동, 엠아이디그린아파트)";
+        String input = "서울시 종로구 창신길 140-10 (창신동, 엠아이디그린아파트)";
         AddressComponents components = parseAddress(input);
         System.out.println(components);
 
