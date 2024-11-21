@@ -1,6 +1,5 @@
 package com.find.doongji.search.payload.request;
 
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchRequest {
 
-    @Size(min = 1, max = 255, message = "Search query must be between 1 and 255 characters")
     private String query;
 
+    // Filter
+    private Integer minPrice = Integer.MIN_VALUE;
+    private Integer maxPrice = Integer.MAX_VALUE;
+    private String locationFiler;
+    private Double minArea = Double.MIN_VALUE;
+    private Double maxArea = Double.MAX_VALUE;
 }
