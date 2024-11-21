@@ -50,6 +50,7 @@ public class BasicListingService implements ListingService {
         List<Long> danjiIds = new ArrayList<>();
         if (addressMappings.isEmpty()) {
             danjiIds.add(createAddressMapping(request));
+
         } else {
             for (AddressMappingResponse addressMapping : addressMappings) {
                 danjiIds.add(addressMapping.getDanjiId());
@@ -64,7 +65,7 @@ public class BasicListingService implements ListingService {
                             .addressMappingId(mapping.getId())
                             .username(username)
                             .imagePath(classificationResponse.getImagePath())
-                            .isOptical(classificationResponse.getResult())
+                            .isOptical(request.getResult())
                             .oldAddress(request.getJibunAddress())
                             .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
                             .aptDong(request.getAptDong())

@@ -23,6 +23,9 @@ public class ListingCreateRequest {
     private String aptHo;
     private String description;
 
+    @NotNull
+    private int result;
+
 
     @Override
     public String toString() {
