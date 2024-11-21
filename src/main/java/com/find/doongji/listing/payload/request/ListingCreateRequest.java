@@ -23,4 +23,15 @@ public class ListingCreateRequest {
     private String aptHo;
     private String description;
 
+
+    @Override
+    public String toString() {
+        return "ListingCreateRequest{" +
+                "roadAddress='" + roadAddress + '\'' +
+                ", jibunAddress='" + jibunAddress + '\'' +
+                ", aptDong='" + aptDong + '\'' +
+                ", aptHo='" + aptHo + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }
