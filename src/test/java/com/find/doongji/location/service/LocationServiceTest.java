@@ -62,10 +62,10 @@ public class LocationServiceTest {
 		String expected = "1111010300";
 		
 		DongCode result = service.findDongCode(si, gugun, dong);
-		Assertions.assertEquals(result.getSido(), si);
-		Assertions.assertEquals(result.getGugun(), gugun);
-		Assertions.assertEquals(result.getDong(), dong);
-		Assertions.assertEquals(result.getDongcode(), expected);
+		Assertions.assertEquals(result.getSidoName(), si);
+		Assertions.assertEquals(result.getGugunName(), gugun);
+		Assertions.assertEquals(result.getDongName(), dong);
+		Assertions.assertEquals(result.getDongCode(), expected);
 
 	}
 }

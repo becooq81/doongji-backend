@@ -46,11 +46,11 @@ public class BasicAptService implements AptService {
 	public List<AptDeal> findAptDealByDong(String sido, String gugun, String dong) throws NotFoundException {
 
 		DongCode dongcode = service.findDongCode(sido, gugun, dong);
-		if (dongcode.getDongcode() == null) {
+		if (dongcode.getDongCode() == null) {
 	        throw new NotFoundException("DongCode not found for sido: " + sido + ", gugun: " + gugun + ", dong: " + dong);
 		}
 		
-		return findAptDealByDongCode(dongcode.getDongcode());
+		return findAptDealByDongCode(dongcode.getDongCode());
 	}
 
 	@Override

@@ -52,10 +52,10 @@ public class BasicLocationService implements LocationService {
 	public DongCode findDongCode(String sido, String gugun, String dong) {
 		String dongcodeVal = repo.selectDongCode(sido, gugun, dong);
 		DongCode dongcode = DongCode.builder()
-				.sido(sido)
-				.gugun(gugun)
-				.dong(dong)
-				.dongcode(dongcodeVal)
+				.sidoName(sido)
+				.gugunName(gugun)
+				.dongName(dong)
+				.dongCode(dongcodeVal)
 				.build();
 		return dongcode;
 	}
