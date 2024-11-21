@@ -14,4 +14,14 @@ public class DanjiCode {
     private String bjdCode;
     private String kaptCode;
     private String kaptName;
+
+    @Override
+    public String toString() {
+        return "DanjiCode{" +
+                "roadAddress='" + roadAddress + '\'' +
+                ", bjdCode='" + bjdCode + '\'' +
+                ", kaptCode='" + kaptCode + '\'' +
+                ", kaptName='" + kaptName + '\'' +
+                '}';
+    }
 }
