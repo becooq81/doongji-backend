@@ -4,7 +4,8 @@ public enum SimilarityScore {
 
     HIGH(60.0, Double.MAX_VALUE),
     MEDIUM(40.0, 60.0),
-    LOW(Double.MIN_VALUE, 40.0);
+    LOW(Double.MIN_VALUE, 40.0),
+    NONE(Double.MIN_VALUE, Double.MIN_VALUE);
 
     private final double lowerBound;
     private final double upperBound;
@@ -28,5 +29,6 @@ public enum SimilarityScore {
                 return level;
             }
         }
-        throw new IllegalArgumentException("Score " + score + " is out of valid range");    }
+        throw new IllegalArgumentException("Score " + score + " is out of valid range");
+    }
 }
