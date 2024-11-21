@@ -47,7 +47,7 @@ public class AddressMappingLoader implements CommandLineRunner {
                 String[] columns = line.split(",");
                 String roadAddress = columns[1];
                 String oldAddress = columns[2];
-                int danjiId = Integer.parseInt(columns[0]);
+                Long danjiId = Long.parseLong(columns[0]);
 
                 String[] addressParts = oldAddress.split(" ");
                 if (addressParts.length < 2) continue;

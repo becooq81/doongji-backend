@@ -17,7 +17,7 @@ public class AddressMappingResponse {
     private String umdNm;
     private String jibun;
     private String aptSeq;
-    private int danjiId;
+    private Long danjiId;
     private String bjdCode;
 
     /**
