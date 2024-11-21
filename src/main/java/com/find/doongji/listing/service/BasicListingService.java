@@ -144,7 +144,9 @@ public class BasicListingService implements ListingService {
 
         Long id = -1L;
         for (DanjiCode danjiCode : danjiCodes) {
-            if (!request.getRoadAddress().startsWith(danjiCode.getRoadAddress())) continue;
+            String cleanedJibunAddress = RoadAddressUtil.cleanAddress(request.getJibunAddress());
+            String cleanedRoadAddress = RoadAddressUtil.cleanAddress(request.getRoadAddress());
+            if (!RoadAddressUtil.cleanAddress(request.getJibunAddress()).startsWith(RoadAddressUtil.cleanAddress(danjiCode.getSiGugunDong()))) continue;
             id = addressRepository.insertAddressMapping(
                     AddressMapping.builder()
                             .roadAddress(request.getRoadAddress())
