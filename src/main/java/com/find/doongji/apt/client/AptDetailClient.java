@@ -1,5 +1,6 @@
 package com.find.doongji.apt.client;
 
+import com.find.doongji.address.util.RoadAddressUtil;
 import com.find.doongji.apt.payload.response.DanjiCode;
 import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.utils.HttpUtils;
@@ -47,7 +48,7 @@ public class AptDetailClient implements AptClient {
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
         for (Map<String, String> map : result) {
-            danjiCodes.add(new DanjiCode(map.get("doroJuso"), bjdCode, map.get("kaptCode"), map.get("kaptName")));
+            danjiCodes.add(new DanjiCode(RoadAddressUtil.cleanAddress(map.get("doroJuso")), bjdCode, map.get("kaptCode"), map.get("kaptName")));
         }
         return danjiCodes;
     }
