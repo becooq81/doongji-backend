@@ -30,7 +30,7 @@ public interface AddressRepository {
      * @param addressMapping
      * @return 맵핑 테이블에 주소 맵핑 추가 (맵핑 테이블에 존재하지 않는 주소만 추가)
      */
-    Long insertAddressMapping(AddressMapping addressMapping);
+    void insertAddressMapping(AddressMapping addressMapping);
 
     /**
      * @param roadNm
