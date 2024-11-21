@@ -1,6 +1,8 @@
 package com.find.doongji.apt.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -47,11 +49,34 @@ public class BasicAptService implements AptService {
 		if (dongcode.getDongcode() == null) {
 	        throw new NotFoundException("DongCode not found for sido: " + sido + ", gugun: " + gugun + ", dong: " + dong);
 		}
-		String sggCd = dongcode.getDongcode().substring(0, 5);
-		String umdCd = dongcode.getDongcode().substring(5);
 		
-		List<AptDeal> aptDeals = repo.selectAptDealByDong(sggCd, umdCd);
-		return aptDeals;
+		return findAptDealByDongCode(dongcode.getDongcode());
 	}
 
+	@Override
+	public List<AptDeal> findAptDealByDongCode(String dongCode) {
+		Map<String, String> dongCodes = validateAndParseDongCode(dongCode);
+		return repo.selectAptDealByDong(dongCodes.get("sggCd"), dongCodes.get("umdCd"));
+	}
+
+	@Override
+	public List<AptInfo> findAptInfoByDongCode(String dongCode) {
+		Map<String, String> dongCodes = validateAndParseDongCode(dongCode);
+		return repo.selectAptInfoByDong(dongCodes.get("sggCd"), dongCodes.get("umdCd"));
+	}
+
+	private Map<String, String> validateAndParseDongCode(String dongCode) {
+		if (dongCode == null || dongCode.isEmpty() || dongCode.length() != 10) {
+			throw new IllegalArgumentException("Invalid dong code: " + dongCode);
+		}
+
+		String sggCd = dongCode.substring(0, 5);
+		String umdCd = dongCode.substring(5);
+
+		Map<String, String> result = new HashMap<>();
+		result.put("sggCd", sggCd);
+		result.put("umdCd", umdCd);
+
+		return result;
+	}
 }
