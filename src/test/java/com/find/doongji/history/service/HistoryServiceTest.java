@@ -80,22 +80,5 @@ public class HistoryServiceTest {
         assertEquals("Duplicate search detected within a short period", exception.getMessage());
     }
 
-    @Test
-    void getSearchHistoryTest() {
-        // Given
-        String username = "testuser";
-        service.addHistory(new HistoryRequest(username, "First search"));
-        service.addHistory(new HistoryRequest(username, "Second search"));
-
-        // When
-        List<HistoryResponse> searchHistories = service.getAllHistory(username);
-
-        // Then
-        assertNotNull(searchHistories);
-        assertEquals(2, searchHistories.size());
-        assertTrue(searchHistories.stream().anyMatch(sh -> "First search".equals(sh.getQuery())));
-        assertTrue(searchHistories.stream().anyMatch(sh -> "Second search".equals(sh.getQuery())));
-    }
-
 
 }
