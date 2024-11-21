@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @Builder
@@ -24,13 +26,13 @@ public class SearchResult  {
      * Comma-separated list of convenient facilities
      * Example: "편의점,주차장,놀이터"
      */
-    private String convenientFacility;
+    private List<Detail> convenientFacility;
 
     /**
      * Comma-separated list of educational facilities
      * Example: "초등학교,중학교"
      */
-    private String educationFacility;
+    private List<Detail> educationFacility;
 
     /**
      * Bus station walking time in minutes
@@ -58,4 +60,33 @@ public class SearchResult  {
 
     private String longitude;
     private String latitude;
+
+    @Override
+    public String toString() {
+        return "SearchResult{" +
+                "kaptName='" + kaptName + '\'' +
+                ", hoCnt='" + hoCnt + '\'' +
+                ", kaptCode='" + kaptCode + '\'' +
+                ", kaptDongCnt='" + kaptDongCnt + '\'' +
+                ", kaptAddr='" + kaptAddr + '\'' +
+                ", kaptdaCnt='" + kaptdaCnt + '\'' +
+                ", doroJuso='" + doroJuso + '\'' +
+                ", convenientFacility='" + convenientFacility + '\'' +
+                ", educationFacility='" + educationFacility + '\'' +
+                ", busWalkingTime='" + busWalkingTime + '\'' +
+                ", subwayWalkingTime='" + subwayWalkingTime + '\'' +
+                ", subwayLine='" + subwayLine + '\'' +
+                ", subwayStation='" + subwayStation + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                '}';
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
 }
