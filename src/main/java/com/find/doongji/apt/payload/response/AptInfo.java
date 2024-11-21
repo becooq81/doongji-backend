@@ -23,4 +23,9 @@ public class AptInfo {
 	private int buildYear;
 	private String latitude;
 	private String longitude;
+
+	private String minExcluUseAr;
+	private String maxExcluUseAr;
+	private String minDealAmount;
+	private String maxDealAmount;
 }
