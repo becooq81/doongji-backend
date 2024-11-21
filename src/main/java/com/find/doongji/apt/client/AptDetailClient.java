@@ -5,6 +5,7 @@ import com.find.doongji.apt.payload.response.DanjiCode;
 import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.utils.HttpUtils;
 import com.find.doongji.apt.utils.ParseUtils;
+import com.find.doongji.search.util.ResultParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,6 @@ public class AptDetailClient implements AptClient {
                 .append("&bjdCode=").append(bjdCode);
 
         String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder.toString());
-        System.out.println(responseBody);
         List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "as1", "as2", "as3", "kaptCode", "kaptName");
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
@@ -52,6 +52,7 @@ public class AptDetailClient implements AptClient {
                     RoadAddressUtil.cleanAddress(map.get("as1") + " " + map.get("as2") + " " + map.get("as3")),
                     bjdCode, map.get("kaptCode"), map.get("kaptName")));
         }
+
         return danjiCodes;
     }
 
@@ -67,20 +68,22 @@ public class AptDetailClient implements AptClient {
         String basicInfoResponseBody = HttpUtils.fetchDataFromUrl(basicInfoUrlBuilder.toString());
         String specificInfoResponseBody = HttpUtils.fetchDataFromUrl(specificInfoUrlBuilder.toString());
 
-
         Map<String, String> basicInfoResult = ParseUtils.parseXML("/response/body/item", basicInfoResponseBody, "kaptName", "kaptAddr", "hoCnt", "kaptCode", "kaptDongCnt", "doroJuso", "kaptdaCnt")
                 .get(0);
         Map<String, String> specificInfoResult = ParseUtils.parseXML("/response/body/item", specificInfoResponseBody, "convenientFacility", "educationFacility", "kaptdWtimebus", "kaptdWtimesub", "subwayLine", "subwayStation")
                 .get(0);
 
-        String address = basicInfoResult.get("doroJuso");
-        if (address.equals("")) {
-            return null;
+        String address = basicInfoResult.get("kaptAddr");
+
+        String latitude = null;
+        String longitude = null;
+        if (address != null && !address.isEmpty()) {
+            Map<String, String> geocoderResult = getCoordinatesFromDoroJuso(address);
+            latitude = geocoderResult.get("y");
+            longitude = geocoderResult.get("x");
         }
 
-        Map<String, String> geocoderResult = getCoordinatesFromDoroJuso(address);
-
-        SearchResult result = SearchResult.builder()
+        return SearchResult.builder()
                 .kaptName(basicInfoResult.get("kaptName"))
                 .hoCnt(basicInfoResult.get("hoCnt"))
                 .kaptCode(basicInfoResult.get("kaptCode"))
@@ -88,16 +91,16 @@ public class AptDetailClient implements AptClient {
                 .kaptAddr(basicInfoResult.get("kaptAddr"))
                 .kaptdaCnt(basicInfoResult.get("kaptdaCnt"))
                 .doroJuso(basicInfoResult.get("doroJuso"))
-                .convenientFacility(specificInfoResult.get("convenientFacility"))
-                .educationFacility(specificInfoResult.get("educationFacility"))
+                .convenientFacility(ResultParser.parseToDetails(specificInfoResult.get("convenientFacility")))
+                .educationFacility(ResultParser.parseToDetails(specificInfoResult.get("educationFacility")))
                 .busWalkingTime(specificInfoResult.get("kaptdWtimebus"))
                 .subwayWalkingTime(specificInfoResult.get("kaptdWtimesub"))
                 .subwayLine(specificInfoResult.get("subwayLine"))
                 .subwayStation(specificInfoResult.get("subwayStation"))
-                .latitude(geocoderResult.get("y"))
-                .longitude(geocoderResult.get("x"))
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
-        return result;
+
     }
 
     @Override
@@ -106,6 +109,7 @@ public class AptDetailClient implements AptClient {
                 .append(GEOCODER_KEY)
                 .append("&address=").append(URLEncoder.encode(doroJuso, StandardCharsets.UTF_8));
         String geocoderResponseBody = HttpUtils.fetchDataFromUrl(geocoderUrlBuilder.toString());
+
         return ParseUtils.parseXML("/response/result/point", geocoderResponseBody, "x", "y").get(0);
     }
 
