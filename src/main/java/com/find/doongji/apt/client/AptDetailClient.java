@@ -43,11 +43,11 @@ public class AptDetailClient implements AptClient {
 
         String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder.toString());
 
-        List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "kaptCode", "kaptName");
+        List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "doroJuso", "kaptCode", "kaptName");
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
         for (Map<String, String> map : result) {
-            danjiCodes.add(new DanjiCode(bjdCode, map.get("kaptCode"), map.get("kaptName")));
+            danjiCodes.add(new DanjiCode(map.get("doroJuso"), bjdCode, map.get("kaptCode"), map.get("kaptName")));
         }
         return danjiCodes;
     }
@@ -65,7 +65,7 @@ public class AptDetailClient implements AptClient {
         String specificInfoResponseBody = HttpUtils.fetchDataFromUrl(specificInfoUrlBuilder.toString());
 
 
-        Map<String, String> basicInfoResult = ParseUtils.parseXML("/response/body/item", basicInfoResponseBody, "kaptName", "hoCnt", "kaptCode", "kaptDongCnt", "doroJuso", "kaptdaCnt")
+        Map<String, String> basicInfoResult = ParseUtils.parseXML("/response/body/item", basicInfoResponseBody, "kaptName", "kaptAddr", "hoCnt", "kaptCode", "kaptDongCnt", "doroJuso", "kaptdaCnt")
                 .get(0);
         Map<String, String> specificInfoResult = ParseUtils.parseXML("/response/body/item", specificInfoResponseBody, "convenientFacility", "educationFacility", "kaptdWtimebus", "kaptdWtimesub", "subwayLine", "subwayStation")
                 .get(0);
@@ -77,22 +77,24 @@ public class AptDetailClient implements AptClient {
 
         Map<String, String> geocoderResult = getCoordinatesFromDoroJuso(address);
 
-        return new SearchResult(
-                basicInfoResult.get("kaptName"),
-                basicInfoResult.get("hoCnt"),
-                basicInfoResult.get("kaptCode"),
-                basicInfoResult.get("kaptDongCnt"),
-                basicInfoResult.get("doroJuso"),
-                basicInfoResult.get("kaptdaCnt"),
-                specificInfoResult.get("convenientFacility"),
-                specificInfoResult.get("educationFacility"),
-                specificInfoResult.get("kaptdWtimebus"),
-                specificInfoResult.get("kaptdWtimesub"),
-                specificInfoResult.get("subwayLine"),
-                specificInfoResult.get("subwayStation"),
-                geocoderResult.get("x"),
-                geocoderResult.get("y")
-        );
+        SearchResult result = SearchResult.builder()
+                .kaptName(basicInfoResult.get("kaptName"))
+                .hoCnt(basicInfoResult.get("hoCnt"))
+                .kaptCode(basicInfoResult.get("kaptCode"))
+                .kaptDongCnt(basicInfoResult.get("kaptDongCnt"))
+                .kaptAddr(basicInfoResult.get("kaptAddr"))
+                .kaptdaCnt(basicInfoResult.get("kaptdaCnt"))
+                .doroJuso(basicInfoResult.get("doroJuso"))
+                .convenientFacility(specificInfoResult.get("convenientFacility"))
+                .educationFacility(specificInfoResult.get("educationFacility"))
+                .busWalkingTime(specificInfoResult.get("kaptdWtimebus"))
+                .subwayWalkingTime(specificInfoResult.get("kaptdWtimesub"))
+                .subwayLine(specificInfoResult.get("subwayLine"))
+                .subwayStation(specificInfoResult.get("subwayStation"))
+                .latitude(geocoderResult.get("y"))
+                .longitude(geocoderResult.get("x"))
+                .build();
+        return result;
     }
 
     @Override
