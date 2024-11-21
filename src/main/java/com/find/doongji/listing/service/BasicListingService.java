@@ -3,12 +3,11 @@ package com.find.doongji.listing.service;
 import com.find.doongji.address.payload.request.AddressMapping;
 import com.find.doongji.address.payload.response.AddressMappingResponse;
 import com.find.doongji.address.repository.AddressRepository;
-import com.find.doongji.address.util.RoadAddressUtil;
+import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.client.AptClient;
 import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.payload.response.DanjiCode;
 import com.find.doongji.apt.repository.AptRepository;
-import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.listing.client.ClassificationClient;
 import com.find.doongji.listing.payload.request.ListingCreateRequest;
 import com.find.doongji.listing.payload.request.ListingEntity;
@@ -41,24 +40,28 @@ public class BasicListingService implements ListingService {
     @Override
     public void addListing(ListingCreateRequest request, MultipartFile image) throws Exception {
 
+        // TODO: 이미지 분류는 FastAPI 서버로 하기 때문에 ClassificationClient를 제거하고 FileUploader로 대체해야 함
         ClassificationResponse classificationResponse = classificationClient.classify(image, "./uploads");
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         List<AddressMappingResponse> addressMappings = addressRepository.selectAddressMappingByRoadAddress(request.getRoadAddress());
 
-        List<Long> ids = new ArrayList<>();
+        List<Long> danjiIds = new ArrayList<>();
         if (addressMappings.isEmpty()) {
-            ids.add(createAddressMapping(request));
+            danjiIds.add(createAddressMapping(request));
         } else {
             for (AddressMappingResponse addressMapping : addressMappings) {
-                ids.add(addressMapping.getId());
+                danjiIds.add(addressMapping.getDanjiId());
             }
         }
 
-        for (Long id : ids) {
+
+        for (Long id : danjiIds) {
+            System.out.println(id);
+            AddressMappingResponse mapping = addressRepository.selectAddressMappingByDanjiId(id);
             ListingEntity entity = ListingEntity.builder()
-                            .addressMappingId(id)
+                            .addressMappingId(mapping.getId())
                             .username(username)
                             .imagePath(classificationResponse.getImagePath())
                             .isOptical(classificationResponse.getResult())
@@ -116,7 +119,8 @@ public class BasicListingService implements ListingService {
 
     @Override
     public List<ListingResponse> getListingsForRoadAddress(String roadAddress) {
-        String cleanedAddress = RoadAddressUtil.cleanAddress(roadAddress);
+        String cleanedAddress = AddressUtil.cleanAddress(roadAddress);
+        System.out.println(cleanedAddress);
         return listingRepository.selectListingsByRoadAddress(cleanedAddress);
     }
 
@@ -135,33 +139,35 @@ public class BasicListingService implements ListingService {
         String bjdCode = getDongCode(request.getJibunAddress());
         List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
 
-        RoadAddressUtil.AddressComponents components = RoadAddressUtil.parseAddress(request.getRoadAddress());
-
-        System.out.println("road_nm: " + components.getRoadNm()+", road_nm_bonbun: "+components.getRoadNmBonbun()+", road_nm_bubun: "+components.getRoadNmBubun());
+        AddressUtil.AddressComponents components = AddressUtil.parseAddress(request.getRoadAddress());
 
         // TODO: 해당 레포지토리 메서드는 단일 레코드가 아닌 집합을 리턴하기 때문에 모두 고려해야 한다
         AptInfo aptInfo = aptRepository.selectAptInfoByRoadComponents(components.getRoadNm(), components.getRoadNmBonbun(), components.getRoadNmBubun()).get(0);
-
-        Long id = -1L;
+        Long danjiId = null;
         for (DanjiCode danjiCode : danjiCodes) {
-            String cleanedJibunAddress = RoadAddressUtil.cleanAddress(request.getJibunAddress());
-            String cleanedRoadAddress = RoadAddressUtil.cleanAddress(request.getRoadAddress());
-            if (!RoadAddressUtil.cleanAddress(request.getJibunAddress()).startsWith(RoadAddressUtil.cleanAddress(danjiCode.getSiGugunDong()))) continue;
-            id = addressRepository.insertAddressMapping(
+            System.out.println(request.getJibunAddress());
+            danjiId = (aptInfo.getAptSeq() + danjiCode.getKaptCode()).hashCode() & 0xffffffffL;
+            if (!AddressUtil.cleanAddress(request.getJibunAddress()).startsWith(AddressUtil.cleanAddress(danjiCode.getSiGugunDong()))) continue;
+            AddressUtil.OldAddressComponents oldAddressComponents = AddressUtil.parseOldAddress(request.getJibunAddress());
+            System.out.println(oldAddressComponents.getAptName());
+            addressRepository.insertAddressMapping(
                     AddressMapping.builder()
                             .roadAddress(request.getRoadAddress())
-                            .oldAddress(request.getJibunAddress())
+                            .oldAddress(oldAddressComponents.getJibunAddress())
                             .umdNm(aptInfo.getUmdNm())
                             .jibun(aptInfo.getJibun())
                             .aptSeq(aptInfo.getAptSeq())
                             .bjdCode(danjiCode.getBjdCode())
                             .roadNm(components.getRoadNm())
                             .roadNmBonbun(components.getRoadNmBonbun())
-                            .roadNmBubun(components.getRoadNmBubun()).build()
+                            .roadNmBubun(components.getRoadNmBubun())
+                            .danjiId(danjiId)
+                            .aptNm(oldAddressComponents.getAptName())
+                            .build()
             );
             break;
         }
-        return id;
+        return danjiId;
     }
 
     private boolean checkEditPermission(Long id) {
