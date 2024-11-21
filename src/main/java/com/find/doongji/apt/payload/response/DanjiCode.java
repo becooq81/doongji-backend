@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class DanjiCode {
-    private String roadAddress;
+    private String siGugunDong;
     private String bjdCode;
     private String kaptCode;
     private String kaptName;
@@ -18,7 +18,7 @@ public class DanjiCode {
     @Override
     public String toString() {
         return "DanjiCode{" +
-                "roadAddress='" + roadAddress + '\'' +
+                "roadAddress='" + siGugunDong + '\'' +
                 ", bjdCode='" + bjdCode + '\'' +
                 ", kaptCode='" + kaptCode + '\'' +
                 ", kaptName='" + kaptName + '\'' +
