@@ -43,12 +43,14 @@ public class AptDetailClient implements AptClient {
                 .append("&bjdCode=").append(bjdCode);
 
         String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder.toString());
-
-        List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "doroJuso", "kaptCode", "kaptName");
+        System.out.println(responseBody);
+        List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "as1", "as2", "as3", "kaptCode", "kaptName");
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
         for (Map<String, String> map : result) {
-            danjiCodes.add(new DanjiCode(RoadAddressUtil.cleanAddress(map.get("doroJuso")), bjdCode, map.get("kaptCode"), map.get("kaptName")));
+            danjiCodes.add(new DanjiCode(
+                    RoadAddressUtil.cleanAddress(map.get("as1") + " " + map.get("as2") + " " + map.get("as3")),
+                    bjdCode, map.get("kaptCode"), map.get("kaptName")));
         }
         return danjiCodes;
     }
