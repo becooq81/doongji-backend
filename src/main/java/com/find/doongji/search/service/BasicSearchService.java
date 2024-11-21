@@ -1,7 +1,7 @@
 package com.find.doongji.search.service;
 
 import com.find.doongji.address.repository.AddressRepository;
-import com.find.doongji.address.util.RoadAddressUtil;
+import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.payload.response.DanjiCode;
@@ -24,14 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +73,7 @@ public class BasicSearchService implements SearchService {
                 }
 
                 if (searchRequest.getLocationFilter() != null) {
-                    List<DongCode> dongCodes = locationRepository.selectDongCodeByStartsWith(RoadAddressUtil.cleanAddress(searchRequest.getLocationFilter()));
+                    List<DongCode> dongCodes = locationRepository.selectDongCodeByStartsWith(AddressUtil.cleanAddress(searchRequest.getLocationFilter()));
                     if (dongCodes.isEmpty()) {
                         continue;
                     }
@@ -241,7 +238,7 @@ public class BasicSearchService implements SearchService {
         DongCode dongCode = locationRepository.selectDongCodeByDongcode(aptInfo.getSggCd() + aptInfo.getUmdCd());
         if (dongCode != null) {
             String startAddress = dongCode.getSidoName() + " " + dongCode.getGugunName() + " " + dongCode.getDongName();
-            String cleaned = RoadAddressUtil.cleanAddress(searchRequest.getLocationFilter());
+            String cleaned = AddressUtil.cleanAddress(searchRequest.getLocationFilter());
             return startAddress.startsWith(cleaned);
         }
 
