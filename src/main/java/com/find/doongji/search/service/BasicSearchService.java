@@ -7,6 +7,8 @@ import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.payload.response.DanjiCode;
 import com.find.doongji.apt.service.AptService;
 import com.find.doongji.auth.service.AuthService;
+import com.find.doongji.location.payload.response.DongCode;
+import com.find.doongji.location.repository.LocationRepository;
 import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.history.payload.request.HistoryRequest;
@@ -31,6 +33,7 @@ public class BasicSearchService implements SearchService {
 
     private final AddressRepository addressRepository;
     private final AptRepository aptRepository;
+    private final LocationRepository locationRepository;
 
     private final HistoryService historyService;
     private final AptService aptService;
@@ -41,42 +44,58 @@ public class BasicSearchService implements SearchService {
     @Override
     @Transactional
     public List<AptInfo> search(SearchRequest searchRequest) throws Exception {
-        List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K);
-        List<AptInfo> aptInfos = new ArrayList<>();
+        // Handle empty query case
+        List<AptInfo> aptInfos;
 
-        for (RecommendResponse recommendResponse : recommendResponses) {
-            String bjdCode = addressRepository.selectBjdCodeByDanjiId(recommendResponse.getDanjiId());
-            if (bjdCode == null) {
-                continue; // INFO: 공개된 공동주택에 대한 정보만 관리하는 API를 사용하기 때문에 존재하지 않을 수도 있음
-            }
-            List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
-            List<AptInfo> unverifiedAptInfos = aptService.findAptInfoByDongCode(bjdCode);
-            for (DanjiCode danjiCode : danjiCodes) {
-                RoadAddressUtil.AddressComponents components = RoadAddressUtil.parseAddress(danjiCode.getRoadAddress());
-                for (AptInfo aptInfo : unverifiedAptInfos) {
-                    if (!checkSameAddress(components, aptInfo)) continue;
-                    aptInfos.add(aptInfo);
-                    break;
+        if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
+            aptInfos = aptRepository.findAllAptInfos();
+        } else {
+            // Query is not empty, use recommendation client
+            List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K);
+            aptInfos = new ArrayList<>();
+
+            for (RecommendResponse recommendResponse : recommendResponses) {
+                String bjdCode = addressRepository.selectBjdCodeByDanjiId(recommendResponse.getDanjiId());
+                if (bjdCode == null) {
+                    continue;
+                }
+                List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
+                List<AptInfo> unverifiedAptInfos = aptService.findAptInfoByDongCode(bjdCode);
+
+                for (DanjiCode danjiCode : danjiCodes) {
+                    System.out.println(danjiCode);
+                    RoadAddressUtil.AddressComponents components = RoadAddressUtil.parseAddress(danjiCode.getRoadAddress());
+                    for (AptInfo aptInfo : unverifiedAptInfos) {
+                        if (searchRequest.getLocationFilter() == null || searchRequest.getLocationFilter().isEmpty() || !checkSameAddress(components, aptInfo)) continue;
+                        aptInfos.add(aptInfo);
+                        break;
+                    }
                 }
             }
         }
 
+        // Apply filters
+        aptInfos = filterAptInfosByOverlap(aptInfos, searchRequest);
+
+        // Save search history for authenticated users
         if (authService.isAuthenticated()) {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             historyService.addHistory(new HistoryRequest(username, searchRequest.getQuery()));
         }
 
-        if (aptInfos.size() >= 1000) {
-            return aptInfos.subList(0, aptInfos.size()/2);
+        // Trim results if too many
+        if (aptInfos.size() >= TOP_K) {
+            return aptInfos.subList(0, aptInfos.size() / 2);
         }
         return aptInfos;
     }
 
+
     @Override
     public SearchResult viewSearched(String aptSeq) throws Exception {
-
         AptInfo aptInfo = aptRepository.selectAptInfoByAptSeq(aptSeq);
         List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(aptInfo.getSggCd() + aptInfo.getUmdCd());
+
         for (DanjiCode danjiCode : danjiCodes) {
             RoadAddressUtil.AddressComponents components = RoadAddressUtil.parseAddress(danjiCode.getRoadAddress());
             if (!checkSameAddress(components, aptInfo)) continue;
@@ -89,5 +108,61 @@ public class BasicSearchService implements SearchService {
 
     private boolean checkSameAddress(RoadAddressUtil.AddressComponents components, AptInfo aptInfo) {
         return components.getRoadNm().equals(aptInfo.getRoadNm()) && components.getRoadNmBonbun().equals(aptInfo.getRoadNmBonbun()) && components.getRoadNmBubun().equals(aptInfo.getRoadNmBubun());
+    }
+
+    private List<AptInfo> filterAptInfosByOverlap(List<AptInfo> aptInfos, SearchRequest searchRequest) {
+        return aptInfos.stream().filter(aptInfo -> {
+            boolean matches = true;
+
+            if (searchRequest.getMinPrice() != null || searchRequest.getMaxPrice() != null) {
+                matches &= isOverlappingRange(
+                        parseToInt(aptInfo.getMinDealAmount()),
+                        parseToInt(aptInfo.getMaxDealAmount()),
+                        searchRequest.getMinPrice(),
+                        searchRequest.getMaxPrice()
+                );
+            }
+            if (searchRequest.getMinArea() != null || searchRequest.getMaxArea() != null) {
+                matches &= isOverlappingRange(
+                        parseToDouble(aptInfo.getMinExcluUseAr()),
+                        parseToDouble(aptInfo.getMaxExcluUseAr()),
+                        searchRequest.getMinArea(),
+                        searchRequest.getMaxArea()
+                );
+            }
+            if (searchRequest.getLocationFilter() != null) {
+                DongCode dongCode = locationRepository.selectDongCodeByDongcode(aptInfo.getSggCd() + aptInfo.getUmdCd());
+                String startAddress = dongCode.getSidoName() + " " + dongCode.getGugunName() + " " + dongCode.getDongName();
+                matches &= startAddress.startsWith(RoadAddressUtil.cleanAddress(searchRequest.getLocationFilter()));
+            }
+            return matches;
+        }).toList();
+    }
+
+    private boolean isOverlappingRange(Number minApt, Number maxApt, Number minRequest, Number maxRequest) {
+        if (minApt == null || maxApt == null) return false;
+
+        // Default request range if null
+        minRequest = minRequest != null ? minRequest : Double.MIN_VALUE;
+        maxRequest = maxRequest != null ? maxRequest : Double.MAX_VALUE;
+
+        // Overlap condition
+        return minApt.doubleValue() <= maxRequest.doubleValue() && maxApt.doubleValue() >= minRequest.doubleValue();
+    }
+
+    private Integer parseToInt(String value) {
+        try {
+            return Integer.parseInt(value.replace(",", "").trim());
+        } catch (NumberFormatException e) {
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    private Double parseToDouble(String value) {
+        try {
+            return Double.parseDouble(value.replace(",", "").trim());
+        } catch (NumberFormatException e) {
+            return Double.MIN_VALUE;
+        }
     }
 }
