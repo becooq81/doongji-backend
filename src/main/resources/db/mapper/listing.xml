@@ -40,7 +40,7 @@
         WHERE id = #{id}
     </update>
 
-    <select id="selectListingsByRoadAddress" resultType="com.find.doongji.listing.payload.response.ListingResponse" parameterType="String">
+    <select id="selectListingsByRoadAddress" resultType="com.find.doongji.listing.payload.response.ListingResponse" parameterType="string">
         select * from listing
         where road_address = #{roadAddress}
     </select>
