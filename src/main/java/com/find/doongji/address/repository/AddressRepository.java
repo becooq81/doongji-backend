@@ -50,4 +50,6 @@ public interface AddressRepository {
      * @return
      */
     List<AddressMappingResponse> selectAddressMappingByRoadAddress(@Param("roadAddress") String roadAddress);
+
+    AddressMappingResponse selectAddressMappingByDanjiId(@Param("danjiId") Long danjiId);
 }
