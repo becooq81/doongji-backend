@@ -18,6 +18,7 @@ public class AddressMapping {
     private String aptSeq;
     private int danjiId;
     private String bjdCode;
+    private String aptNm;
 
     /**
      * 아래 필드를 합해서 도로명 주소를 구성할 수 있다.

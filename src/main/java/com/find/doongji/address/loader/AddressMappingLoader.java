@@ -68,6 +68,7 @@ public class AddressMappingLoader implements CommandLineRunner {
                             .roadNmBonbun(aptInfo.getRoadNmBonbun())
                             .roadNmBubun(aptInfo.getRoadNmBubun())
                             .roadAddress(roadAddress)
+                            .aptNm(aptInfo.getAptNm())
                             .build();
                     mappings.add(addressMapping);
                     if (mappings.size() == BATCH_SIZE) {
