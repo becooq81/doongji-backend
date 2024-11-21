@@ -3,6 +3,7 @@ package com.find.doongji.listing.service;
 import com.find.doongji.listing.payload.request.ListingCreateRequest;
 import com.find.doongji.listing.payload.request.ListingUpdateRequest;
 import com.find.doongji.listing.payload.response.ListingResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ListingService {
      * 매물 등록
      * @param request
      */
-    void addListing(ListingCreateRequest request);
+    void addListing(ListingCreateRequest request, MultipartFile image) throws Exception;
 
     /**
      * 매물 삭제
@@ -36,6 +37,6 @@ public interface ListingService {
      * 매물 목록 조회
      * @param address
      */
-    List<ListingResponse> getListings(String address);
+    List<ListingResponse> getListingsForRoadAddress(String address);
 
 }
