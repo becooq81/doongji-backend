@@ -64,9 +64,9 @@ public class RoadAddressUtil {
 
         String cleanedAddress = address.replaceAll("\\s*\\([^)]*\\)", "").trim();
 
-        if (cleanedAddress.contains("서울시")) {
-            cleanedAddress = cleanedAddress.replace("서울시", "서울특별시");
-        }
+        cleanedAddress = cleanedAddress.replace("광역", "").replace("특별", "");
+
+
         return cleanedAddress;
     }
 
