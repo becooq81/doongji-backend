@@ -14,7 +14,7 @@ public class SearchRequest {
     // Filter
     private Integer minPrice = Integer.MIN_VALUE;
     private Integer maxPrice = Integer.MAX_VALUE;
-    private String locationFiler;
+    private String locationFilter;
     private Double minArea = Double.MIN_VALUE;
     private Double maxArea = Double.MAX_VALUE;
 }
