@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // aka 도로명주소, 신주소
-public class RoadAddressUtil {
+public class AddressUtil {
 
     @Getter
     @AllArgsConstructor
@@ -24,6 +24,42 @@ public class RoadAddressUtil {
                     ", roadNmBubun=" + roadNmBubun +
                     '}';
         }
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    public static class OldAddressComponents {
+        private final String jibunAddress;
+        private final String aptName;
+
+        @Override
+        public String toString() {
+            return "OldAddressComponents{" +
+                    "jibunAddress='" + jibunAddress + '\'' +
+                    ", aptName='" + aptName + '\'' +
+                    '}';
+        }
+    }
+    public static OldAddressComponents parseOldAddress(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            throw new IllegalArgumentException("Input string cannot be null or empty");
+        }
+
+        String regex = "(.*?\\d[-\\d]*)(.*)";
+
+        // Match the input string
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+        java.util.regex.Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            String jibunAddress = matcher.group(1).trim(); // Group 1: Everything up to and including the last number
+            String aptName = matcher.group(2).trim();      // Group 2: Everything after the last number
+            return new OldAddressComponents(jibunAddress, aptName);
+        }
+
+        // If no match is found, consider the entire input as jibunAddress
+        return new OldAddressComponents(input.trim(), "");
     }
 
     public static AddressComponents parseAddress(String input) {
@@ -80,6 +116,10 @@ public class RoadAddressUtil {
         System.out.println(components2);
 
         System.out.println(cleanAddress(input));
+
+        String input3 = "경기도 과천시 부림동 41 주공아파트";
+        OldAddressComponents oldAddressComponents = parseOldAddress(input3);
+        System.out.println(oldAddressComponents);
     }
 
 
