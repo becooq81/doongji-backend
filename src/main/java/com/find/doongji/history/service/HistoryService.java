@@ -18,7 +18,7 @@ public interface HistoryService {
      * @param username
      * @return
      */
-    List<HistoryResponse> getAllHistory(String username);
+    List<HistoryResponse> getAllHistory();
 
     /**
      * Removes a history entry by its ID

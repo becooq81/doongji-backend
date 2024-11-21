@@ -7,6 +7,7 @@ import com.find.doongji.history.payload.response.HistoryResponse;
 import com.find.doongji.history.repository.HistoryRepository;
 import com.find.doongji.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -43,12 +44,15 @@ public class BasicHistoryService implements HistoryService {
     /**
      * Retrieves history entries for a specific user.
      *
-     * @param username the username for which to retrieve search history
      * @return list of history entries for the specified user
      */
     @Override
     @Transactional(readOnly = true)
-    public List<HistoryResponse> getAllHistory(String username) {
+    public List<HistoryResponse> getAllHistory() {
+        if (!authService.isAuthenticated()) {
+            throw new AccessDeniedException("User is not authenticated");
+        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!memberRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("User does not exist");
         }

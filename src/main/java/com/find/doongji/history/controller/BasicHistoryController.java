@@ -24,10 +24,10 @@ public class BasicHistoryController implements HistoryController {
 
     @Override
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/{username}")
-    public ResponseEntity<?> getHistoryByUsername(@PathVariable String username) {
+    @GetMapping
+    public ResponseEntity<?> getHistoryByUsername() {
         try {
-            List<HistoryResponse> searchHistories = service.getAllHistory(username);
+            List<HistoryResponse> searchHistories = service.getAllHistory();
             return ResponseEntity.ok(searchHistories);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
