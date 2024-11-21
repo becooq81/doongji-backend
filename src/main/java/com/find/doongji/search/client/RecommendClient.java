@@ -35,7 +35,6 @@ public class RecommendClient {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
 
         ResponseEntity<String> response = restTemplate.postForEntity(RECOMMEND_URL, requestEntity, String.class);
-
         try {
             return parseJson(response.getBody());
         } catch (Exception e) {
@@ -60,7 +59,6 @@ public class RecommendClient {
 
                 result.add(new RecommendResponse(danjiId, similarity));
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Error parsing JSON", e);
