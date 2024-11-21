@@ -1,5 +1,6 @@
 package com.find.doongji.listing.client;
 
+import com.find.doongji.listing.payload.response.ClassificationApiResponse;
 import com.find.doongji.listing.payload.response.ClassificationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,22 +28,24 @@ public class ClassificationClient {
     @Value("${class.ai-url}")
     private String CLASSIFICATION_URL;
 
-    public int classify(MultipartFile file) {
+    public ClassificationResponse classify(MultipartFile file, String uploadDir) {
 
         try {
+
+            String filePath = saveMultipartFileToDirectory(file, uploadDir);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", new FileSystemResource(convertMultipartFileToFile(file)));
+            body.add("file", new FileSystemResource(filePath));
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            ResponseEntity<ClassificationResponse> response = restTemplate.postForEntity(CLASSIFICATION_URL, requestEntity, ClassificationResponse.class);
+            ResponseEntity<ClassificationApiResponse> response = restTemplate.postForEntity(CLASSIFICATION_URL, requestEntity, ClassificationApiResponse.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                ClassificationResponse classificationResponse = response.getBody();
-                if (classificationResponse != null) {
-                    return classificationResponse.getResult();  // Assuming you need to return the 'result' field from the response
+                ClassificationApiResponse apiResponse = response.getBody();
+                if (apiResponse != null) {
+                    return new ClassificationResponse(apiResponse.getResult(), filePath);
                 } else {
                     throw new RuntimeException("API response body is null");
                 }
@@ -61,15 +64,23 @@ public class ClassificationClient {
 
     }
 
-    private File convertMultipartFileToFile(MultipartFile file) throws IOException {
+    private String saveMultipartFileToDirectory(MultipartFile file, String uploadDir) throws IOException {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("Uploaded file is empty");
         }
 
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String uniqueFileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String filePath = uploadDir + File.separator + uniqueFileName;
+
+        File destFile = new File(filePath);
+        try (FileOutputStream fos = new FileOutputStream(destFile)) {
+            fos.write(file.getBytes());
+        }
+        return filePath;
     }
 }
