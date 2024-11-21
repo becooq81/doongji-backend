@@ -4,6 +4,60 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.find.doongji.listing.repository.ListingRepository">
+    <insert id="insertListing" parameterType="com.find.doongji.listing.payload.request.ListingEntity">
+        INSERT INTO listing (
+            img_path, address_mapping_id, apt_dong, description, username
+        ) VALUES (
+            #{imagePath}, #{addressMappingId}, #{aptDong}, #{description}, #{username}
+        )
+    </insert>
+
+    <select id="selectListing" resultMap="ListingResponseMap" parameterType="long">
+        SELECT l.*,
+        CASE
+            WHEN a.road_nm_bubun = 0 THEN CONCAT(a.road_nm, ' ', a.road_nm_bonbun)
+            ELSE CONCAT(a.road_nm, ' ', a.road_nm_bonbun, '-', a.road_nm_bubun)
+        END AS roadAddress
+        FROM listing l
+            JOIN address_mapping a
+        ON l.address_mapping_id = a.id
+        WHERE l.address_mapping_id = #{addressMappingId};
+    </select>
+
+    <delete id="deleteListing" parameterType="long">
+        DELETE FROM listing
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateListing" parameterType="com.find.doongji.listing.payload.request.ListingUpdateEntity">
+        UPDATE listing
+            SET
+            image_path = #{imagePath},
+            address_mapping_id = #{addressMappingId},
+            apt_dong = #{aptDong},
+            description = #{description},
+            username = #{username}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectListingsByRoadAddress" resultType="com.find.doongji.listing.payload.response.ListingResponse" parameterType="String">
+        select * from listing
+        where road_address = #{roadAddress}
+    </select>
+
+    <resultMap id="ListingResponseMap" type="com.find.doongji.listing.payload.response.ListingResponse">
+        <constructor>
+            <idArg column="listingId" javaType="Long"/>
+            <arg column="imagePath" javaType="String"/>
+            <arg column="aptDong" javaType="String"/>
+            <arg column="description" javaType="String"/>
+            <arg column="username" javaType="String"/>
+            <arg column="oldAddress" javaType="String"/>
+            <arg column="roadAddress" javaType="String"/>
+        </constructor>
+    </resultMap>
+
+
 
 
 </mapper>
