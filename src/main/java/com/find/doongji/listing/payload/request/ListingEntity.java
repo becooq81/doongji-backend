@@ -9,10 +9,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListEntity {
-    private String imagePath;
+public class ListingEntity {
     private Long addressMappingId;
-    private String aptDong;
-    private String description;
     private String username;
+
+    private String imagePath;
+    private int isOptical;
+    private String oldAddress;
+    private String roadAddress;
+
+    private String aptDong;
+    private String aptHo;
+    private String description;
+
 }
