@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SearchResponse {
-    private SearchResult searchResult;
     private SimilarityScore similarityScore;
     private AptInfo aptInfo;
 }
