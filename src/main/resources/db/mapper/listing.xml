@@ -6,9 +6,9 @@
 <mapper namespace="com.find.doongji.listing.repository.ListingRepository">
     <insert id="insertListing" parameterType="com.find.doongji.listing.payload.request.ListingEntity">
         INSERT INTO listing (
-            img_path, address_mapping_id, apt_dong, description, username
+            address_mapping_id, username, image_path, is_optical, old_address, road_address, apt_dong, apt_ho, description
         ) VALUES (
-            #{imagePath}, #{addressMappingId}, #{aptDong}, #{description}, #{username}
+            #{addressMappingId}, #{username}, #{imagePath}, #{isOptical}, #{oldAddress}, #{roadAddress}, #{aptDong}, #{aptHo}, #{description}
         )
     </insert>
 

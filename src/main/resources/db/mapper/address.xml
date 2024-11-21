@@ -28,15 +28,20 @@
         LIMIT 1
     </select>
 
-    <insert id="insertAddressMapping" parameterType="com.find.doongji.address.payload.request.AddressMapping" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertAddressMapping" parameterType="com.find.doongji.address.payload.request.AddressMapping" >
         INSERT INTO address_mapping (
-            old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, road_nm, road_nm_bonbun, road_nm_bubun
+            old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, road_nm, road_nm_bonbun, road_nm_bubun, road_address, apt_nm
         )
         VALUES (
-            #{oldAddress}, #{umdNm}, #{jibun}, #{aptSeq}, #{danjiId}, #{bjdCode}, #{roadNm}, #{roadNmBonbun}, #{roadNmBubun}
+            #{oldAddress}, #{umdNm}, #{jibun}, #{aptSeq}, #{danjiId}, #{bjdCode}, #{roadNm}, #{roadNmBonbun}, #{roadNmBubun}, #{roadAddress}, #{aptNm}
         )
     </insert>
 
+    <select id="selectAddressMappingByDanjiId" parameterType="long" resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
+        select * from address_mapping
+        where danji_id = #{danjiId}
+        limit 1;
+    </select>
 
     <select id="selectAddressMappingByDoroJuso" parameterType="map" resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
         SELECT *
