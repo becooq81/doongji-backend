@@ -1,9 +1,8 @@
 package com.find.doongji.apt.repository;
 
 import java.util.List;
-import java.util.Map;
 
-import com.find.doongji.apt.payload.request.AddressMapping;
+import com.find.doongji.address.payload.request.AddressMapping;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -53,31 +52,11 @@ public interface AptRepository {
 	List<AptInfo> selectAptInfoByUmdNmAndJibun(@Param("umdNm") String umdNm, @Param("jibun") String jibun);
 
 	/**
-	 * @return 맵핑 테이블 존재 여부 반환
-	 */
-	int checkIfMappingTableExists();
-
-	/**
-	 * @return 맵핑 테이블 생성
-	 */
-	void bulkInsertAddressMapping(@Param("list") List<AddressMapping> mappings);
-
-	/**
-	 * @param danjiId
-	 * @return danjiId에 해당하는 법정동 코드 반환
-	 */
-	String selectBjdCodeByDanjiId(int danjiId);
-
-	/**
-	 * @param addressMapping
-	 * @return 맵핑 테이블에 주소 맵핑 추가 (맵핑 테이블에 존재하지 않는 주소만 추가)
-	 */
-	void insertAddressMapping(AddressMapping addressMapping);
-
-	/**
 	 * @param roadNm
 	 * @param roadNmBonbun
-	 * @param roadNmBubun 도로명주소 숫자 부분에 다시가 없으면 0으로 대체
+	 * @param roadNmBubun
+	 * @return
 	 */
-	List<AddressMapping> selectAddressMappingByDoroJuso(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
+	List<AptInfo> selectAptInfoByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
+
 }
