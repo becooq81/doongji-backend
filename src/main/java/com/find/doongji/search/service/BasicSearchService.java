@@ -1,5 +1,6 @@
 package com.find.doongji.search.service;
 
+import com.find.doongji.address.repository.AddressRepository;
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.DanjiCode;
 import com.find.doongji.auth.service.AuthService;
@@ -27,7 +28,7 @@ public class BasicSearchService implements SearchService {
     private final RecommendClient aiClient;
     private final AptDetailClient aptClient;
 
-    private final AptRepository aptRepository;
+    private final AddressRepository addressRepository;
 
     private final HistoryService historyService;
     private final AuthService authService;
@@ -40,12 +41,18 @@ public class BasicSearchService implements SearchService {
         List<RecommendResponse> recommendResponses = aiClient.getRecommendation(searchRequest.getQuery(), TOP_K);
         List<SearchResponse> searchResults = new ArrayList<>();
 
+
         outerLoop:
         for (RecommendResponse recommendResponse : recommendResponses) {
-            String bjdCode = aptRepository.selectBjdCodeByDanjiId(recommendResponse.getDanjiId());
+            String bjdCode = addressRepository.selectBjdCodeByDanjiId(recommendResponse.getDanjiId());
+            if (bjdCode == null) {
+                continue; // INFO: 공개된 공동주택에 대한 정보만 관리하는 API를 사용하기 때문에 존재하지 않을 수도 있음
+            }
             List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
             for (DanjiCode danjiCode : danjiCodes) {
+                System.out.println(danjiCode.getKaptCode());
                 SearchResult searchResult = aptClient.getAptDetail(danjiCode.getKaptCode());
+                System.out.println(searchResult);
                 if (searchResult != null) {
                     searchResults.add(new SearchResponse(searchResult, SimilarityScore.classify(recommendResponse.getSimilarity())));
                     if (searchResults.size() >= TOP_K) {
