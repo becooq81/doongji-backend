@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class ClassificationResponse {
 
     private int result;
+    private String imagePath;
+
 }
