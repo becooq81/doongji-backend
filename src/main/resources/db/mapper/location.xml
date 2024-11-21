@@ -44,4 +44,11 @@
         FROM dongcodes
         WHERE dong_code = #{dongCode}
     </select>
+
+    <select id="selectDongCodeByStartsWith" parameterType="String" resultType="com.find.doongji.location.payload.response.DongCode">
+        SELECT dong_code, sido_name, gugun_name, dong_name
+        FROM dongcodes
+        WHERE CONCAT(sido_name, ' ', gugun_name, ' ', dong_name) LIKE CONCAT(#{prefix}, '%');
+    </select>
+
 </mapper>

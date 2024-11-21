@@ -14,10 +14,10 @@
 
 
     <insert id="bulkInsertAddressMapping" parameterType="list">
-        INSERT INTO address_mapping (old_address, road_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, road_nm, road_nm_bonbun, road_nm_bubun)
+        INSERT INTO address_mapping (old_address, road_address, umd_nm, jibun, apt_seq, danji_id, bjd_code, apt_nm, road_nm, road_nm_bonbun, road_nm_bubun)
         VALUES
         <foreach collection="list" item="mapping" separator=",">
-            (#{mapping.oldAddress}, #{mapping.roadAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId}, #{mapping.bjdCode}, #{mapping.roadNm}, #{mapping.roadNmBonbun}, #{mapping.roadNmBubun})
+            (#{mapping.oldAddress}, #{mapping.roadAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId}, #{mapping.bjdCode}, #{mapping.aptNm}, #{mapping.roadNm}, #{mapping.roadNmBonbun}, #{mapping.roadNmBubun})
         </foreach>
     </insert>
 
