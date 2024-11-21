@@ -14,4 +14,14 @@ public class DongCode {
 	private String gugunName;
 	private String dongName;
 	private String dongCode;
+
+	@Override
+	public String toString() {
+		return "DongCode{" +
+				"sidoName='" + sidoName + '\'' +
+				", gugunName='" + gugunName + '\'' +
+				", dongName='" + dongName + '\'' +
+				", dongCode='" + dongCode + '\'' +
+				'}';
+	}
 }
