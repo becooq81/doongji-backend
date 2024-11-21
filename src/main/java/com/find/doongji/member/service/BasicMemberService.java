@@ -48,12 +48,11 @@ public class BasicMemberService implements MemberService {
     @Transactional(readOnly = true)
     public MemberResponse getMemberProfile() {
         String currentUsername = getAuthenticatedUsername();
-        MemberEntity memberEntity =  memberRepository.findByUsername(currentUsername);
-        return MemberResponse.builder()
-                .username(memberEntity.getUsername())
-                .email(memberEntity.getEmail())
-                .name(memberEntity.getName())
-                .build();
+        MemberResponse response =  memberRepository.findByUsername(currentUsername);
+        if (response == null) {
+            throw new NoSuchElementException("User not found");
+        }
+        return response;
     }
 
     @Override

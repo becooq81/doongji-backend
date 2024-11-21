@@ -6,7 +6,13 @@
 <mapper namespace="com.find.doongji.member.repository.MemberRepository">
 
     <!-- 사용자 이름으로 사용자 찾기 -->
-    <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.request.MemberEntity">
+    <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.response.MemberResponse">
+        SELECT *
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="findEntityByUsername" parameterType="string" resultType="com.find.doongji.member.payload.request.MemberEntity">
         SELECT *
         FROM users
         WHERE username = #{username}
