@@ -33,6 +33,12 @@ public interface AptService {
 	 * @exception NotFoundException
 	 */
 	List<AptDeal> findAptDealByDong(String sido, String gugun, String dong) throws NotFoundException;
-	
-	
+
+	/**
+	 * @param dongCode
+	 * @return
+	 */
+	List<AptDeal> findAptDealByDongCode(String dongCode);
+
+	List<AptInfo> findAptInfoByDongCode(String dongCode);
 }
