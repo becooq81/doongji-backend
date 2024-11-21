@@ -1,9 +1,11 @@
-package com.find.doongji.apt.loader;
+package com.find.doongji.address.loader;
 
+import com.find.doongji.address.repository.AddressRepository;
 import com.find.doongji.apt.payload.response.AptInfo;
-import com.find.doongji.apt.payload.request.AddressMapping;
+import com.find.doongji.address.payload.request.AddressMapping;
 import com.find.doongji.apt.repository.AptRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +16,17 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AddressMappingLoader implements CommandLineRunner {
 
+    private final AddressRepository addressRepository;
     private final AptRepository aptRepository;
 
     private static final int BATCH_SIZE = 100;
 
     @Override
     public void run(String... args) throws Exception {
-        if (aptRepository.checkIfMappingTableExists() == 0) {
+        if (addressRepository.checkIfMappingTableExists() == 0) {
             System.out.println("Table 'address_mapping' does not exist. Loading data...");
             processCsvAndInsertMappings();
         } else {
@@ -41,7 +45,8 @@ public class AddressMappingLoader implements CommandLineRunner {
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] columns = line.split(",");
-                String oldAddress = columns[1];
+                String roadAddress = columns[1];
+                String oldAddress = columns[2];
                 int danjiId = Integer.parseInt(columns[0]);
 
                 String[] addressParts = oldAddress.split(" ");
@@ -62,10 +67,11 @@ public class AddressMappingLoader implements CommandLineRunner {
                             .roadNm(aptInfo.getRoadNm())
                             .roadNmBonbun(aptInfo.getRoadNmBonbun())
                             .roadNmBubun(aptInfo.getRoadNmBubun())
+                            .roadAddress(roadAddress)
                             .build();
                     mappings.add(addressMapping);
                     if (mappings.size() == BATCH_SIZE) {
-                        aptRepository.bulkInsertAddressMapping(mappings);
+                        addressRepository.bulkInsertAddressMapping(mappings);
                         System.out.println("Inserted " + mappings.size() + " records into 'address_mapping'.");
                         mappings.clear();
                     }
