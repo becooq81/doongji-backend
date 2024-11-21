@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // aka 도로명주소, 신주소
-public class RoadAddressParser {
+public class RoadAddressUtil {
 
     @Getter
     @AllArgsConstructor
@@ -31,7 +31,7 @@ public class RoadAddressParser {
             throw new IllegalArgumentException("Input string cannot be null or empty");
         }
 
-        String[] words = input.trim().split("\\s+");
+        String[] words = cleanAddress(input).split("\\s+");
         List<String> filteredWords = Arrays.stream(words)
                 .filter(word -> !(word.startsWith("(") && word.endsWith(")")))
                 .toList();
@@ -62,12 +62,12 @@ public class RoadAddressParser {
             return "";
         }
 
-        String cleanedAddress = address.replaceAll("\\s*\\([^)]*\\)\\s*$", "").trim();
+        String cleanedAddress = address.replaceAll("\\s*\\([^)]*\\)", "").trim();
         return cleanedAddress;
     }
 
     public static void main(String[] args) {
-        String input = "서울특별시 강남구 테헤란로 212 (역삼동)";
+        String input = "서울특별시 종로구 창신길 140-10 (창신동, 엠아이디그린아파트)";
         AddressComponents components = parseAddress(input);
         System.out.println(components);
 
