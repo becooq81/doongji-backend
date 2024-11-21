@@ -65,4 +65,6 @@ public interface AptRepository {
 	List<AptInfo> selectAptInfoByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
 
 	List<AptDeal> selectAptDealByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
+
+	List<AptInfo> findAllAptInfos();
 }
