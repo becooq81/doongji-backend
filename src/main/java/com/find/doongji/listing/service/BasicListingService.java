@@ -66,7 +66,7 @@ public class BasicListingService implements ListingService {
                             .imagePath(classificationResponse.getImagePath())
                             .isOptical(classificationResponse.getResult())
                             .oldAddress(request.getJibunAddress())
-                            .roadAddress(request.getRoadAddress())
+                            .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
                             .aptDong(request.getAptDong())
                             .aptHo(request.getAptHo())
                             .description(request.getDescription())
@@ -120,7 +120,6 @@ public class BasicListingService implements ListingService {
     @Override
     public List<ListingResponse> getListingsForRoadAddress(String roadAddress) {
         String cleanedAddress = AddressUtil.cleanAddress(roadAddress);
-        System.out.println(cleanedAddress);
         return listingRepository.selectListingsByRoadAddress(cleanedAddress);
     }
 
@@ -140,6 +139,7 @@ public class BasicListingService implements ListingService {
         List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
 
         AddressUtil.AddressComponents components = AddressUtil.parseAddress(request.getRoadAddress());
+        System.out.println(components);
 
         // TODO: 해당 레포지토리 메서드는 단일 레코드가 아닌 집합을 리턴하기 때문에 모두 고려해야 한다
         AptInfo aptInfo = aptRepository.selectAptInfoByRoadComponents(components.getRoadNm(), components.getRoadNmBonbun(), components.getRoadNmBubun()).get(0);
@@ -152,7 +152,7 @@ public class BasicListingService implements ListingService {
             System.out.println(oldAddressComponents.getAptName());
             addressRepository.insertAddressMapping(
                     AddressMapping.builder()
-                            .roadAddress(request.getRoadAddress())
+                            .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
                             .oldAddress(oldAddressComponents.getJibunAddress())
                             .umdNm(aptInfo.getUmdNm())
                             .jibun(aptInfo.getJibun())
