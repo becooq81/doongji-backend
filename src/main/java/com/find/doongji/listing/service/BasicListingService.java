@@ -8,14 +8,13 @@ import com.find.doongji.apt.client.AptClient;
 import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.danji.payload.response.DanjiCode;
-import com.find.doongji.listing.client.ClassificationClient;
 import com.find.doongji.listing.payload.request.ListingCreateRequest;
 import com.find.doongji.listing.payload.request.ListingEntity;
 import com.find.doongji.listing.payload.request.ListingUpdateEntity;
 import com.find.doongji.listing.payload.request.ListingUpdateRequest;
-import com.find.doongji.listing.payload.response.ClassificationResponse;
 import com.find.doongji.listing.payload.response.ListingResponse;
 import com.find.doongji.listing.repository.ListingRepository;
+import com.find.doongji.listing.util.FileUploadUtil;
 import com.find.doongji.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +37,6 @@ public class BasicListingService implements ListingService {
     private final LocationRepository locationRepository;
 
     private final AptClient aptClient;
-    private final ClassificationClient classificationClient;
 
     @Value("${server.url}")
     private String serverUrl;
@@ -47,7 +45,6 @@ public class BasicListingService implements ListingService {
     public void addListing(ListingCreateRequest request, MultipartFile image) throws Exception {
 
         // TODO: 이미지 분류는 FastAPI 서버로 하기 때문에 ClassificationClient를 제거하고 FileUploader로 대체해야 함
-        ClassificationResponse classificationResponse = classificationClient.classify(image, "./uploads");
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -63,6 +60,7 @@ public class BasicListingService implements ListingService {
             }
         }
 
+        String imagePath = FileUploadUtil.uploadFile(image, "./uploads");
 
         for (Long id : danjiIds) {
             System.out.println(id);
@@ -70,7 +68,7 @@ public class BasicListingService implements ListingService {
             ListingEntity entity = ListingEntity.builder()
                     .addressMappingId(mapping.getId())
                     .username(username)
-                    .imagePath(cleanPath(removeUploadsPrefix(classificationResponse.getImagePath())))
+                    .imagePath(cleanPath(removeUploadsPrefix(imagePath)))
                     .isOptical(request.getResult())
                     .oldAddress(request.getJibunAddress())
                     .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
