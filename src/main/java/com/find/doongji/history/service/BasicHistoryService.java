@@ -1,7 +1,6 @@
 package com.find.doongji.history.service;
 
 import com.find.doongji.auth.service.AuthService;
-import com.find.doongji.auth.service.CustomUserDetailsService;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.payload.response.HistoryResponse;
 import com.find.doongji.history.repository.HistoryRepository;

@@ -12,12 +12,14 @@ public interface ListingRepository {
 
     /**
      * 매물 등록
+     *
      * @param listingEntity
      */
     void insertListing(ListingEntity listingEntity);
 
     /**
      * 매물 조회
+     *
      * @param addressMappingId
      * @return ListingResponse
      */
@@ -25,6 +27,7 @@ public interface ListingRepository {
 
     /**
      * 매물 삭제
+     *
      * @param id
      */
     void deleteListing(Long id);
@@ -36,6 +39,7 @@ public interface ListingRepository {
 
     /**
      * 도로명 주소로 매물 조회
+     *
      * @param roadAddress
      */
     List<ListingResponse> selectListingsByRoadAddress(String roadAddress);

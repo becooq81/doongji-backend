@@ -35,7 +35,7 @@ public interface AddressRepository {
     /**
      * @param roadNm
      * @param roadNmBonbun
-     * @param roadNmBubun 도로명주소 숫자 부분에 다시가 없으면 0으로 대체
+     * @param roadNmBubun  도로명주소 숫자 부분에 다시가 없으면 0으로 대체
      */
     List<AddressMappingResponse> selectAddressMappingByDoroJuso(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
 

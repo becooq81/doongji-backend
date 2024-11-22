@@ -10,18 +10,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class DongCode {
-	private String sidoName;
-	private String gugunName;
-	private String dongName;
-	private String dongCode;
+    private String sidoName;
+    private String gugunName;
+    private String dongName;
+    private String dongCode;
 
-	@Override
-	public String toString() {
-		return "DongCode{" +
-				"sidoName='" + sidoName + '\'' +
-				", gugunName='" + gugunName + '\'' +
-				", dongName='" + dongName + '\'' +
-				", dongCode='" + dongCode + '\'' +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "DongCode{" +
+                "sidoName='" + sidoName + '\'' +
+                ", gugunName='" + gugunName + '\'' +
+                ", dongName='" + dongName + '\'' +
+                ", dongCode='" + dongCode + '\'' +
+                '}';
+    }
 }

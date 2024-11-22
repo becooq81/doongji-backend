@@ -9,12 +9,14 @@ public interface HistoryService {
 
     /**
      * Adds a new history entry for a user
+     *
      * @param searchHistoryRequest
      */
     void addHistory(HistoryRequest searchHistoryRequest);
 
     /**
      * Retrieves all history entries for a user
+     *
      * @param username
      * @return
      */
@@ -22,6 +24,7 @@ public interface HistoryService {
 
     /**
      * Removes a history entry by its ID
+     *
      * @param username
      * @param id
      */

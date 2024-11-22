@@ -1,6 +1,6 @@
 package com.find.doongji.apt.client;
 
-import com.find.doongji.apt.payload.response.DanjiCode;
+import com.find.doongji.danji.payload.response.DanjiCode;
 import com.find.doongji.search.payload.response.SearchResult;
 
 import java.util.List;

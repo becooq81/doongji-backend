@@ -4,20 +4,20 @@ import com.find.doongji.address.repository.AddressRepository;
 import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.AptInfo;
-import com.find.doongji.apt.payload.response.DanjiCode;
+import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.apt.service.AptService;
 import com.find.doongji.auth.service.AuthService;
-import com.find.doongji.location.payload.response.DongCode;
-import com.find.doongji.location.repository.LocationRepository;
-import com.find.doongji.search.enums.SimilarityScore;
-import com.find.doongji.search.payload.response.SearchResponse;
-import com.find.doongji.search.payload.response.SearchResult;
-import com.find.doongji.apt.repository.AptRepository;
+import com.find.doongji.danji.payload.response.DanjiCode;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.service.HistoryService;
+import com.find.doongji.location.payload.response.DongCode;
+import com.find.doongji.location.repository.LocationRepository;
 import com.find.doongji.search.client.RecommendClient;
+import com.find.doongji.search.enums.SimilarityScore;
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.RecommendResponse;
+import com.find.doongji.search.payload.response.SearchResponse;
+import com.find.doongji.search.payload.response.SearchResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,18 +34,20 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public class BasicSearchService implements SearchService {
 
+    private static final int TOP_K = 50;
     private final RecommendClient recClient;
     private final AptDetailClient aptClient;
-
     private final AddressRepository addressRepository;
     private final AptRepository aptRepository;
     private final LocationRepository locationRepository;
-
     private final HistoryService historyService;
     private final AptService aptService;
     private final AuthService authService;
 
-    private static final int TOP_K = 50;
+    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
 
     @Override
     @Transactional
@@ -80,7 +82,7 @@ public class BasicSearchService implements SearchService {
                 }
 
                 List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
-                System.out.println("BjdCode: "+ bjdCode);
+                System.out.println("BjdCode: " + bjdCode);
                 for (DanjiCode danjiCode : danjiCodes) {
                     System.out.println("DanjiCode: " + danjiCode);
 
@@ -95,7 +97,7 @@ public class BasicSearchService implements SearchService {
                         }
                         if (!matchesSearchCriteria(aptInfo, searchRequest)) continue;
                         responses.add(new SearchResponse(SimilarityScore.classify(recommendResponse.getSimilarity()), aptInfo));
-                        System.out.println("Compare: aptInfo("+aptInfo.getAptNm()+"), danjiCode("+danjiCode.getKaptName()+")");
+                        System.out.println("Compare: aptInfo(" + aptInfo.getAptNm() + "), danjiCode(" + danjiCode.getKaptName() + ")");
 
                         if (responses.size() >= TOP_K) {
                             break outerLoop;
@@ -103,7 +105,6 @@ public class BasicSearchService implements SearchService {
                         break;
                     }
                 }
-
 
 
             }
@@ -130,7 +131,6 @@ public class BasicSearchService implements SearchService {
         return normalizedDanjiName.startsWith(normalizedAptInfoName);
     }
 
-
     @Override
     public SearchResult viewSearched(String aptSeq) throws Exception {
         AptInfo aptInfo = aptRepository.selectAptInfoByAptSeq(aptSeq);
@@ -146,12 +146,6 @@ public class BasicSearchService implements SearchService {
         }
         throw new Exception("viewSearched: No matching danji code found for apt seq: " + aptSeq);
     }
-
-    private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
-        Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
-
 
     private String cleanDanjiName(String danjiName) {
         if (danjiName == null || danjiName.isEmpty()) {
@@ -206,11 +200,11 @@ public class BasicSearchService implements SearchService {
 
         if (minDealAmount == null || maxDealAmount == null) return false;
         return isOverlappingRange(
-                    parseToDouble(minDealAmount),
-                    parseToDouble(maxDealAmount),
-                    searchRequest.getMinPrice(),
-                    searchRequest.getMaxPrice()
-            );
+                parseToDouble(minDealAmount),
+                parseToDouble(maxDealAmount),
+                searchRequest.getMinPrice(),
+                searchRequest.getMaxPrice()
+        );
     }
 
     private boolean checkAreaOverlap(AptInfo aptInfo, SearchRequest searchRequest) {
@@ -223,11 +217,11 @@ public class BasicSearchService implements SearchService {
 
         if (minExcluUseAr == null || maxExcluUseAr == null) return false;
         return isOverlappingRange(
-                    parseToDouble(minExcluUseAr),
-                    parseToDouble(maxExcluUseAr),
-                    searchRequest.getMinArea(),
-                    searchRequest.getMaxArea()
-            );
+                parseToDouble(minExcluUseAr),
+                parseToDouble(maxExcluUseAr),
+                searchRequest.getMinArea(),
+                searchRequest.getMaxArea()
+        );
     }
 
     private boolean checkLocationFilter(AptInfo aptInfo, SearchRequest searchRequest) {
@@ -256,7 +250,6 @@ public class BasicSearchService implements SearchService {
         // Overlap exists if the ranges intersect
         return Math.max(minApt.doubleValue(), minRequest.doubleValue()) <= Math.min(maxApt.doubleValue(), maxRequest.doubleValue());
     }
-
 
 
     private Double parseToDouble(String value) {

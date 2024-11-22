@@ -7,8 +7,11 @@ import com.find.doongji.location.payload.response.SidoList;
 
 
 public interface LocationService {
-	DongList findDongBySiGugun(String sido, String gugun);
-	GugunList findGugunBySi(String sido);
-	DongCode findDongCode(String sido, String gugun, String dong);
-	SidoList findSido();
+    DongList findDongBySiGugun(String sido, String gugun);
+
+    GugunList findGugunBySi(String sido);
+
+    DongCode findDongCode(String sido, String gugun, String dong);
+
+    SidoList findSido();
 }

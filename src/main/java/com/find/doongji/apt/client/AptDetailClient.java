@@ -1,10 +1,10 @@
 package com.find.doongji.apt.client;
 
 import com.find.doongji.address.util.AddressUtil;
-import com.find.doongji.apt.payload.response.DanjiCode;
-import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.apt.utils.HttpUtils;
 import com.find.doongji.apt.utils.ParseUtils;
+import com.find.doongji.danji.payload.response.DanjiCode;
+import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.search.util.ResultParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -39,11 +39,11 @@ public class AptDetailClient implements AptClient {
 
     @Override
     public List<DanjiCode> getDanjiCodeList(String bjdCode) throws Exception {
-        StringBuilder dataUrlBuilder = new StringBuilder(DANJI_CODE_URL)
-                .append("?ServiceKey=").append(PUBLIC_DATA_KEY)
-                .append("&bjdCode=").append(bjdCode);
+        String dataUrlBuilder = DANJI_CODE_URL +
+                "?ServiceKey=" + PUBLIC_DATA_KEY +
+                "&bjdCode=" + bjdCode;
 
-        String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder.toString());
+        String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder);
         List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "as1", "as2", "as3", "kaptCode", "kaptName");
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
@@ -58,15 +58,15 @@ public class AptDetailClient implements AptClient {
 
     @Override
     public SearchResult getAptDetail(String kaptCode) throws Exception {
-        StringBuilder basicInfoUrlBuilder = new StringBuilder(BASIC_INFO_URL)
-                .append("?ServiceKey=").append(PUBLIC_DATA_KEY)
-                .append("&kaptCode=").append(kaptCode);
-        StringBuilder specificInfoUrlBuilder = new StringBuilder(SPECIFIC_INFO_URL)
-                .append("?ServiceKey=").append(PUBLIC_DATA_KEY)
-                .append("&kaptCode=").append(kaptCode);
+        String basicInfoUrlBuilder = BASIC_INFO_URL +
+                "?ServiceKey=" + PUBLIC_DATA_KEY +
+                "&kaptCode=" + kaptCode;
+        String specificInfoUrlBuilder = SPECIFIC_INFO_URL +
+                "?ServiceKey=" + PUBLIC_DATA_KEY +
+                "&kaptCode=" + kaptCode;
 
-        String basicInfoResponseBody = HttpUtils.fetchDataFromUrl(basicInfoUrlBuilder.toString());
-        String specificInfoResponseBody = HttpUtils.fetchDataFromUrl(specificInfoUrlBuilder.toString());
+        String basicInfoResponseBody = HttpUtils.fetchDataFromUrl(basicInfoUrlBuilder);
+        String specificInfoResponseBody = HttpUtils.fetchDataFromUrl(specificInfoUrlBuilder);
 
         Map<String, String> basicInfoResult = ParseUtils.parseXML("/response/body/item", basicInfoResponseBody, "kaptName", "kaptAddr", "hoCnt", "kaptCode", "kaptDongCnt", "doroJuso", "kaptdaCnt")
                 .get(0);
@@ -105,10 +105,10 @@ public class AptDetailClient implements AptClient {
 
     @Override
     public Map<String, String> getCoordinatesFromDoroJuso(String doroJuso) throws Exception {
-        StringBuilder geocoderUrlBuilder = new StringBuilder(GEOCODER_URL)
-                .append(GEOCODER_KEY)
-                .append("&address=").append(URLEncoder.encode(doroJuso, StandardCharsets.UTF_8));
-        String geocoderResponseBody = HttpUtils.fetchDataFromUrl(geocoderUrlBuilder.toString());
+        String geocoderUrlBuilder = GEOCODER_URL +
+                GEOCODER_KEY +
+                "&address=" + URLEncoder.encode(doroJuso, StandardCharsets.UTF_8);
+        String geocoderResponseBody = HttpUtils.fetchDataFromUrl(geocoderUrlBuilder);
 
         return ParseUtils.parseXML("/response/result/point", geocoderResponseBody, "x", "y").get(0);
     }

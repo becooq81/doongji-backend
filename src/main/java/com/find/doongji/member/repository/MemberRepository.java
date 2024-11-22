@@ -1,13 +1,12 @@
 package com.find.doongji.member.repository;
 
-import java.util.List;
-
+import com.find.doongji.member.payload.request.MemberEntity;
+import com.find.doongji.member.payload.request.MemberUpdateRequest;
+import com.find.doongji.member.payload.response.MemberSearchResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.find.doongji.member.payload.request.MemberUpdateRequest;
-import com.find.doongji.member.payload.request.MemberEntity;
-import com.find.doongji.member.payload.response.MemberSearchResponse;
+import java.util.List;
 
 @Mapper
 public interface MemberRepository {

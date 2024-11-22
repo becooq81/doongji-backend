@@ -15,14 +15,6 @@ public enum SimilarityScore {
         this.upperBound = upperBound;
     }
 
-    public double getLowerBound() {
-        return lowerBound;
-    }
-
-    public double getUpperBound() {
-        return upperBound;
-    }
-
     public static SimilarityScore classify(double score) {
         for (SimilarityScore level : SimilarityScore.values()) {
             if (score >= level.getLowerBound() && score < level.getUpperBound()) {
@@ -30,5 +22,13 @@ public enum SimilarityScore {
             }
         }
         throw new IllegalArgumentException("Score " + score + " is out of valid range");
+    }
+
+    public double getLowerBound() {
+        return lowerBound;
+    }
+
+    public double getUpperBound() {
+        return upperBound;
     }
 }

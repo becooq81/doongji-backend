@@ -1,54 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.find.doongji.location.repository.LocationRepository">
-	
+
     <!-- Method 1: Select dong names based on si and gugun -->
     <select id="selectDong" resultType="String">
-        SELECT DISTINCT dong_name 
-        FROM dongcodes 
-        WHERE sido_name = #{si} 
-         	AND gugun_name = #{gugun}
-         	AND dong_name IS NOT NULL
+        SELECT DISTINCT dong_name
+        FROM dongcodes
+        WHERE sido_name = #{si}
+        AND gugun_name = #{gugun}
+        AND dong_name IS NOT NULL
         ORDER BY dong_name
     </select>
 
-	<!-- Method 2: Select gugun names based on sido -->
-	<select id="selectGugun" resultType="String">
-	    SELECT DISTINCT SUBSTRING_INDEX(gugun_name, ' ', 1) AS gugun_name
-	    FROM dongcodes 
-	    WHERE sido_name = #{si} 
-	        AND gugun_name IS NOT NULL
-	   	ORDER BY gugun_name
-	</select>
+    <!-- Method 2: Select gugun names based on sido -->
+    <select id="selectGugun" resultType="String">
+        SELECT DISTINCT SUBSTRING_INDEX(gugun_name, ' ', 1) AS gugun_name
+        FROM dongcodes
+        WHERE sido_name = #{si}
+        AND gugun_name IS NOT NULL
+        ORDER BY gugun_name
+    </select>
 
 
     <!-- Method 3: Select dong_code based on si, gugun, and dong -->
     <select id="selectDongCode" resultType="String">
-        SELECT dong_code 
-        FROM dongcodes 
-        WHERE sido_name = #{si} 
-          AND gugun_name = #{gugun} 
-          AND dong_name = #{dong}
-    </select>
-    
-    <!-- Method 4: Select distinct sido names -->
-    <select id="selectSido" resultType="String">
-    	SELECT DISTINCT sido_name
-    	FROM dongcodes
+        SELECT dong_code
+        FROM dongcodes
+        WHERE sido_name = #{si}
+        AND gugun_name = #{gugun}
+        AND dong_name = #{dong}
     </select>
 
-    <select id="selectDongCodeByDongcode" resultType="com.find.doongji.location.payload.response.DongCode" parameterType="String">
+    <!-- Method 4: Select distinct sido names -->
+    <select id="selectSido" resultType="String">
+        SELECT DISTINCT sido_name
+        FROM dongcodes
+    </select>
+
+    <select id="selectDongCodeByDongcode" resultType="com.find.doongji.location.payload.response.DongCode"
+            parameterType="String">
         SELECT *
         FROM dongcodes
         WHERE dong_code = #{dongCode}
     </select>
 
-    <select id="selectDongCodeByStartsWith" parameterType="String" resultType="com.find.doongji.location.payload.response.DongCode">
+    <select id="selectDongCodeByStartsWith" parameterType="String"
+            resultType="com.find.doongji.location.payload.response.DongCode">
         SELECT dong_code, sido_name, gugun_name, dong_name
         FROM dongcodes
         WHERE CONCAT(sido_name, ' ', gugun_name, ' ', dong_name) LIKE CONCAT(#{prefix}, '%');
+    </select>
+
+    <select id="selectAllDongCode" resultType="string">
+        select dong_code
+        from dongcodes;
     </select>
 
 </mapper>

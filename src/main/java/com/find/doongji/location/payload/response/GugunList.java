@@ -1,11 +1,11 @@
 package com.find.doongji.location.payload.response;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GugunList {
 
-	private String sido;
-	private List<String> gugunList;
+    private String sido;
+    private List<String> gugunList;
 }

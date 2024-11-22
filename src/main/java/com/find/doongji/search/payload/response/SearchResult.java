@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class SearchResult  {
+public class SearchResult {
 
     private String kaptName; // 단지 이름
     private String hoCnt; // 호 수

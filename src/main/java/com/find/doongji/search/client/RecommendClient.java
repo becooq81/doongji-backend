@@ -24,25 +24,6 @@ public class RecommendClient {
     @Value("${rec.ai-url}")
     private String RECOMMEND_URL;
 
-    public List<RecommendResponse> getRecommendation(String query, int topK) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        JSONObject requestBody = new JSONObject();
-        requestBody.put("query", query);
-        requestBody.put("top_k", topK);
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(RECOMMEND_URL, requestEntity, String.class);
-        try {
-            return parseJson(response.getBody());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
-
     private static List<RecommendResponse> parseJson(String responseBody) throws Exception {
         List<RecommendResponse> result = new ArrayList<>();
 
@@ -65,6 +46,25 @@ public class RecommendClient {
         }
 
         return result;
+    }
+
+    public List<RecommendResponse> getRecommendation(String query, int topK) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("query", query);
+        requestBody.put("top_k", topK);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(RECOMMEND_URL, requestEntity, String.class);
+        try {
+            return parseJson(response.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
 

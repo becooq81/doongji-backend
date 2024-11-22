@@ -1,15 +1,18 @@
 package com.find.doongji.address.loader;
 
+import com.find.doongji.address.payload.request.AddressMapping;
 import com.find.doongji.address.repository.AddressRepository;
 import com.find.doongji.apt.payload.response.AptInfo;
-import com.find.doongji.address.payload.request.AddressMapping;
 import com.find.doongji.apt.repository.AptRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +22,9 @@ import java.util.List;
 @Slf4j
 public class AddressMappingLoader implements CommandLineRunner {
 
+    private static final int BATCH_SIZE = 100;
     private final AddressRepository addressRepository;
     private final AptRepository aptRepository;
-
-    private static final int BATCH_SIZE = 100;
 
     @Override
     public void run(String... args) throws Exception {

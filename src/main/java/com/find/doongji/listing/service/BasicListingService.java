@@ -6,8 +6,8 @@ import com.find.doongji.address.repository.AddressRepository;
 import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.client.AptClient;
 import com.find.doongji.apt.payload.response.AptInfo;
-import com.find.doongji.apt.payload.response.DanjiCode;
 import com.find.doongji.apt.repository.AptRepository;
+import com.find.doongji.danji.payload.response.DanjiCode;
 import com.find.doongji.listing.client.ClassificationClient;
 import com.find.doongji.listing.payload.request.ListingCreateRequest;
 import com.find.doongji.listing.payload.request.ListingEntity;
@@ -62,16 +62,16 @@ public class BasicListingService implements ListingService {
             System.out.println(id);
             AddressMappingResponse mapping = addressRepository.selectAddressMappingByDanjiId(id);
             ListingEntity entity = ListingEntity.builder()
-                            .addressMappingId(mapping.getId())
-                            .username(username)
-                            .imagePath(classificationResponse.getImagePath())
-                            .isOptical(request.getResult())
-                            .oldAddress(request.getJibunAddress())
-                            .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
-                            .aptDong(request.getAptDong())
-                            .aptHo(request.getAptHo())
-                            .description(request.getDescription())
-                                    .build();
+                    .addressMappingId(mapping.getId())
+                    .username(username)
+                    .imagePath(classificationResponse.getImagePath())
+                    .isOptical(request.getResult())
+                    .oldAddress(request.getJibunAddress())
+                    .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
+                    .aptDong(request.getAptDong())
+                    .aptHo(request.getAptHo())
+                    .description(request.getDescription())
+                    .build();
             listingRepository.insertListing(entity);
         }
     }
@@ -148,7 +148,8 @@ public class BasicListingService implements ListingService {
         for (DanjiCode danjiCode : danjiCodes) {
             System.out.println(request.getJibunAddress());
             danjiId = (aptInfo.getAptSeq() + danjiCode.getKaptCode()).hashCode() & 0xffffffffL;
-            if (!AddressUtil.cleanAddress(request.getJibunAddress()).startsWith(AddressUtil.cleanAddress(danjiCode.getSiGugunDong()))) continue;
+            if (!AddressUtil.cleanAddress(request.getJibunAddress()).startsWith(AddressUtil.cleanAddress(danjiCode.getSiGugunDong())))
+                continue;
             AddressUtil.OldAddressComponents oldAddressComponents = AddressUtil.parseOldAddress(request.getJibunAddress());
             System.out.println(oldAddressComponents.getAptName());
             addressRepository.insertAddressMapping(

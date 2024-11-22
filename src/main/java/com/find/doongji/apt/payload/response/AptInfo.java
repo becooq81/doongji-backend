@@ -10,22 +10,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class AptInfo {
-	private String aptSeq;
-	private String sggCd;
-	private String umdCd;
-	private String umdNm;
-	private String jibun;
-	private String roadNmSggCd;
-	private String roadNm;
-	private String roadNmBonbun;
-	private String roadNmBubun;
-	private String aptNm;
-	private int buildYear;
-	private String latitude;
-	private String longitude;
+    private String aptSeq;
+    private String sggCd;
+    private String umdCd;
+    private String umdNm;
+    private String jibun;
+    private String roadNmSggCd;
+    private String roadNm;
+    private String roadNmBonbun;
+    private String roadNmBubun;
+    private String aptNm;
+    private int buildYear;
+    private String latitude;
+    private String longitude;
 
-	private String minExcluUseAr;
-	private String maxExcluUseAr;
-	private String minDealAmount;
-	private String maxDealAmount;
+    private String minExcluUseAr;
+    private String maxExcluUseAr;
+    private String minDealAmount;
+    private String maxDealAmount;
 }

@@ -9,38 +9,6 @@ import java.util.List;
 // aka 도로명주소, 신주소
 public class AddressUtil {
 
-    @Getter
-    @AllArgsConstructor
-    public static class AddressComponents {
-        private final String roadNm;
-        private final String roadNmBonbun;
-        private final String roadNmBubun;
-
-        @Override
-        public String toString() {
-            return "AddressComponents{" +
-                    "roadNm='" + roadNm + '\'' +
-                    ", roadNmBonbun='" + roadNmBonbun + '\'' +
-                    ", roadNmBubun=" + roadNmBubun +
-                    '}';
-        }
-    }
-
-
-    @Getter
-    @AllArgsConstructor
-    public static class OldAddressComponents {
-        private final String jibunAddress;
-        private final String aptName;
-
-        @Override
-        public String toString() {
-            return "OldAddressComponents{" +
-                    "jibunAddress='" + jibunAddress + '\'' +
-                    ", aptName='" + aptName + '\'' +
-                    '}';
-        }
-    }
     public static OldAddressComponents parseOldAddress(String input) {
         if (input == null || input.trim().isEmpty()) {
             throw new IllegalArgumentException("Input string cannot be null or empty");
@@ -120,6 +88,38 @@ public class AddressUtil {
         String input3 = "경기도 과천시 부림동 41 주공아파트";
         OldAddressComponents oldAddressComponents = parseOldAddress(input3);
         System.out.println(oldAddressComponents);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class AddressComponents {
+        private final String roadNm;
+        private final String roadNmBonbun;
+        private final String roadNmBubun;
+
+        @Override
+        public String toString() {
+            return "AddressComponents{" +
+                    "roadNm='" + roadNm + '\'' +
+                    ", roadNmBonbun='" + roadNmBonbun + '\'' +
+                    ", roadNmBubun=" + roadNmBubun +
+                    '}';
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class OldAddressComponents {
+        private final String jibunAddress;
+        private final String aptName;
+
+        @Override
+        public String toString() {
+            return "OldAddressComponents{" +
+                    "jibunAddress='" + jibunAddress + '\'' +
+                    ", aptName='" + aptName + '\'' +
+                    '}';
+        }
     }
 
 
