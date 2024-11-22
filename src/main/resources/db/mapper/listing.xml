@@ -6,10 +6,10 @@
 <mapper namespace="com.find.doongji.listing.repository.ListingRepository">
     <insert id="insertListing" parameterType="com.find.doongji.listing.payload.request.ListingEntity">
         INSERT INTO listing (
-        address_mapping_id, username, image_path, is_optical, old_address, road_address, apt_dong, apt_ho, description
+            address_mapping_id, username, image_path, is_optical, old_address, road_address, apt_dong, apt_ho, description, price
         ) VALUES (
-        #{addressMappingId}, #{username}, #{imagePath}, #{isOptical}, #{oldAddress}, #{roadAddress}, #{aptDong},
-        #{aptHo}, #{description}
+            #{addressMappingId}, #{username}, #{imagePath}, #{isOptical}, #{oldAddress}, #{roadAddress}, #{aptDong},
+            #{aptHo}, #{description}, #{price}
         )
     </insert>
 
@@ -38,6 +38,7 @@
         apt_dong = #{aptDong},
         description = #{description},
         username = #{username}
+        price = #{price}
         WHERE id = #{id}
     </update>
 
@@ -56,6 +57,7 @@
             <arg column="username" javaType="String"/>
             <arg column="oldAddress" javaType="String"/>
             <arg column="roadAddress" javaType="String"/>
+            <arg column="price" javaType="String"/>
         </constructor>
     </resultMap>
 

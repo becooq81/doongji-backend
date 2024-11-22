@@ -22,4 +22,6 @@ public class ListingEntity {
     private String aptHo;
     private String description;
 
+    private String price;
+
 }

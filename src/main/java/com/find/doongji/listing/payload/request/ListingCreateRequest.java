@@ -25,6 +25,7 @@ public class ListingCreateRequest {
     @NotNull
     private int result;
 
+    private String price;
 
     @Override
     public String toString() {
@@ -34,6 +35,8 @@ public class ListingCreateRequest {
                 ", aptDong='" + aptDong + '\'' +
                 ", aptHo='" + aptHo + '\'' +
                 ", description='" + description + '\'' +
+                ", result=" + result +
+                ", price='" + price + '\'' +
                 '}';
     }
 }

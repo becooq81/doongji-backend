@@ -71,6 +71,7 @@ public class BasicListingService implements ListingService {
                     .aptDong(request.getAptDong())
                     .aptHo(request.getAptHo())
                     .description(request.getDescription())
+                    .price(request.getPrice())
                     .build();
             listingRepository.insertListing(entity);
         }
@@ -107,6 +108,7 @@ public class BasicListingService implements ListingService {
                 .aptDong(request.getAptDong() == null ? response.getAptDong() : request.getAptDong())
                 .aptHo(request.getAptHo() == null ? response.getAptHo() : request.getAptHo())
                 .description(request.getDescription() == null ? response.getDescription() : request.getDescription())
+                .price(request.getPrice() == null ? response.getPrice() : request.getPrice())
                 .build();
 
         listingRepository.updateListing(entity);

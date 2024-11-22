@@ -22,4 +22,7 @@ public class ListingUpdateEntity {
     private String aptDong;
     private String aptHo;
     private String description;
+
+    private String price;
+
 }

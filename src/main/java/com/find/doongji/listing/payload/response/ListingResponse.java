@@ -20,4 +20,7 @@ public class ListingResponse {
     private String aptHo;
 
     private String description;
+
+    private String price;
+
 }
