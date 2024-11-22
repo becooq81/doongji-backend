@@ -68,7 +68,10 @@ public class AddressUtil {
 
         String cleanedAddress = address.replaceAll("\\s*\\([^)]*\\)", "").trim();
 
-        cleanedAddress = cleanedAddress.replace("광역", "").replace("특별", "");
+        if (cleanedAddress.contains("서울특별")) {
+            cleanedAddress = cleanedAddress.replace("서울특별", "서울");
+        }
+        cleanedAddress = cleanedAddress.replace("광역", ""); // Retain other replacements
 
 
         return cleanedAddress;
