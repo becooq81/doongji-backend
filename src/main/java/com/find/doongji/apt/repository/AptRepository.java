@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface AptRepository {
@@ -28,6 +29,7 @@ public interface AptRepository {
      */
     List<AptInfo> selectAptInfoByDong(@Param("sggCd") String sggCd, @Param("umdCd") String umdCd);
 
+    List<AptInfo> selectAptInfosByDongCodes(@Param("list") List<String> dongCodes);
     /**
      * @param aptNm (아파트 명): 부분 검색 가능
      * @return 아파트 명에 해당하는 아파트 번호 반환
@@ -39,6 +41,8 @@ public interface AptRepository {
      * @return 아파트 번호에 해당하는 아파트 정보 반환
      */
     AptInfo selectAptInfoByAptSeq(String aptSeq);
+
+    List<AptInfo> selectAptInfoByAptSeqList(@Param("list") List<String> aptSeqList);
 
     /**
      * @param aptNm

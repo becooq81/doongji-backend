@@ -12,6 +12,7 @@
         END;
     </select>
 
+
     <insert id="bulkInsertDanji" parameterType="list">
         INSERT INTO danji (as1, as2, as3, bjd_code, kapt_code, kapt_name)
         VALUES
@@ -19,5 +20,22 @@
             (#{item.as1}, #{item.as2}, #{item.as3}, #{item.bjdCode}, #{item.kaptCode}, #{item.kaptName})
         </foreach>
     </insert>
+
+    <select id="selectAllByBjdCode" resultType="com.find.doongji.danji.payload.response.DanjiCode">
+        SELECT *, CONCAT(as1, " ", as2, " ", as3) AS si_gugun_dong
+        FROM danji
+        WHERE bjd_code = #{bjdCode}
+    </select>
+
+
+
+    <select id="selectAllByBjdCodeList" parameterType="list" resultType="com.find.doongji.danji.payload.response.DanjiCode">
+        SELECT *, CONCAT(as1, " ", as2, " ", as3) AS si_gugun_dong
+        FROM danji
+        WHERE bjd_code IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
 </mapper>

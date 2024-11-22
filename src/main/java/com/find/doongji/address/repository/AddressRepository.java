@@ -24,7 +24,9 @@ public interface AddressRepository {
      * @param danjiId
      * @return danjiId에 해당하는 법정동 코드 반환
      */
-    String selectBjdCodeByDanjiId(int danjiId);
+    String selectBjdCodeByDanjiId(Long danjiId);
+
+    List<String> selectBjdCodeByDanjiIdList(@Param("list") List<Long> danjiIdList);
 
     /**
      * @param addressMapping
@@ -52,4 +54,6 @@ public interface AddressRepository {
     List<AddressMappingResponse> selectAddressMappingByRoadAddress(@Param("roadAddress") String roadAddress);
 
     AddressMappingResponse selectAddressMappingByDanjiId(@Param("danjiId") Long danjiId);
+
+    List<AddressMappingResponse> selectAddressMappingByDanjiIdList(@Param("list") List<Long> danjiIdList);
 }

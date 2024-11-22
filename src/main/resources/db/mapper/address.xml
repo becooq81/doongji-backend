@@ -23,8 +23,16 @@
             #{mapping.roadNmBubun})
         </foreach>
     </insert>
+    <select id="selectBjdCodeByDanjiIdList" parameterType="list" resultType="string">
+        SELECT bjd_code
+        FROM address_mapping
+        WHERE danji_id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
-    <select id="selectBjdCodeByDanjiId" parameterType="int" resultType="String">
+    <select id="selectBjdCodeByDanjiId" parameterType="long" resultType="String">
         SELECT bjd_code
         FROM address_mapping
         WHERE danji_id = #{danjiId}
@@ -68,5 +76,14 @@
             resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
         SELECT * FROM address_mapping
         WHERE road_address = #{roadAddress}
+    </select>
+
+    <select id="selectAddressMappingByDanjiIdList" parameterType="list" resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
+        SELECT *
+        FROM address_mapping
+        WHERE danji_id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 </mapper>

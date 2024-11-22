@@ -93,5 +93,24 @@
         FROM houseinfos
     </select>
 
+    <select id="selectAptInfosByDongCodes" parameterType="list" resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+        WHERE
+        <foreach collection="list" item="dongcode" open="(" separator=" OR " close=")">
+            (sgg_cd = SUBSTRING(#{dongcode}, 1, 5) AND umd_cd = SUBSTRING(#{dongcode}, 6, 5))
+        </foreach>
+    </select>
+
+    <select id="selectAptInfoByAptSeqList" parameterType="list" resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+        WHERE apt_seq IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
 
 </mapper>
