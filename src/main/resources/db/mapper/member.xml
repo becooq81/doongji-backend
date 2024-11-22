@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.find.doongji.member.repository.MemberRepository">
 
     <!-- 사용자 이름으로 사용자 찾기 -->
-    <select id="findByUsername" parameterType="string"
-            resultType="com.find.doongji.member.payload.request.MemberEntity">
+    <select id="findByUsername" parameterType="string" resultType="com.find.doongji.member.payload.response.MemberResponse">
+        SELECT *
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <select id="findEntityByUsername" parameterType="string" resultType="com.find.doongji.member.payload.request.MemberEntity">
         SELECT *
         FROM users
         WHERE username = #{username}
     </select>
 
     <!-- 새로운 사용자 추가 -->
-    <insert id="insertMember" parameterType="com.find.doongji.member.payload.request.MemberEntity">
-        INSERT INTO users (username, email, password, name, role)
-        VALUES (#{username}, #{email}, #{password}, #{name}, #{role})
-    </insert>
+	<insert id="insertMember" parameterType="com.find.doongji.member.payload.request.MemberEntity">
+	    INSERT INTO users (username, email, password, name, role)
+	    VALUES (#{username}, #{email}, #{password}, #{name}, #{role})
+	</insert>
 
     <!-- 사용자 정보 업데이트 -->
     <update id="updateMember" parameterType="map">
         UPDATE users
-        SET email = #{request.email},
-            name  = #{request.name}
+        SET email = #{request.email}, name = #{request.name}
         WHERE username = #{username}
     </update>
 
     <!-- 사용자 삭제 -->
     <delete id="deleteMember" parameterType="string">
-        DELETE
-        FROM users
-        WHERE username = #{username}
+        DELETE FROM users WHERE username = #{username}
     </delete>
 
     <!-- 사용자 검색 -->
-    <select id="searchMembers" parameterType="string"
-            resultType="com.find.doongji.member.payload.response.MemberSearchResponse">
+    <select id="searchMembers" parameterType="string" resultType="com.find.doongji.member.payload.response.MemberSearchResponse">
         SELECT username, email, name, password, role
         FROM users
         WHERE username LIKE CONCAT('%', #{keyword}, '%')
@@ -45,15 +46,19 @@
 
     <!-- 사용자 이름 존재 여부 확인 -->
     <select id="existsByUsername" parameterType="string" resultType="boolean">
-        SELECT EXISTS (SELECT 1
-                       FROM users
-                       WHERE username = #{username})
+        SELECT EXISTS (
+            SELECT 1
+            FROM users
+            WHERE username = #{username}
+        )
     </select>
 
     <!-- 사용자 이메일 존재 여부 확인 -->
     <select id="existsByEmail" parameterType="string" resultType="boolean">
-        SELECT EXISTS (SELECT 1
-                       FROM users
-                       WHERE email = #{email})
+        SELECT EXISTS (
+            SELECT 1
+            FROM users
+            WHERE email = #{email}
+        )
     </select>
 </mapper>

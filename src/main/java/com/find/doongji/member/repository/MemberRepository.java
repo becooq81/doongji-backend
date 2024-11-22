@@ -1,19 +1,22 @@
 package com.find.doongji.member.repository;
 
-import com.find.doongji.member.payload.request.MemberEntity;
-import com.find.doongji.member.payload.request.MemberUpdateRequest;
-import com.find.doongji.member.payload.response.MemberSearchResponse;
+import java.util.List;
+
+import com.find.doongji.member.payload.response.MemberResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.find.doongji.member.payload.request.MemberUpdateRequest;
+import com.find.doongji.member.payload.request.MemberEntity;
+import com.find.doongji.member.payload.response.MemberSearchResponse;
 
 @Mapper
 public interface MemberRepository {
 
     // 사용자 이름으로 사용자 찾기
-    MemberEntity findByUsername(@Param("username") String username);
+    MemberResponse findByUsername(@Param("username") String username);
 
+    MemberEntity findEntityByUsername(@Param("username") String username);
 
     // 새로운 사용자 추가
     int insertMember(MemberEntity memberEntity);

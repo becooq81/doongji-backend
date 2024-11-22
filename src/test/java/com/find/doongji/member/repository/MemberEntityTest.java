@@ -1,6 +1,7 @@
 package com.find.doongji.member.repository;
 
 import com.find.doongji.auth.enums.Role;
+import com.find.doongji.member.payload.response.MemberResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class MemberEntityTest {
                         .build();
         repo.insertMember(memberEntity);
         
-        MemberEntity registeredUser = repo.findByUsername("kim");
+        MemberResponse registeredUser = repo.findByUsername("kim");
         
         Assertions.assertNotNull(registeredUser, "User should be registered successfully");
         Assertions.assertEquals("kim", registeredUser.getUsername());
