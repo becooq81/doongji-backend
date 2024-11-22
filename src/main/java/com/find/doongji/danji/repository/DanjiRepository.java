@@ -21,4 +21,6 @@ public interface DanjiRepository {
     List<DanjiCode> selectAllByBjdCode(@Param("bjdCode") String bjdCode);
 
     List<DanjiCode> selectAllByBjdCodeList(@Param("list") Set<String> bjdCodeList);
+
+    DanjiCode selectByAptNm(@Param("aptNm") String aptNm);
 }

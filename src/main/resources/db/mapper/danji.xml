@@ -27,7 +27,11 @@
         WHERE bjd_code = #{bjdCode}
     </select>
 
-
+    <select id="selectByAptNm" parameterType="string" resultType="com.find.doongji.danji.payload.response.DanjiCode">
+        SELECT *, CONCAT(as1, " ", as2, " ", as3) AS si_gugun_dong
+        FROM danji
+        WHERE kapt_name LIKE CONCAT('%', #{aptNm}, '%')
+    </select>
 
     <select id="selectAllByBjdCodeList" parameterType="list" resultType="com.find.doongji.danji.payload.response.DanjiCode">
         SELECT *, CONCAT(as1, " ", as2, " ", as3) AS si_gugun_dong
