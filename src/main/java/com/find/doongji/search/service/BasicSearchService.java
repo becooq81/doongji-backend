@@ -109,10 +109,7 @@ public class BasicSearchService implements SearchService {
 
         }
 
-        if (authService.isAuthenticated()) {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            historyService.addHistory(new HistoryRequest(username, searchRequest.getQuery()));
-        }
+        trackSearchHistory(searchRequest);
 
         return searchResponses;
     }
@@ -130,16 +127,11 @@ public class BasicSearchService implements SearchService {
     }
 
 
-    private String cleanDanjiName(String danjiName) {
-        if (danjiName == null || danjiName.isEmpty()) {
-            return "";
+    private void trackSearchHistory(SearchRequest searchRequest) {
+        if (authService.isAuthenticated()) {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            historyService.addHistory(new HistoryRequest(username, searchRequest.getQuery()));
         }
-        return danjiName
-                .replaceAll("[^가-힣0-9a-zA-Z]", "")
-                .replace("더블유", "W")
-                .replace("아파트", "")
-                .replaceAll("\\s+", "")
-                .trim();
     }
 
 
@@ -153,22 +145,18 @@ public class BasicSearchService implements SearchService {
 
         // Check price range overlap
         if (!checkPriceOverlap(aptInfo, searchRequest)) {
-            System.out.println("Price range does not overlap");
             return false;
         }
 
         // Check area range overlap
         if (!checkAreaOverlap(aptInfo, searchRequest)) {
-            System.out.println("Area range does not overlap");
             return false;
         }
 
         // Check location filter
         if (!checkLocationFilter(aptInfo, searchRequest)) {
-            System.out.println("Location filter does not match");
             return false;
         }
-
 
         return true;
     }
