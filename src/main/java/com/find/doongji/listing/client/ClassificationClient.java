@@ -74,7 +74,10 @@ public class ClassificationClient {
             directory.mkdirs();
         }
 
-        String uniqueFileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String originalFileName = file.getOriginalFilename();
+        String sanitizedFileName = originalFileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+        String uniqueFileName = System.currentTimeMillis() + "_" + sanitizedFileName;
+
         String filePath = uploadDir + File.separator + uniqueFileName;
 
         File destFile = new File(filePath);
