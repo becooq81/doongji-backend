@@ -8,7 +8,6 @@ import java.util.Map;
 
 public interface AptClient {
 
-    List<DanjiCode> getDanjiCodeList(String bjdCode) throws Exception;
 
     SearchResult getAptDetail(String kaptCode) throws Exception;
 

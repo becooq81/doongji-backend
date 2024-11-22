@@ -18,8 +18,6 @@ import java.util.Map;
 @Component
 public class AptDetailClient implements AptClient {
 
-    @Value("${apt.danji-code-url}")
-    private String DANJI_CODE_URL;
 
     @Value("${apt.basic-info-url}")
     private String BASIC_INFO_URL;
@@ -36,32 +34,6 @@ public class AptDetailClient implements AptClient {
     @Value("${GEOCODER_SERVICE_KEY}")
     private String GEOCODER_KEY;
 
-
-    @Override
-    public List<DanjiCode> getDanjiCodeList(String bjdCode) throws Exception {
-        String dataUrlBuilder = DANJI_CODE_URL +
-                "?ServiceKey=" + PUBLIC_DATA_KEY +
-                "&bjdCode=" + bjdCode;
-
-        String responseBody = HttpUtils.fetchDataFromUrl(dataUrlBuilder);
-        List<Map<String, String>> result = ParseUtils.parseXML("/response/body/items/item", responseBody, "as1", "as2", "as3", "kaptCode", "kaptName");
-
-        List<DanjiCode> danjiCodes = new ArrayList<>();
-        for (Map<String, String> map : result) {
-            danjiCodes.add(DanjiCode.builder()
-                    .siGugunDong(AddressUtil.cleanAddress(map.get("as1") + " " + map.get("as2") + " " + map.get("as3")))
-                    .bjdCode(bjdCode)
-                    .kaptCode(map.get("kaptCode"))
-                    .kaptName(map.get("kaptName"))
-                            .as1(map.get("as1"))
-                            .as2(map.get("as2"))
-                            .as3(map.get("as3"))
-                    .build()
-            );
-        }
-
-        return danjiCodes;
-    }
 
     @Override
     public SearchResult getAptDetail(String kaptCode) throws Exception {
