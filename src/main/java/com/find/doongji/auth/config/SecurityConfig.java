@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,8 +54,9 @@ public class SecurityConfig {
                         // search
                         .requestMatchers("/api/v1/search/**").permitAll()
 
-                        // TODO: Require SELLER role for listing endpoints.
-                        .requestMatchers("/api/v1/listing/**").hasRole("SELLER")
+                        // listing
+                        .requestMatchers(HttpMethod.POST, "/api/v1/listing/**").hasRole("SELLER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/listing/**").permitAll()
 
                         // everything else
                         .anyRequest().permitAll())
