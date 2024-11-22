@@ -18,10 +18,13 @@ import com.find.doongji.listing.payload.response.ListingResponse;
 import com.find.doongji.listing.repository.ListingRepository;
 import com.find.doongji.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,9 @@ public class BasicListingService implements ListingService {
 
     private final AptClient aptClient;
     private final ClassificationClient classificationClient;
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     @Override
     public void addListing(ListingCreateRequest request, MultipartFile image) throws Exception {
@@ -64,7 +70,7 @@ public class BasicListingService implements ListingService {
             ListingEntity entity = ListingEntity.builder()
                     .addressMappingId(mapping.getId())
                     .username(username)
-                    .imagePath(classificationResponse.getImagePath())
+                    .imagePath(cleanPath(removeUploadsPrefix(classificationResponse.getImagePath())))
                     .isOptical(request.getResult())
                     .oldAddress(request.getJibunAddress())
                     .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
@@ -123,7 +129,19 @@ public class BasicListingService implements ListingService {
     @Override
     public List<ListingResponse> getListingsForRoadAddress(String roadAddress) {
         String cleanedAddress = AddressUtil.cleanAddress(roadAddress);
-        return listingRepository.selectListingsByRoadAddress(cleanedAddress);
+
+        List<ListingResponse>  responses =  listingRepository.selectListingsByRoadAddress(cleanedAddress);
+        responses.forEach(listing -> listing.setImagePath(getFullImageUrl(listing.getImagePath())));
+        return responses;
+    }
+
+    private String getFullImageUrl(String imagePath) {
+        return imagePath != null ? serverUrl + "/" + imagePath.replace("\\", "/") : null;
+    }
+
+    public String removeUploadsPrefix(String path) {
+        if (path == null) return null; // Handle null input
+        return path.replaceFirst("^\\.\\/uploads\\\\?", ""); // Removes ./uploads\ or ./uploads/
     }
 
     private String getDongCode(String oldAddress) {
@@ -180,6 +198,12 @@ public class BasicListingService implements ListingService {
 
         ListingResponse listing = listingRepository.selectListing(id);
         return listing.getUsername().equals(username);
+    }
+
+    private String cleanPath(String path) {
+        path.replaceAll(" ", "_");
+        path = URLEncoder.encode(path, StandardCharsets.UTF_8);
+        return path;
     }
 
 }

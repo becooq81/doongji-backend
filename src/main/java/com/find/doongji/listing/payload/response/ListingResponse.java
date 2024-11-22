@@ -23,4 +23,8 @@ public class ListingResponse {
 
     private String price;
 
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
 }
