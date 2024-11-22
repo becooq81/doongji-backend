@@ -1,12 +1,9 @@
 package com.find.doongji.member.service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import com.find.doongji.auth.enums.Role;
-import com.find.doongji.member.payload.request.SignUpRequest;
-import com.find.doongji.member.payload.request.MemberUpdateRequest;
 import com.find.doongji.member.payload.request.MemberEntity;
+import com.find.doongji.member.payload.request.MemberUpdateRequest;
+import com.find.doongji.member.payload.request.SignUpRequest;
 import com.find.doongji.member.payload.response.MemberResponse;
 import com.find.doongji.member.payload.response.MemberSearchResponse;
 import com.find.doongji.member.repository.MemberRepository;
@@ -17,6 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -48,11 +48,13 @@ public class BasicMemberService implements MemberService {
     @Transactional(readOnly = true)
     public MemberResponse getMemberProfile() {
         String currentUsername = getAuthenticatedUsername();
-        MemberResponse response =  memberRepository.findByUsername(currentUsername);
-        if (response == null) {
-            throw new NoSuchElementException("User not found");
-        }
-        return response;
+        MemberEntity memberEntity = memberRepository.findByUsername(currentUsername);
+        return MemberResponse.builder()
+                .username(memberEntity.getUsername())
+                .email(memberEntity.getEmail())
+                .name(memberEntity.getName())
+                .role(memberEntity.getRole())
+                .build();
     }
 
     @Override

@@ -31,9 +31,9 @@ public class MemberEntityTest {
                         .password("1234")
                         .build();
         repo.insertMember(memberEntity);
-        
-        MemberResponse registeredUser = repo.findByUsername("kim");
-        
+
+        MemberEntity registeredUser = repo.findEntityByUsername("kim");
+
         Assertions.assertNotNull(registeredUser, "User should be registered successfully");
         Assertions.assertEquals("kim", registeredUser.getUsername());
         Assertions.assertEquals("kim@naver.com", registeredUser.getEmail());

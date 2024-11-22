@@ -1,14 +1,17 @@
 package com.find.doongji.search.payload.response;
 
+import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.search.enums.SimilarityScore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SearchResponse {
-    private SearchResult searchResult;
     private SimilarityScore similarityScore;
+    private AptInfo aptInfo;
 }

@@ -12,7 +12,8 @@
     </insert>
 
     <!-- Get search history by username -->
-    <select id="getHistoryByUsername" parameterType="string" resultType="com.find.doongji.history.payload.response.HistoryResponse">
+    <select id="getHistoryByUsername" parameterType="string"
+            resultType="com.find.doongji.history.payload.response.HistoryResponse">
         SELECT id, username, query, created_at
         FROM history
         WHERE username = #{username}
@@ -21,16 +22,18 @@
 
     <!-- Delete search history by username and ID -->
     <delete id="deleteHistoryByUsernameAndId" parameterType="map">
-        DELETE FROM history
-        WHERE username = #{username} AND id = #{id};
+        DELETE
+        FROM history
+        WHERE username = #{username}
+          AND id = #{id};
     </delete>
 
     <!-- Find duplicate search history -->
-    <select id="findDuplicateHistory" parameterType="map" resultType="com.find.doongji.history.payload.response.HistoryResponse">
+    <select id="findDuplicateHistory" parameterType="map"
+            resultType="com.find.doongji.history.payload.response.HistoryResponse">
         SELECT id, username, query, created_at
         FROM history
         WHERE username = #{username}
-          AND query = #{query}
-            LIMIT 1;
+          AND query = #{query} LIMIT 1;
     </select>
 </mapper>

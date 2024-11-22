@@ -1,14 +1,20 @@
 package com.find.doongji.listing.controller;
 
-import com.find.doongji.listing.service.ListingService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.find.doongji.listing.payload.request.ListingCreateRequest;
+import com.find.doongji.listing.payload.request.ListingUpdateRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/v1/listing")
-public class ListingController {
+public interface ListingController {
 
-    private final ListingService listingService;
+    ResponseEntity<?> createListing(MultipartFile image, ListingCreateRequest request);
+
+    ResponseEntity<?> updateListing(ListingUpdateRequest request);
+
+    ResponseEntity<?> deleteListing(Long id);
+
+    ResponseEntity<?> getListing(Long id);
+
+    ResponseEntity<?> getListings(String address);
+
 }

@@ -1,75 +1,89 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.find.doongji.apt.repository.AptRepository">
-	
-	<select id="selectAptDealByAptSeq" parameterType="String" resultType="com.find.doongji.apt.payload.response.AptDeal">
-	    SELECT * FROM housedeals 
-	    WHERE apt_seq = #{aptSeq} 
-	    ORDER BY deal_year DESC, deal_month DESC, deal_day DESC
-	</select>
-	
-	<select id="selectAptDealByDong" parameterType="map" resultType="com.find.doongji.apt.payload.response.AptDeal">
-	    SELECT * 
-	    FROM housedeals 
-	    JOIN houseinfos ON housedeals.apt_seq = houseinfos.apt_seq 
-	    WHERE sgg_cd = #{sggCd} 
-	      AND umd_cd = #{umdCd}
-	</select>
-	
-	<select id="selectAptSeqByAptNm" parameterType="String" resultType="String">
-	    SELECT apt_seq 
-	    FROM houseinfos 
-	    WHERE apt_nm = #{aptName}
-	</select>
-	
-	<select id="selectAptInfoByAptSeq" parameterType="String" resultType="com.find.doongji.apt.payload.response.AptInfo">
-	    SELECT * 
-	    FROM houseinfos 
-	    WHERE apt_seq = #{aptSeq}
-	</select>
-	
-	<select id="selectAptDealByAptNm" parameterType="String" resultType="com.find.doongji.apt.payload.response.AptDeal">
-	    SELECT 
-	    	housedeals.*, 
-       	 	houseinfos.*,
-        	CONCAT(houseinfos.umd_nm, ' ', houseinfos.jibun) AS address
-	    FROM housedeals 
-	    JOIN houseinfos ON houseinfos.apt_seq = housedeals.apt_seq 
-	    WHERE apt_nm LIKE CONCAT('%', #{name}, '%') 
-	</select>
 
-	<select id="selectAptInfoByUmdNmAndJibun" parameterType="map" resultType="com.find.doongji.apt.payload.response.AptInfo">
-		SELECT *
-		FROM houseinfos
-		WHERE umd_nm = #{umdNm}
-		AND jibun = #{jibun}
-	</select>
+    <select id="selectAptDealByAptSeq" parameterType="String"
+            resultType="com.find.doongji.apt.payload.response.AptDeal">
+        SELECT * FROM housedeals
+        WHERE apt_seq = #{aptSeq}
+        ORDER BY deal_year DESC, deal_month DESC, deal_day DESC
+    </select>
 
-	<select id="checkIfMappingTableExists" resultType="int">
-		SELECT CASE
-			WHEN EXISTS (SELECT 1 FROM address_mapping LIMIT 1) THEN 1
-			ELSE 0
-		END;
-	</select>
+    <select id="selectAptDealByDong" parameterType="map" resultType="com.find.doongji.apt.payload.response.AptDeal">
+        SELECT *
+        FROM housedeals
+        JOIN houseinfos ON housedeals.apt_seq = houseinfos.apt_seq
+        WHERE sgg_cd = #{sggCd}
+        AND umd_cd = #{umdCd}
+    </select>
 
+    <select id="selectAptInfoByDong" parameterType="map" resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM housedeals
+        JOIN houseinfos ON housedeals.apt_seq = houseinfos.apt_seq
+        WHERE sgg_cd = #{sggCd}
+        AND umd_cd = #{umdCd}
+    </select>
 
-	<insert id="bulkInsertAddressMapping" parameterType="list">
-		INSERT INTO address_mapping (old_address, umd_nm, jibun, apt_seq, danji_id, bjd_code)
-		VALUES
-		<foreach collection="list" item="mapping" separator=",">
-			(#{mapping.oldAddress}, #{mapping.umdNm}, #{mapping.jibun}, #{mapping.aptSeq}, #{mapping.danjiId}, #{mapping.bjdCode})
-		</foreach>
-	</insert>
+    <select id="selectAptSeqByAptNm" parameterType="String" resultType="String">
+        SELECT apt_seq
+        FROM houseinfos
+        WHERE apt_nm = #{aptName}
+    </select>
 
-	<select id="selectBjdCodeByDanjiId" parameterType="int" resultType="String">
-		SELECT bjd_code
-		FROM address_mapping
-		WHERE danji_id = #{danjiId}
-		LIMIT 1
-	</select>
+    <select id="selectAptInfoByAptSeq" parameterType="String"
+            resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+        WHERE apt_seq = #{aptSeq}
+    </select>
+
+    <select id="selectAptDealByAptNm" parameterType="String" resultType="com.find.doongji.apt.payload.response.AptDeal">
+        SELECT
+        housedeals.*,
+        houseinfos.*,
+        CONCAT(houseinfos.road_nm, ' ', houseinfos.road_nm_bonbun,
+        CASE WHEN houseinfos.road_nm_bubun != '0' THEN CONCAT('-', houseinfos.road_nm_bubun) ELSE '' END) AS
+        road_address,
+        CONCAT(houseinfos.umd_nm, ' ', houseinfos.jibun) AS old_address
+        FROM housedeals
+        JOIN houseinfos ON houseinfos.apt_seq = housedeals.apt_seq
+        WHERE apt_nm LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <select id="selectAptInfoByUmdNmAndJibun" parameterType="map"
+            resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+        WHERE umd_nm = #{umdNm}
+        AND jibun = #{jibun}
+    </select>
+
+    <select id="selectAptInfoByRoadComponents" parameterType="map"
+            resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+        WHERE road_nm = #{roadNm}
+        AND road_nm_bonbun = #{roadNmBonbun}
+        AND road_nm_bubun = #{roadNmBubun}
+    </select>
+
+    <select id="findAllAptInfos" resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+    </select>
+
+    <select id="selectAptInfoByAptSeqList" parameterType="list" resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM houseinfos
+        WHERE apt_seq IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
 
 

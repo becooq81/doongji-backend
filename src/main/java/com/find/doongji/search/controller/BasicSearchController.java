@@ -5,10 +5,7 @@ import com.find.doongji.search.service.SearchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/search")
@@ -26,6 +23,16 @@ public class BasicSearchController {
             return ResponseEntity.badRequest().body("An error occurred while processing the search request.");
         }
 
+    }
+
+    @GetMapping("/result")
+    public ResponseEntity<?> getAptDetail(@RequestParam("aptSeq") String aptSeq) {
+        try {
+            return ResponseEntity.ok(searchService.viewSearched(aptSeq));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("An error occurred while processing the search request.");
+        }
     }
 
 }

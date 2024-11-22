@@ -1,8 +1,12 @@
 package com.find.doongji.member.payload.response;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberSearchResponse {
     private String username;
     private String email;

@@ -1,67 +1,77 @@
 package com.find.doongji.apt.repository;
 
-import java.util.List;
-import java.util.Map;
-
-import com.find.doongji.apt.payload.request.AddressMapping;
+import com.find.doongji.apt.payload.response.AptDeal;
+import com.find.doongji.apt.payload.response.AptInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.find.doongji.apt.payload.response.AptDeal;
-import com.find.doongji.apt.payload.response.AptInfo;
+import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface AptRepository {
 
-	/**
-	 * @param aptSeq
-	 * @return aptSeq에 해당하는 아파트 거래 내역 반환
-	 */
-	List<AptDeal> selectAptDealByAptSeq(String aptSeq);
-	
-	
-	/**
-	 * @param sggCd (시군구 코드), umdCd (읍면동 코드)
-	 * @return 시군구, 읍면동 코드에 해당하는 아파트 거래 내역 반환
-	 */
-	List<AptDeal> selectAptDealByDong(@Param("sggCd") String sggCd, @Param("umdCd") String umdCd);
+    /**
+     * @param aptSeq
+     * @return aptSeq에 해당하는 아파트 거래 내역 반환
+     */
+    List<AptDeal> selectAptDealByAptSeq(String aptSeq);
 
-	/**
-	 *  @param aptNm (아파트 명): 부분 검색 가능
-	 *  @return 아파트 명에 해당하는 아파트 번호 반환
-	 */
-	List<String> selectAptSeqByAptNm(String aptNm);
-	
-	/**
-	 * @param aptSeq
-	 * @return 아파트 번호에 해당하는 아파트 정보 반환
-	 */
-	AptInfo selectAptInfoByAptSeq(String aptSeq);
-	
-	/**
-	 * @param aptNm
-	 * @return 아파트명에 해당하는 아파트 거래 내역 반환
+    /**
+     * @param sggCd (시군구 코드), umdCd (읍면동 코드)
+     * @return 시군구, 읍면동 코드에 해당하는 아파트 거래 내역 반환
+     */
+    List<AptDeal> selectAptDealByDong(@Param("sggCd") String sggCd, @Param("umdCd") String umdCd);
 
-	 */
-	List<AptDeal> selectAptDealByAptNm(String aptNm);
+    /**
+     * @param sggCd (시군구 코드), umdCd (읍면동 코드)
+     */
+    List<AptInfo> selectAptInfoByDong(@Param("sggCd") String sggCd, @Param("umdCd") String umdCd);
 
-	/**
-	 * @param umdNm
-	 * @param jibun
-	 * @return umdNm(읍면동명)과 jibun(지번)에 해당하는 아파트 정보 반환
-	 */
-	List<AptInfo> selectAptInfoByUmdNmAndJibun(@Param("umdNm") String umdNm, @Param("jibun") String jibun);
+    /**
+     * @param aptNm (아파트 명): 부분 검색 가능
+     * @return 아파트 명에 해당하는 아파트 번호 반환
+     */
+    List<String> selectAptSeqByAptNm(String aptNm);
 
-	/**
-	 * @return 맵핑 테이블 존재 여부 반환
-	 */
-	int checkIfMappingTableExists();
+    /**
+     * @param aptSeq
+     * @return 아파트 번호에 해당하는 아파트 정보 반환
+     */
+    AptInfo selectAptInfoByAptSeq(String aptSeq);
 
-	/**
-	 * @return 맵핑 테이블 생성
-	 */
-	void bulkInsertAddressMapping(@Param("list") List<AddressMapping> mappings);
+    /**
+     * apt seq 리스트로 아파트 정보 반환
+     * @param aptSeqList
+     * @return
+     */
+    List<AptInfo> selectAptInfoByAptSeqList(@Param("list") List<String> aptSeqList);
 
-	String selectBjdCodeByDanjiId(int danjiId);
+    /**
+     * @param aptNm
+     * @return 아파트명에 해당하는 아파트 거래 내역 반환
+     */
+    List<AptDeal> selectAptDealByAptNm(String aptNm);
 
+    /**
+     * @param umdNm
+     * @param jibun
+     * @return umdNm(읍면동명)과 jibun(지번)에 해당하는 아파트 정보 반환
+     */
+    List<AptInfo> selectAptInfoByUmdNmAndJibun(@Param("umdNm") String umdNm, @Param("jibun") String jibun);
+
+    /**
+     * @param roadNm
+     * @param roadNmBonbun
+     * @param roadNmBubun
+     * @return
+     */
+    List<AptInfo> selectAptInfoByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
+
+
+    /**
+     * 모든 아파트 정보 반환
+     * @return
+     */
+    List<AptInfo> findAllAptInfos();
 }

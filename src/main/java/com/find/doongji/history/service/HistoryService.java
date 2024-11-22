@@ -9,19 +9,22 @@ public interface HistoryService {
 
     /**
      * Adds a new history entry for a user
+     *
      * @param searchHistoryRequest
      */
     void addHistory(HistoryRequest searchHistoryRequest);
 
     /**
      * Retrieves all history entries for a user
+     *
      * @param username
      * @return
      */
-    List<HistoryResponse> getAllHistory(String username);
+    List<HistoryResponse> getAllHistory();
 
     /**
      * Removes a history entry by its ID
+     *
      * @param username
      * @param id
      */
