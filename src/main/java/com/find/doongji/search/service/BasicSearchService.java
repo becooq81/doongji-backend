@@ -1,5 +1,6 @@
 package com.find.doongji.search.service;
 
+import com.find.doongji.address.payload.response.AddressMappingResponse;
 import com.find.doongji.address.repository.AddressRepository;
 import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.client.AptDetailClient;
@@ -8,6 +9,7 @@ import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.apt.service.AptService;
 import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.danji.payload.response.DanjiCode;
+import com.find.doongji.danji.repository.DanjiRepository;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.service.HistoryService;
 import com.find.doongji.location.payload.response.DongCode;
@@ -23,23 +25,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BasicSearchService implements SearchService {
 
-    private static final int TOP_K = 50;
+    private static final int TOP_K = 10000;
     private final RecommendClient recClient;
     private final AptDetailClient aptClient;
     private final AddressRepository addressRepository;
     private final AptRepository aptRepository;
     private final LocationRepository locationRepository;
+    private final DanjiRepository danjiRepository;
     private final HistoryService historyService;
     private final AptService aptService;
     private final AuthService authService;
@@ -53,11 +55,11 @@ public class BasicSearchService implements SearchService {
     @Transactional
     public List<SearchResponse> search(SearchRequest searchRequest) throws Exception {
         // Handle empty query case
-        List<SearchResponse> responses;
+        List<SearchResponse> searchResponses;
 
         if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
             List<AptInfo> aptInfos = filterAptInfosByOverlap(aptRepository.findAllAptInfos(), searchRequest);
-            responses = aptInfos.stream()
+            searchResponses = aptInfos.stream()
                     .map(aptInfo -> new SearchResponse(SimilarityScore.NONE, aptInfo))
                     .toList();
         } else {
@@ -65,50 +67,55 @@ public class BasicSearchService implements SearchService {
             List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K).stream()
                     .filter(distinctByKey(RecommendResponse::getDanjiId))
                     .toList();
-            responses = new ArrayList<>();
 
-            outerLoop:
-            for (RecommendResponse recommendResponse : recommendResponses) {
-                String bjdCode = addressRepository.selectBjdCodeByDanjiId(recommendResponse.getDanjiId());
-                if (bjdCode == null) {
-                    continue;
-                }
-
-                if (searchRequest.getLocationFilter() != null) {
-                    List<DongCode> dongCodes = locationRepository.selectDongCodeByStartsWith(AddressUtil.cleanAddress(searchRequest.getLocationFilter()));
-                    if (dongCodes.isEmpty()) {
-                        continue;
-                    }
-                }
-
-                List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
-                System.out.println("BjdCode: " + bjdCode);
-                for (DanjiCode danjiCode : danjiCodes) {
-                    System.out.println("DanjiCode: " + danjiCode);
-
-                }
-                List<AptInfo> unverifiedAptInfos = aptService.findAptInfoByDongCode(bjdCode);
-
-                for (DanjiCode danjiCode : danjiCodes) {
-                    System.out.println("DanjiCode: " + danjiCode);
-                    for (AptInfo aptInfo : unverifiedAptInfos) {
-                        if (!compareAptNames(aptInfo.getAptNm(), danjiCode.getKaptName())) {
-                            continue;
-                        }
-                        if (!matchesSearchCriteria(aptInfo, searchRequest)) continue;
-                        responses.add(new SearchResponse(SimilarityScore.classify(recommendResponse.getSimilarity()), aptInfo));
-                        System.out.println("Compare: aptInfo(" + aptInfo.getAptNm() + "), danjiCode(" + danjiCode.getKaptName() + ")");
-
-                        if (responses.size() >= TOP_K) {
-                            break outerLoop;
-                        }
-                        break;
-                    }
-                }
+            searchResponses = new ArrayList<>();
 
 
-            }
+            // 1. recommendResponses의 danjiId를 이용해 bjdCode를 가져온다 (addressMapping)
+// Step 1: Map danjiId to RecommendResponse
+            Map<Long, RecommendResponse> recommendResponseMap = recommendResponses.stream()
+                    .collect(Collectors.toMap(RecommendResponse::getDanjiId, Function.identity()));
 
+// Step 2: Extract danjiIds from recommendResponseMap
+            List<Long> danjiIds = new ArrayList<>(recommendResponseMap.keySet());
+
+// Step 3: Fetch AddressMappings for danjiIds
+            List<AddressMappingResponse> mappings = addressRepository.selectAddressMappingByDanjiIdList(danjiIds);
+
+// Step 4: Create a Map of aptSeq to a List of danjiIds
+            Map<String, List<Long>> aptSeqToDanjiIdsMap = mappings.stream()
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toMap(
+                            AddressMappingResponse::getAptSeq,
+                            mapping -> new ArrayList<>(List.of(mapping.getDanjiId())),
+                            (existing, replacement) -> {
+                                existing.addAll(replacement);
+                                return existing;
+                            }
+                    ));
+
+// Step 5: Fetch AptInfos based on aptSeqs
+            List<String> aptSeqList = new ArrayList<>(aptSeqToDanjiIdsMap.keySet());
+            List<AptInfo> aptInfos = aptRepository.selectAptInfoByAptSeqList(aptSeqList);
+
+// Step 6: Generate SearchResponses
+            searchResponses = filterAptInfosByOverlap(aptInfos, searchRequest)
+                    .stream()
+                    .flatMap(aptInfo -> {
+                        // Get the list of danjiIds for the current aptSeq
+                        List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
+
+                        // Map each danjiId to a SearchResponse
+                        return danjiIdList.stream().map(danjiId -> {
+                            RecommendResponse response = recommendResponseMap.get(danjiId);
+                            SimilarityScore similarityScore = (response != null)
+                                    ? SimilarityScore.classify(response.getSimilarity())
+                                    : SimilarityScore.LOW;
+
+                            return new SearchResponse(similarityScore, aptInfo);
+                        });
+                    })
+                    .toList();
 
         }
 
@@ -117,7 +124,7 @@ public class BasicSearchService implements SearchService {
             historyService.addHistory(new HistoryRequest(username, searchRequest.getQuery()));
         }
 
-        return responses;
+        return searchResponses;
     }
 
     public boolean compareAptNames(String aptInfoName, String danjiName) {
@@ -231,8 +238,16 @@ public class BasicSearchService implements SearchService {
 
         DongCode dongCode = locationRepository.selectDongCodeByDongcode(aptInfo.getSggCd() + aptInfo.getUmdCd());
         if (dongCode != null) {
-            String startAddress = dongCode.getSidoName() + " " + dongCode.getGugunName() + " " + dongCode.getDongName();
+            String startAddress = dongCode.getSidoName();
+            if (!startAddress.equals(dongCode.getGugunName())) {
+                startAddress+= " " + dongCode.getGugunName();
+            }
+            startAddress += " " + dongCode.getDongName();
+            startAddress = AddressUtil.cleanAddress(startAddress);
+
             String cleaned = AddressUtil.cleanAddress(searchRequest.getLocationFilter());
+
+            // System.out.println("Cleaned request address: " + cleaned);
             return startAddress.startsWith(cleaned);
         }
 
