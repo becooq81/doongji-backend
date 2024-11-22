@@ -1,4 +1,4 @@
-package com.find.doongji.apt.payload.response;
+package com.find.doongji.danji.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.find.doongji.danji.repository.DanjiRepository">
+
+    <select id="checkIfTableExists" resultType="int">
+        SELECT CASE
+        WHEN EXISTS (SELECT 1 FROM danji LIMIT 1) THEN 1
+        ELSE 0
+        END;
+    </select>
+
+    <insert id="bulkInsertDanji" parameterType="list">
+        INSERT INTO danji (as1, as2, as3, bjd_code, kapt_code, kapt_name)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.as1}, #{item.as2}, #{item.as3}, #{item.bjdCode}, #{item.kaptCode}, #{item.kaptName})
+        </foreach>
+    </insert>
+
+</mapper>

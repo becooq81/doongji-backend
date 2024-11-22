@@ -1,7 +1,10 @@
-package com.find.doongji.danji.payload.response;
+package com.find.doongji.danji.repository;
 
+import com.find.doongji.danji.payload.request.DanjiEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface DanjiRepository {
