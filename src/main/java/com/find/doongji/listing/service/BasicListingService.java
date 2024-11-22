@@ -53,7 +53,6 @@ public class BasicListingService implements ListingService {
         List<Long> danjiIds = new ArrayList<>();
         if (addressMappings.isEmpty()) {
             danjiIds.add(createAddressMapping(request));
-
         } else {
             for (AddressMappingResponse addressMapping : addressMappings) {
                 danjiIds.add(addressMapping.getDanjiId());
@@ -63,7 +62,7 @@ public class BasicListingService implements ListingService {
         String imagePath = FileUploadUtil.uploadFile(image, "./uploads");
 
         for (Long id : danjiIds) {
-            System.out.println(id);
+            System.out.println("danjiId: "+id);
             AddressMappingResponse mapping = addressRepository.selectAddressMappingByDanjiId(id);
             ListingEntity entity = ListingEntity.builder()
                     .addressMappingId(mapping.getId())
@@ -161,7 +160,11 @@ public class BasicListingService implements ListingService {
         System.out.println(components);
 
         // TODO: 해당 레포지토리 메서드는 단일 레코드가 아닌 집합을 리턴하기 때문에 모두 고려해야 한다
-        AptInfo aptInfo = aptRepository.selectAptInfoByRoadComponents(components.getRoadNm(), components.getRoadNmBonbun(), components.getRoadNmBubun()).get(0);
+        List<AptInfo> aptInfoList = aptRepository.selectAptInfoByRoadComponents(components.getRoadNm(), components.getRoadNmBonbun(), components.getRoadNmBubun());
+        if (aptInfoList.isEmpty()) {
+            throw new Exception("해당 도로명주소에 대한 아파트 정보가 존재하지 않습니다.");
+        }
+        AptInfo aptInfo = aptInfoList.get(0);
         Long danjiId = null;
         for (DanjiCode danjiCode : danjiCodes) {
             System.out.println(request.getJibunAddress());
