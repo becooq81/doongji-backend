@@ -119,22 +119,16 @@ public class BasicSearchService implements SearchService {
 
     @Override
     public SearchResult viewSearched(String aptSeq) throws Exception {
+
         AptInfo aptInfo = aptRepository.selectAptInfoByAptSeq(aptSeq);
         if (aptInfo == null) {
             throw new Exception("viewSearched: No matching apt seq found: " + aptSeq);
         }
-        List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(aptInfo.getSggCd() + aptInfo.getUmdCd());
+        DanjiCode danjiCode = danjiRepository.selectByAptNm(aptInfo.getAptNm());
+        return aptClient.getAptDetail(danjiCode.getKaptCode());
 
-        String aptName = aptInfo.getAptNm();
-
-        for (DanjiCode danjiCode : danjiCodes) {
-            String cleanedDanjiName = cleanDanjiName(danjiCode.getKaptName());
-            if (!cleanedDanjiName.equals(aptName)) continue;
-
-            return aptClient.getAptDetail(danjiCode.getKaptCode());
-        }
-        throw new Exception("viewSearched: No matching danji code found for apt seq: " + aptSeq);
     }
+
 
     private String cleanDanjiName(String danjiName) {
         if (danjiName == null || danjiName.isEmpty()) {
@@ -228,6 +222,7 @@ public class BasicSearchService implements SearchService {
             startAddress = AddressUtil.cleanAddress(startAddress);
 
             String cleaned = AddressUtil.cleanAddress(searchRequest.getLocationFilter());
+
             return startAddress.startsWith(cleaned);
         }
 
