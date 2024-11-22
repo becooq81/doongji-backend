@@ -8,6 +8,7 @@ import com.find.doongji.apt.client.AptClient;
 import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.danji.payload.response.DanjiCode;
+import com.find.doongji.danji.repository.DanjiRepository;
 import com.find.doongji.listing.payload.request.ListingCreateRequest;
 import com.find.doongji.listing.payload.request.ListingEntity;
 import com.find.doongji.listing.payload.request.ListingUpdateEntity;
@@ -37,6 +38,7 @@ public class BasicListingService implements ListingService {
     private final LocationRepository locationRepository;
 
     private final AptClient aptClient;
+    private final DanjiRepository danjiRepository;
 
     @Value("${server.url}")
     private String serverUrl;
@@ -154,7 +156,7 @@ public class BasicListingService implements ListingService {
 
     private Long createAddressMapping(ListingCreateRequest request) throws Exception {
         String bjdCode = getDongCode(request.getJibunAddress());
-        List<DanjiCode> danjiCodes = aptClient.getDanjiCodeList(bjdCode);
+        List<DanjiCode> danjiCodes = danjiRepository.selectAllByBjdCode(bjdCode);
 
         AddressUtil.AddressComponents components = AddressUtil.parseAddress(request.getRoadAddress());
         System.out.println(components);
