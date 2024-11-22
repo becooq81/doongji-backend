@@ -71,18 +71,13 @@ public class BasicSearchService implements SearchService {
             searchResponses = new ArrayList<>();
 
 
-            // 1. recommendResponses의 danjiId를 이용해 bjdCode를 가져온다 (addressMapping)
-// Step 1: Map danjiId to RecommendResponse
             Map<Long, RecommendResponse> recommendResponseMap = recommendResponses.stream()
                     .collect(Collectors.toMap(RecommendResponse::getDanjiId, Function.identity()));
 
-// Step 2: Extract danjiIds from recommendResponseMap
             List<Long> danjiIds = new ArrayList<>(recommendResponseMap.keySet());
 
-// Step 3: Fetch AddressMappings for danjiIds
             List<AddressMappingResponse> mappings = addressRepository.selectAddressMappingByDanjiIdList(danjiIds);
 
-// Step 4: Create a Map of aptSeq to a List of danjiIds
             Map<String, List<Long>> aptSeqToDanjiIdsMap = mappings.stream()
                     .filter(Objects::nonNull)
                     .collect(Collectors.toMap(
@@ -94,28 +89,23 @@ public class BasicSearchService implements SearchService {
                             }
                     ));
 
-// Step 5: Fetch AptInfos based on aptSeqs
             List<String> aptSeqList = new ArrayList<>(aptSeqToDanjiIdsMap.keySet());
             List<AptInfo> aptInfos = aptRepository.selectAptInfoByAptSeqList(aptSeqList);
 
-// Step 6: Generate SearchResponses
             searchResponses = filterAptInfosByOverlap(aptInfos, searchRequest)
                     .stream()
                     .flatMap(aptInfo -> {
-                        // Get the list of danjiIds for the current aptSeq
                         List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
 
-                        // Map each danjiId to a SearchResponse
-                        return danjiIdList.stream().map(danjiId -> {
-                            RecommendResponse response = recommendResponseMap.get(danjiId);
-                            SimilarityScore similarityScore = (response != null)
-                                    ? SimilarityScore.classify(response.getSimilarity())
-                                    : SimilarityScore.LOW;
-
-                            return new SearchResponse(similarityScore, aptInfo);
-                        });
+                        return danjiIdList.stream()
+                                .map(danjiId -> recommendResponseMap.get(danjiId))
+                                .filter(Objects::nonNull)
+                                .map(response -> Map.entry(response, aptInfo)); // aptInfo와 함께 매핑
                     })
+                    .sorted(Comparator.comparing((Map.Entry<RecommendResponse, AptInfo> entry) -> entry.getKey().getSimilarity()).reversed())
+                    .map(entry -> new SearchResponse(SimilarityScore.classify(entry.getKey().getSimilarity()), entry.getValue()))
                     .toList();
+
 
         }
 
