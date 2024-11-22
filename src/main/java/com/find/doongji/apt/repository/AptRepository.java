@@ -17,7 +17,6 @@ public interface AptRepository {
      */
     List<AptDeal> selectAptDealByAptSeq(String aptSeq);
 
-
     /**
      * @param sggCd (시군구 코드), umdCd (읍면동 코드)
      * @return 시군구, 읍면동 코드에 해당하는 아파트 거래 내역 반환
@@ -29,7 +28,6 @@ public interface AptRepository {
      */
     List<AptInfo> selectAptInfoByDong(@Param("sggCd") String sggCd, @Param("umdCd") String umdCd);
 
-    List<AptInfo> selectAptInfosByDongCodes(@Param("list") List<String> dongCodes);
     /**
      * @param aptNm (아파트 명): 부분 검색 가능
      * @return 아파트 명에 해당하는 아파트 번호 반환
@@ -42,6 +40,11 @@ public interface AptRepository {
      */
     AptInfo selectAptInfoByAptSeq(String aptSeq);
 
+    /**
+     * apt seq 리스트로 아파트 정보 반환
+     * @param aptSeqList
+     * @return
+     */
     List<AptInfo> selectAptInfoByAptSeqList(@Param("list") List<String> aptSeqList);
 
     /**
@@ -65,7 +68,10 @@ public interface AptRepository {
      */
     List<AptInfo> selectAptInfoByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
 
-    List<AptDeal> selectAptDealByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
 
+    /**
+     * 모든 아파트 정보 반환
+     * @return
+     */
     List<AptInfo> findAllAptInfos();
 }

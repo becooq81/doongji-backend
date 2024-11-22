@@ -71,35 +71,9 @@
         AND road_nm_bubun = #{roadNmBubun}
     </select>
 
-    <select id="selectAptDealByRoadComponents" parameterType="map"
-            resultType="com.find.doongji.apt.payload.response.AptDeal">
-        SELECT
-        housedeals.*,
-        houseinfos.*,
-        CONCAT(houseinfos.road_nm, ' ', houseinfos.road_nm_bonbun,
-        CASE WHEN houseinfos.road_nm_bubun != '0' THEN CONCAT('-', houseinfos.road_nm_bubun) ELSE '' END) AS
-        road_address,
-        CONCAT(houseinfos.umd_nm, ' ', houseinfos.jibun) AS old_address
-        FROM housedeals
-        JOIN houseinfos ON housedeals.apt_seq = houseinfos.apt_seq
-        WHERE houseinfos.road_nm = #{roadNm}
-        AND houseinfos.road_nm_bonbun = #{roadNmBonbun}
-        AND houseinfos.road_nm_bubun = #{roadNmBubun}
-        ORDER BY housedeals.deal_year DESC, housedeals.deal_month DESC, housedeals.deal_day DESC
-    </select>
-
     <select id="findAllAptInfos" resultType="com.find.doongji.apt.payload.response.AptInfo">
         SELECT *
         FROM houseinfos
-    </select>
-
-    <select id="selectAptInfosByDongCodes" parameterType="list" resultType="com.find.doongji.apt.payload.response.AptInfo">
-        SELECT *
-        FROM houseinfos
-        WHERE
-        <foreach collection="list" item="dongcode" open="(" separator=" OR " close=")">
-            (sgg_cd = SUBSTRING(#{dongcode}, 1, 5) AND umd_cd = SUBSTRING(#{dongcode}, 6, 5))
-        </foreach>
     </select>
 
     <select id="selectAptInfoByAptSeqList" parameterType="list" resultType="com.find.doongji.apt.payload.response.AptInfo">

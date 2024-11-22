@@ -23,21 +23,6 @@
             #{mapping.roadNmBubun})
         </foreach>
     </insert>
-    <select id="selectBjdCodeByDanjiIdList" parameterType="list" resultType="string">
-        SELECT bjd_code
-        FROM address_mapping
-        WHERE danji_id IN
-        <foreach collection="list" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
-
-    <select id="selectBjdCodeByDanjiId" parameterType="long" resultType="String">
-        SELECT bjd_code
-        FROM address_mapping
-        WHERE danji_id = #{danjiId}
-        LIMIT 1
-    </select>
 
     <insert id="insertAddressMapping" parameterType="com.find.doongji.address.payload.request.AddressMapping">
         INSERT INTO address_mapping (
@@ -55,21 +40,6 @@
         select * from address_mapping
         where danji_id = #{danjiId}
         limit 1;
-    </select>
-
-    <select id="selectAddressMappingByDoroJuso" parameterType="map"
-            resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
-        SELECT *
-        FROM address_mapping
-        WHERE road_nm = #{roadNm}
-        AND road_nm_bonbun = #{roadNmBonbun}
-        AND road_nm_bubun = #{roadNmBubun}
-    </select>
-
-    <select id="selectAddressMappingByOldAddress" parameterType="String"
-            resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
-        SELECT * FROM address_mapping
-        WHERE old_address = #{oldAddress}
     </select>
 
     <select id="selectAddressMappingByRoadAddress" parameterType="String"

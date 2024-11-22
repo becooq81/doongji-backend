@@ -16,17 +16,10 @@ public interface AddressRepository {
     int checkIfMappingTableExists();
 
     /**
-     * @return 맵핑 테이블 생성
+     * address mapping 레코드 한 번에 여러 개씩 추가
+     * @param mappings
      */
     void bulkInsertAddressMapping(@Param("list") List<AddressMapping> mappings);
-
-    /**
-     * @param danjiId
-     * @return danjiId에 해당하는 법정동 코드 반환
-     */
-    String selectBjdCodeByDanjiId(Long danjiId);
-
-    List<String> selectBjdCodeByDanjiIdList(@Param("list") List<Long> danjiIdList);
 
     /**
      * @param addressMapping
@@ -35,25 +28,20 @@ public interface AddressRepository {
     void insertAddressMapping(AddressMapping addressMapping);
 
     /**
-     * @param roadNm
-     * @param roadNmBonbun
-     * @param roadNmBubun  도로명주소 숫자 부분에 다시가 없으면 0으로 대체
-     */
-    List<AddressMappingResponse> selectAddressMappingByDoroJuso(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
-
-    /**
-     * @param oldAddress 지번주소
-     * @return
-     */
-    List<AddressMappingResponse> selectAddressMappingByOldAddress(@Param("oldAddress") String oldAddress);
-
-    /**
      * @param roadAddress 도로명주소
      * @return
      */
     List<AddressMappingResponse> selectAddressMappingByRoadAddress(@Param("roadAddress") String roadAddress);
 
+    /**
+     * @param danjiId 단지 ID
+     * @return
+     */
     AddressMappingResponse selectAddressMappingByDanjiId(@Param("danjiId") Long danjiId);
 
+    /**
+     * @param danjiIdList 단지 ID 리스트
+     * @return
+     */
     List<AddressMappingResponse> selectAddressMappingByDanjiIdList(@Param("list") List<Long> danjiIdList);
 }

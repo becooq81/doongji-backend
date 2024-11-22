@@ -23,7 +23,6 @@ public interface LocationRepository {
     // 법정동 코드로 시도, 구군, 동 값 조회
     DongCode selectDongCodeByDongcode(String dongcode);
 
-    List<DongCode> selectDongCodeByStartsWith(String prefix);
-
+    // 모든 동 코드를 찾는다
     List<String> selectAllDongCode();
 }

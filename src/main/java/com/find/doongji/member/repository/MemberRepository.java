@@ -16,6 +16,7 @@ public interface MemberRepository {
     // 사용자 이름으로 사용자 찾기
     MemberEntity findByUsername(@Param("username") String username);
 
+    // 사용자 이름으로 사용자 찾기 (엔티티 반환)
     MemberEntity findEntityByUsername(@Param("username") String username);
 
     // 새로운 사용자 추가
