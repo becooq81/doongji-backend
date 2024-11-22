@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecommendResponse {
-    private int danjiId;
+    private Long danjiId;
     private float similarity;
 
     @Override

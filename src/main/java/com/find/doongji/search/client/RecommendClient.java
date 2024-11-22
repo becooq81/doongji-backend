@@ -35,7 +35,7 @@ public class RecommendClient {
             for (int i = 0; i < resultDataArray.length(); i++) {
                 JSONObject item = resultDataArray.getJSONObject(i);
 
-                int danjiId = item.getInt("danji_id");
+                Long danjiId = item.getLong("danji_id");
                 float similarity = (float) item.getDouble("similarity");
 
                 result.add(new RecommendResponse(danjiId, similarity));
