@@ -48,9 +48,16 @@ public class AptDetailClient implements AptClient {
 
         List<DanjiCode> danjiCodes = new ArrayList<>();
         for (Map<String, String> map : result) {
-            danjiCodes.add(new DanjiCode(
-                    AddressUtil.cleanAddress(map.get("as1") + " " + map.get("as2") + " " + map.get("as3")),
-                    bjdCode, map.get("kaptCode"), map.get("kaptName")));
+            danjiCodes.add(DanjiCode.builder()
+                    .siGugunDong(AddressUtil.cleanAddress(map.get("as1") + " " + map.get("as2") + " " + map.get("as3")))
+                    .bjdCode(bjdCode)
+                    .kaptCode(map.get("kaptCode"))
+                    .kaptName(map.get("kaptName"))
+                            .as1(map.get("as1"))
+                            .as2(map.get("as2"))
+                            .as3(map.get("as3"))
+                    .build()
+            );
         }
 
         return danjiCodes;
