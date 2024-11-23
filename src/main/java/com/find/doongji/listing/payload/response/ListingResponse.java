@@ -13,6 +13,8 @@ public class ListingResponse {
     private String username;
 
     private String imagePath;
+    private int isOptical;
+
     private String oldAddress;
     private String roadAddress;
 
