@@ -45,11 +45,7 @@ public class BasicListingService implements ListingService {
 
     @Override
     public void addListing(ListingCreateRequest request, MultipartFile image) throws Exception {
-
-        // TODO: 이미지 분류는 FastAPI 서버로 하기 때문에 ClassificationClient를 제거하고 FileUploader로 대체해야 함
-
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         List<AddressMappingResponse> addressMappings = addressRepository.selectAddressMappingByRoadAddress(request.getRoadAddress());
 
         List<Long> danjiIds = new ArrayList<>();
