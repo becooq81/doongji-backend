@@ -128,7 +128,7 @@ public class BasicSearchService implements SearchService {
 
 
     private void trackSearchHistory(SearchRequest searchRequest) {
-        if (authService.isAuthenticated()) {
+        if (authService.isAuthenticated() && searchRequest.getQuery() != null) {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             historyService.addHistory(new HistoryRequest(username, searchRequest.getQuery()));
         }
