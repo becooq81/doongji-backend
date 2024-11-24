@@ -20,15 +20,24 @@ public class FileUploadUtil {
         }
 
         String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || originalFileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid file name");
+        }
+
         String sanitizedFileName = originalFileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
         String uniqueFileName = System.currentTimeMillis() + "_" + sanitizedFileName;
 
-        String filePath = uploadDir + File.separator + uniqueFileName;
+        String filePath = uploadDir + "/" + uniqueFileName; // Use '/' for web paths
 
         File destFile = new File(filePath);
         try (FileOutputStream fos = new FileOutputStream(destFile)) {
             fos.write(file.getBytes());
+            System.out.println("File successfully uploaded: " + filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("File upload failed", e);
         }
+
         return filePath;
+
     }
 }

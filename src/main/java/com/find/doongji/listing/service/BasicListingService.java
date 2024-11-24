@@ -64,7 +64,6 @@ public class BasicListingService implements ListingService {
         String imagePath = FileUploadUtil.uploadFile(image, "./uploads");
 
         for (Long id : danjiIds) {
-            System.out.println("danjiId: "+id);
             AddressMappingResponse mapping = addressRepository.selectAddressMappingByDanjiId(id);
             ListingEntity entity = ListingEntity.builder()
                     .addressMappingId(mapping.getId())
@@ -135,12 +134,28 @@ public class BasicListingService implements ListingService {
     }
 
     private String getFullImageUrl(String imagePath) {
-        return imagePath != null ? serverUrl + "/" + imagePath.replace("\\", "/") : null;
-    }
+        if (serverUrl == null || serverUrl.isEmpty()) {
+            throw new IllegalArgumentException("Server URL cannot be null or empty");
+        }
+        if (imagePath == null) {
+            return null;
+        }
 
+        // Normalize and encode the image path
+        String normalizedServerUrl = serverUrl.endsWith("/")
+                ? serverUrl.substring(0, serverUrl.length() - 1)
+                : serverUrl;
+        String normalizedImagePath = imagePath.startsWith("/")
+                ? imagePath.substring(1)
+                : imagePath;
+
+        String encodedPath = URLEncoder.encode(normalizedImagePath.replace("\\", "/"), StandardCharsets.UTF_8);
+        String result =  normalizedServerUrl + "/" + encodedPath;
+        return result;
+    }
     public String removeUploadsPrefix(String path) {
-        if (path == null) return null; // Handle null input
-        return path.replaceFirst("^\\.\\/uploads\\\\?", ""); // Removes ./uploads\ or ./uploads/
+        if (path == null) return null;
+        return path.replaceFirst("^\\.\\/uploads\\\\?", "");
     }
 
     private String getDongCode(String oldAddress) {
@@ -159,7 +174,6 @@ public class BasicListingService implements ListingService {
         List<DanjiCode> danjiCodes = danjiRepository.selectAllByBjdCode(bjdCode);
 
         AddressUtil.AddressComponents components = AddressUtil.parseAddress(request.getRoadAddress());
-        System.out.println(components);
 
         // TODO: 해당 레포지토리 메서드는 단일 레코드가 아닌 집합을 리턴하기 때문에 모두 고려해야 한다
         List<AptInfo> aptInfoList = aptRepository.selectAptInfoByRoadComponents(components.getRoadNm(), components.getRoadNmBonbun(), components.getRoadNmBubun());
@@ -169,12 +183,10 @@ public class BasicListingService implements ListingService {
         AptInfo aptInfo = aptInfoList.get(0);
         Long danjiId = null;
         for (DanjiCode danjiCode : danjiCodes) {
-            System.out.println(request.getJibunAddress());
             danjiId = (aptInfo.getAptSeq() + danjiCode.getKaptCode()).hashCode() & 0xffffffffL;
             if (!AddressUtil.cleanAddress(request.getJibunAddress()).startsWith(AddressUtil.cleanAddress(danjiCode.getSiGugunDong())))
                 continue;
             AddressUtil.OldAddressComponents oldAddressComponents = AddressUtil.parseOldAddress(request.getJibunAddress());
-            System.out.println(oldAddressComponents.getAptName());
             addressRepository.insertAddressMapping(
                     AddressMapping.builder()
                             .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
@@ -205,7 +217,6 @@ public class BasicListingService implements ListingService {
 
     private String cleanPath(String path) {
         path.replaceAll(" ", "_");
-        path = URLEncoder.encode(path, StandardCharsets.UTF_8);
         return path;
     }
 
