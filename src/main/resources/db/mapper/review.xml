@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.find.doongji.review.repository.ReviewRepository">
+
+    <select id="checkIfTableExists" resultType="int">
+        SELECT CASE
+        WHEN EXISTS (SELECT 1 FROM review LIMIT 1) THEN 1
+        ELSE 0
+        END;
+    </select>
+
+
+    <insert id="bulkInsertReview" parameterType="list">
+        INSERT INTO review (danji_id, description, apt_seq)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.danjiId}, #{item.description}, #{item.aptSeq})
+        </foreach>
+    </insert>
+
+    <insert id="insertReview" parameterType="com.find.doongji.review.payload.request.ReviewEntity">
+        INSERT INTO review (danji_id, description, apt_seq)
+        VALUES (#{danjiId}, #{description}, #{aptSeq});
+    </insert>
+
+    <select id="selectReviewsByAptSeq" resultType="com.find.doongji.review.payload.response.ReviewResponse">
+        SELECT danji_id, description, apt_seq
+        FROM review
+        WHERE apt_seq = #{aptSeq}
+    </select>
+
+
+</mapper>
