@@ -17,11 +17,14 @@
 
     <!-- 좋아요 여부 조회 -->
     <select id="selectLike" resultType="java.lang.Integer">
-        SELECT liked
+        SELECT COALESCE(
+        (SELECT liked
         FROM likes
-        WHERE username = #{username}
-        AND apt_seq = #{aptSeq};
+        WHERE username = #{username} AND apt_seq = #{aptSeq}
+        ), 0) AS liked;
     </select>
+
+
 
 
 
