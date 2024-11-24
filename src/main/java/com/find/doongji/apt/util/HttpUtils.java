@@ -1,4 +1,4 @@
-package com.find.doongji.apt.utils;
+package com.find.doongji.apt.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

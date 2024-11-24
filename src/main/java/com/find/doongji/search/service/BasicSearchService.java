@@ -131,18 +131,16 @@ public class BasicSearchService implements SearchService {
             throw new Exception("viewSearched: No matching apt seq found: " + aptSeq);
         }
         List<DanjiCode> danjiCodes = danjiRepository.selectByAptNm(aptInfo.getAptNm());
-        DanjiCode match = null;
+        SearchResult searchResult= null;
         for (DanjiCode danjiCode : danjiCodes) {
-            if (danjiCode.getAs2().trim().equals(aptInfo.getUmdNm().trim())) {
-                match = danjiCode;
-                break;
+            if (danjiCode.getAs3().trim().equals(aptInfo.getUmdNm().trim())) {
+                searchResult = aptClient.getAptDetail(danjiCode.getKaptCode());
+                if (!searchResult.getKaptName().isEmpty()) {
+                    break;
+                }
             }
         }
 
-        SearchResult searchResult= null;
-        if (match != null) {
-            searchResult = aptClient.getAptDetail(match.getKaptCode());
-        }
         return SearchDetailResponse.builder()
                 .searchResult(searchResult)
                 .isLiked(likeService.viewLike(aptSeq))

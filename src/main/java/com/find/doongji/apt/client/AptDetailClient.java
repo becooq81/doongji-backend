@@ -1,9 +1,7 @@
 package com.find.doongji.apt.client;
 
-import com.find.doongji.address.util.AddressUtil;
-import com.find.doongji.apt.utils.HttpUtils;
-import com.find.doongji.apt.utils.ParseUtils;
-import com.find.doongji.danji.payload.response.DanjiCode;
+import com.find.doongji.apt.util.HttpUtils;
+import com.find.doongji.apt.util.ParseUtils;
 import com.find.doongji.search.payload.response.SearchResult;
 import com.find.doongji.search.util.ResultParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Component

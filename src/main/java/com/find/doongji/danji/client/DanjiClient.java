@@ -1,7 +1,7 @@
 package com.find.doongji.danji.client;
 
-import com.find.doongji.apt.utils.HttpUtils;
-import com.find.doongji.apt.utils.ParseUtils;
+import com.find.doongji.apt.util.HttpUtils;
+import com.find.doongji.apt.util.ParseUtils;
 import com.find.doongji.danji.payload.request.DanjiEntity;
 import com.find.doongji.danji.repository.DanjiRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
