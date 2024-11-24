@@ -58,6 +58,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/listing/**").hasRole("SELLER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/listing/**").permitAll()
 
+                        // like
+                        .requestMatchers(HttpMethod.POST, "/api/v1/search/result/**/like").authenticated()
+
                         // everything else
                         .anyRequest().permitAll())
                 .sessionManagement(
