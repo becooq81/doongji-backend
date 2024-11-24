@@ -1,6 +1,6 @@
 package com.find.doongji.like.service;
 
-import java.nio.file.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 
 public interface LikeService {
 

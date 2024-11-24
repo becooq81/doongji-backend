@@ -2,11 +2,10 @@ package com.find.doongji.like.service;
 
 import com.find.doongji.like.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.nio.file.AccessDeniedException;
 
 @Service
 @RequiredArgsConstructor
