@@ -14,5 +14,5 @@ public interface LikeService {
      * 좋아요 여부 조회
      * @param aptSeq
      */
-    int isLiked(String aptSeq);
+    int viewLike(String aptSeq);
 }

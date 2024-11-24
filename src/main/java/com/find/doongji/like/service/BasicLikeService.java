@@ -27,7 +27,7 @@ public class BasicLikeService implements LikeService {
 
     @Override
     @Transactional(readOnly = true)
-    public int isLiked(String aptSeq) {
+    public int viewLike(String aptSeq) {
         if (!isLoggedIn()) {
             return 0;
         }
