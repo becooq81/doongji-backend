@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.find.doongji.like.repository.LikeRepository">
+
+
+    <!-- 좋아요 등록 -->
+    <update id="toggleLike">
+        INSERT INTO likes (username, apt_seq, liked, created_at)
+        VALUES (#{username}, #{aptSeq}, 1, CURRENT_TIMESTAMP)
+        ON DUPLICATE KEY UPDATE
+        liked = 1 - liked,
+        created_at = CURRENT_TIMESTAMP;
+    </update>
+
+    <!-- 좋아요 여부 조회 -->
+    <select id="selectLike" resultType="java.lang.Integer">
+        SELECT COALESCE(
+        (SELECT liked
+        FROM likes
+        WHERE username = #{username} AND apt_seq = #{aptSeq}
+        ), 0) AS liked;
+    </select>
+
+
+
+
+
+</mapper>

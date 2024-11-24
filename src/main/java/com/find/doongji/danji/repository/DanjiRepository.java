@@ -33,5 +33,5 @@ public interface DanjiRepository {
      * @param aptNm
      * @return
      */
-    DanjiCode selectByAptNm(@Param("aptNm") String aptNm);
+    List<DanjiCode> selectByAptNm(@Param("aptNm") String aptNm);
 }

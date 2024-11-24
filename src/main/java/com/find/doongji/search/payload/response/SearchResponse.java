@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class SearchResponse {
     private SimilarityScore similarityScore;
     private AptInfo aptInfo;
+    private int isLiked;
 }

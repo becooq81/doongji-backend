@@ -12,12 +12,14 @@ import com.find.doongji.danji.payload.response.DanjiCode;
 import com.find.doongji.danji.repository.DanjiRepository;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.service.HistoryService;
+import com.find.doongji.like.service.LikeService;
 import com.find.doongji.location.payload.response.DongCode;
 import com.find.doongji.location.repository.LocationRepository;
 import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.enums.SimilarityScore;
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.RecommendResponse;
+import com.find.doongji.search.payload.response.SearchDetailResponse;
 import com.find.doongji.search.payload.response.SearchResponse;
 import com.find.doongji.search.payload.response.SearchResult;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +38,18 @@ import java.util.stream.Collectors;
 public class BasicSearchService implements SearchService {
 
     private static final int TOP_K = 10000;
+
     private final RecommendClient recClient;
     private final AptDetailClient aptClient;
+
     private final AddressRepository addressRepository;
     private final AptRepository aptRepository;
     private final LocationRepository locationRepository;
     private final DanjiRepository danjiRepository;
+
     private final HistoryService historyService;
-    private final AptService aptService;
     private final AuthService authService;
+    private final LikeService likeService;
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
@@ -60,7 +65,7 @@ public class BasicSearchService implements SearchService {
         if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
             List<AptInfo> aptInfos = filterAptInfosByOverlap(aptRepository.findAllAptInfos(), searchRequest);
             searchResponses = aptInfos.stream()
-                    .map(aptInfo -> new SearchResponse(SimilarityScore.NONE, aptInfo))
+                    .map(aptInfo -> new SearchResponse(SimilarityScore.NONE, aptInfo, likeService.viewLike(aptInfo.getAptSeq())))
                     .toList();
         } else {
             // Query is not empty, use recommendation client
@@ -103,7 +108,11 @@ public class BasicSearchService implements SearchService {
                                 .map(response -> Map.entry(response, aptInfo)); // aptInfo와 함께 매핑
                     })
                     .sorted(Comparator.comparing((Map.Entry<RecommendResponse, AptInfo> entry) -> entry.getKey().getSimilarity()).reversed())
-                    .map(entry -> new SearchResponse(SimilarityScore.classify(entry.getKey().getSimilarity()), entry.getValue()))
+                    .map(entry -> new SearchResponse(
+                            SimilarityScore.classify(entry.getKey().getSimilarity()),
+                            entry.getValue(),
+                            likeService.viewLike(entry.getValue().getAptSeq()))
+                    )
                     .toList();
 
 
@@ -115,15 +124,29 @@ public class BasicSearchService implements SearchService {
     }
 
     @Override
-    public SearchResult viewSearched(String aptSeq) throws Exception {
+    public SearchDetailResponse viewSearched(String aptSeq) throws Exception {
 
         AptInfo aptInfo = aptRepository.selectAptInfoByAptSeq(aptSeq);
         if (aptInfo == null) {
             throw new Exception("viewSearched: No matching apt seq found: " + aptSeq);
         }
-        DanjiCode danjiCode = danjiRepository.selectByAptNm(aptInfo.getAptNm());
-        return aptClient.getAptDetail(danjiCode.getKaptCode());
+        List<DanjiCode> danjiCodes = danjiRepository.selectByAptNm(aptInfo.getAptNm());
+        DanjiCode match = null;
+        for (DanjiCode danjiCode : danjiCodes) {
+            if (danjiCode.getAs2().trim().equals(aptInfo.getUmdNm().trim())) {
+                match = danjiCode;
+                break;
+            }
+        }
 
+        SearchResult searchResult= null;
+        if (match != null) {
+            searchResult = aptClient.getAptDetail(match.getKaptCode());
+        }
+        return SearchDetailResponse.builder()
+                .searchResult(searchResult)
+                .isLiked(likeService.viewLike(aptSeq))
+                .build();
     }
 
 
