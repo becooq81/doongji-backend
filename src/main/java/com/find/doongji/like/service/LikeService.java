@@ -1,6 +1,9 @@
 package com.find.doongji.like.service;
 
+import com.find.doongji.apt.payload.response.AptInfo;
 import org.springframework.security.access.AccessDeniedException;
+
+import java.util.List;
 
 public interface LikeService {
 
@@ -15,4 +18,9 @@ public interface LikeService {
      * @param aptSeq
      */
     int viewLike(String aptSeq);
+
+    /**
+     * 로그인한 사용자에 대한 모든 좋아요 조회
+     */
+    List<AptInfo>  getAllLikes();
 }
