@@ -24,7 +24,13 @@
         ), 0) AS liked;
     </select>
 
-
+    <!-- 좋아요 목록 조회 -->
+    <select id="selectAllLikes" resultType="string">
+        SELECT apt_seq
+        FROM likes
+        WHERE username = #{username}
+        AND liked = 1;
+    </select>
 
 
 

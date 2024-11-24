@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/listing/**").permitAll()
 
                         // like
-                        .requestMatchers(HttpMethod.POST, "/api/v1/search/result/**/like").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/like/**").authenticated()
 
                         // everything else
                         .anyRequest().permitAll())

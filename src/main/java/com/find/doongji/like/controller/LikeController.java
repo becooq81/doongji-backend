@@ -6,4 +6,5 @@ public interface LikeController {
 
     ResponseEntity<?> toggleLike(String aptSeq);
 
+    ResponseEntity<?> getAllLikes();
 }
