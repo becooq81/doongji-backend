@@ -1,5 +1,6 @@
 package com.find.doongji.like.service;
 
+import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.like.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class BasicLikeService implements LikeService {
 
     private final LikeRepository likeRepository;
+    private final AuthService authService;
 
     @Override
     @Transactional
     public void toggleLike(String aptSeq) throws AccessDeniedException {
-        if (!isLoggedIn()) {
+
+        validateRequest(aptSeq);
+        if (!authService.isAuthenticated()) {
             throw new AccessDeniedException("You must be logged in to like.");
         }
 
@@ -27,7 +31,9 @@ public class BasicLikeService implements LikeService {
     @Override
     @Transactional(readOnly = true)
     public int viewLike(String aptSeq) {
-        if (!isLoggedIn()) {
+
+        validateRequest(aptSeq);
+        if (!authService.isAuthenticated()) {
             return 0;
         }
 
@@ -35,8 +41,9 @@ public class BasicLikeService implements LikeService {
         return likeRepository.selectLike(username, aptSeq);
     }
 
-    private boolean isLoggedIn() {
-        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
-                && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    private void validateRequest(String aptSeq) {
+        if (aptSeq == null || aptSeq.trim().isEmpty()) {
+            throw new IllegalArgumentException("AptSeq must not be null or empty");
+        }
     }
 }
