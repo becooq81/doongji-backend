@@ -56,4 +56,10 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="selectAddressMappingByAptSeq" parameterType="String"
+            resultType="com.find.doongji.address.payload.response.AddressMappingResponse">
+        SELECT * FROM address_mapping
+        WHERE apt_seq = #{aptSeq}
+    </select>
 </mapper>

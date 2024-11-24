@@ -44,4 +44,10 @@ public interface AddressRepository {
      * @return
      */
     List<AddressMappingResponse> selectAddressMappingByDanjiIdList(@Param("list") List<Long> danjiIdList);
+
+    /**
+     * @param aptSeq
+     */
+    List<AddressMappingResponse> selectAddressMappingByAptSeq(@Param("aptSeq") String aptSeq);
+
 }
