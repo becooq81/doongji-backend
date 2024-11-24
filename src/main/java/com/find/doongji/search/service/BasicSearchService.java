@@ -19,6 +19,7 @@ import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.enums.SimilarityScore;
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.RecommendResponse;
+import com.find.doongji.search.payload.response.SearchDetailResponse;
 import com.find.doongji.search.payload.response.SearchResponse;
 import com.find.doongji.search.payload.response.SearchResult;
 import lombok.RequiredArgsConstructor;
@@ -123,15 +124,29 @@ public class BasicSearchService implements SearchService {
     }
 
     @Override
-    public SearchResult viewSearched(String aptSeq) throws Exception {
+    public SearchDetailResponse viewSearched(String aptSeq) throws Exception {
 
         AptInfo aptInfo = aptRepository.selectAptInfoByAptSeq(aptSeq);
         if (aptInfo == null) {
             throw new Exception("viewSearched: No matching apt seq found: " + aptSeq);
         }
-        DanjiCode danjiCode = danjiRepository.selectByAptNm(aptInfo.getAptNm());
-        return aptClient.getAptDetail(danjiCode.getKaptCode());
+        List<DanjiCode> danjiCodes = danjiRepository.selectByAptNm(aptInfo.getAptNm());
+        DanjiCode match = null;
+        for (DanjiCode danjiCode : danjiCodes) {
+            if (danjiCode.getAs2().trim().equals(aptInfo.getUmdNm().trim())) {
+                match = danjiCode;
+                break;
+            }
+        }
 
+        SearchResult searchResult= null;
+        if (match != null) {
+            searchResult = aptClient.getAptDetail(match.getKaptCode());
+        }
+        return SearchDetailResponse.builder()
+                .searchResult(searchResult)
+                .isLiked(likeService.viewLike(aptSeq))
+                .build();
     }
 
 
