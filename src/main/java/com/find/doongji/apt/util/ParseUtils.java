@@ -1,4 +1,4 @@
-package com.find.doongji.apt.utils;
+package com.find.doongji.apt.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
