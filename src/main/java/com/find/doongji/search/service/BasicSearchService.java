@@ -15,6 +15,7 @@ import com.find.doongji.history.service.HistoryService;
 import com.find.doongji.like.service.LikeService;
 import com.find.doongji.location.payload.response.DongCode;
 import com.find.doongji.location.repository.LocationRepository;
+import com.find.doongji.review.service.ReviewService;
 import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.enums.SimilarityScore;
 import com.find.doongji.search.payload.request.SearchRequest;
@@ -49,6 +50,7 @@ public class BasicSearchService implements SearchService {
 
     private final HistoryService historyService;
     private final AuthService authService;
+    private final ReviewService reviewService;
     private final LikeService likeService;
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -144,6 +146,7 @@ public class BasicSearchService implements SearchService {
         return SearchDetailResponse.builder()
                 .searchResult(searchResult)
                 .isLiked(likeService.viewLike(aptSeq))
+                .overview(reviewService.getReviewsByAptSeq(aptSeq))
                 .build();
     }
 
