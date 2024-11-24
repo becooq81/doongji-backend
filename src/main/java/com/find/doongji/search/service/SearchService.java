@@ -1,6 +1,7 @@
 package com.find.doongji.search.service;
 
 import com.find.doongji.search.payload.request.SearchRequest;
+import com.find.doongji.search.payload.response.SearchDetailResponse;
 import com.find.doongji.search.payload.response.SearchResponse;
 import com.find.doongji.search.payload.response.SearchResult;
 
@@ -10,5 +11,5 @@ public interface SearchService {
 
     List<SearchResponse> search(SearchRequest searchRequest) throws Exception;
 
-    SearchResult viewSearched(String aptSeq) throws Exception;
+    SearchDetailResponse viewSearched(String aptSeq) throws Exception;
 }
