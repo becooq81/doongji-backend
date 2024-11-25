@@ -213,7 +213,7 @@ public class BasicSearchService implements SearchService {
         return SearchDetailResponse.builder()
                 .searchResult(searchResult)
                 .isLiked(likeService.viewLike(aptSeq))
-                .overview(reviewService.getReviewsByAptSeq(aptSeq))
+                .reviews(reviewService.getReviewsByAptSeq(aptSeq))
                 .build();
     }
 

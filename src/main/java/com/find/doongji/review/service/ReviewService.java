@@ -11,5 +11,7 @@ public interface ReviewService {
 
     void createReview(ReviewCreateRequest request) throws Exception;
 
-    ReviewSummaryResponse getReviewsByAptSeq(String aptSeq) throws Exception;
+    List<String> getReviewsByAptSeq(String aptSeq) throws Exception;
+
+    String summarize(String aptSeq) throws Exception;
 }
