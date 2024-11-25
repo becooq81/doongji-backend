@@ -97,7 +97,6 @@
         )
         ORDER BY
         ai.apt_seq DESC
-        LIMIT #{searchQuery.size} OFFSET #{searchQuery.offset};
     </select>
 
 </mapper>

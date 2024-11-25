@@ -2,7 +2,6 @@ package com.find.doongji.address.service;
 
 import com.find.doongji.address.payload.request.AddressMapping;
 import com.find.doongji.address.repository.AddressRepository;
-import com.find.doongji.address.service.AddressService;
 import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.repository.AptRepository;

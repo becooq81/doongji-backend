@@ -63,7 +63,7 @@ public class BasicSearchService implements SearchService {
     @Override
     @Transactional
     public List<SearchResponse> search(SearchRequest searchRequest, int page, int size) throws Exception {
-        List<AptInfo> aptInfos;
+        List<SearchResponse> searchResponses = new ArrayList<>();
         page--;
 
         int totalSize;
@@ -80,20 +80,18 @@ public class BasicSearchService implements SearchService {
                     .offset(startIndex)
                     .size(size)
                     .build();
-            aptInfos = searchRepository.filterBySearchQuery(query);
+            List<AptInfo> aptInfos = searchRepository.filterBySearchQuery(query);
 
-            totalSize = searchRepository.selectCountBySearchQuery(query);
-
-            List<SearchResponse> responses = aptInfos.stream().map(
-                    aptInfo -> new SearchResponse(
-                            SimilarityScore.NONE,
-                            aptInfo,
-                            likeService.viewLike(aptInfo.getAptSeq()),
-                            totalSize
+            searchResponses = aptInfos.stream()
+                    .map(
+                            aptInfo -> new SearchResponse(
+                                    SimilarityScore.NONE,
+                                    aptInfo,
+                                    likeService.viewLike(aptInfo.getAptSeq()),
+                                    aptInfos.size()
+                            )
                     )
-            ).toList();
-
-            return responses;
+                    .toList();
 
         } else {
             List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K).stream()
@@ -145,31 +143,14 @@ public class BasicSearchService implements SearchService {
                     .locationFilter(searchRequest.getLocationFilter())
                     .minArea(searchRequest.getMinArea())
                     .maxArea(searchRequest.getMaxArea())
-                    .offset(startIndex)
-                    .size(size)
                     .build();
-            aptInfos = searchRepository.filterBySearchQuery(query);
-
-            Map<String, Double> aptSeqToMaxSimilarity = aptInfos.stream()
-                    .collect(Collectors.toMap(
-                            AptInfo::getAptSeq,
-                            aptInfo -> {
-                                List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
-                                return danjiIdList.stream()
-                                        .map(recommendResponseMap::get)
-                                        .filter(Objects::nonNull)
-                                        .mapToDouble(RecommendResponse::getSimilarity)
-                                        .max()
-                                        .orElse(0.0);
-                            }
-                    ));
-
-            aptInfos = aptInfos.stream()
-                    .sorted(Comparator.comparingDouble(aptInfo -> -similarityMap.get(aptInfo.getAptSeq())))
-                    .toList();
+            List<AptInfo> aptInfos = searchRepository.filterBySearchQuery(query)
+                        .stream()
+                        .sorted(Comparator.comparingDouble(aptInfo -> -similarityMap.get(aptInfo.getAptSeq())))
+                        .toList();
 
             totalSize = searchRepository.selectCountBySearchQuery(query);
-            List<SearchResponse> searchResponses = aptInfos.stream()
+            searchResponses = aptInfos.stream()
                     .map(aptInfo -> {
                         float similarityScore = similarityMap.getOrDefault(aptInfo.getAptSeq(), 0.0f);
                         SimilarityScore similarity = SimilarityScore.classify(similarityScore);
@@ -184,8 +165,14 @@ public class BasicSearchService implements SearchService {
 
             trackSearchHistory(searchRequest);
 
-            return searchResponses;
         }
+
+        if (startIndex >= searchResponses.size()) {
+            return Collections.emptyList();
+        }
+
+        endIndex = Math.min(endIndex, searchResponses.size());
+        return searchResponses.subList(startIndex, endIndex);
     }
 
 
