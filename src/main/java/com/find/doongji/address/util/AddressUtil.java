@@ -61,6 +61,10 @@ public class AddressUtil {
         return new AddressComponents(roadNm, roadNmBonbun, roadNmBubun);
     }
 
+    public static String helpSeongnam(String address) {
+        return address.replaceAll("성남(?!\\s)", "성남 ");
+    }
+
     public static String cleanAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
             return "";
