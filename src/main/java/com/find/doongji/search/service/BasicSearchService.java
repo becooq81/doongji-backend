@@ -60,23 +60,17 @@ public class BasicSearchService implements SearchService {
 
     @Override
     @Transactional
-    public List<SearchResponse> search(SearchRequest searchRequest) throws Exception {
+    public List<SearchResponse> search(SearchRequest searchRequest, int page, int size) throws Exception {
         // Handle empty query case
-        List<SearchResponse> searchResponses;
+        List<AptInfo> aptInfos;
 
         if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
-            List<AptInfo> aptInfos = filterAptInfosByOverlap(aptRepository.findAllAptInfos(), searchRequest);
-            searchResponses = aptInfos.stream()
-                    .map(aptInfo -> new SearchResponse(SimilarityScore.NONE, aptInfo, likeService.viewLike(aptInfo.getAptSeq())))
-                    .toList();
+            aptInfos = filterAptInfosByOverlap(aptRepository.findAllAptInfos(), searchRequest);
         } else {
             // Query is not empty, use recommendation client
             List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K).stream()
                     .filter(distinctByKey(RecommendResponse::getDanjiId))
                     .toList();
-
-            searchResponses = new ArrayList<>();
-
 
             Map<Long, RecommendResponse> recommendResponseMap = recommendResponses.stream()
                     .collect(Collectors.toMap(RecommendResponse::getDanjiId, Function.identity()));
@@ -97,33 +91,55 @@ public class BasicSearchService implements SearchService {
                     ));
 
             List<String> aptSeqList = new ArrayList<>(aptSeqToDanjiIdsMap.keySet());
-            List<AptInfo> aptInfos = aptRepository.selectAptInfoByAptSeqList(aptSeqList);
+            aptInfos = filterAptInfosByOverlap(
+                    aptRepository.selectAptInfoByAptSeqList(aptSeqList),
+                    searchRequest
+            );
 
-            searchResponses = filterAptInfosByOverlap(aptInfos, searchRequest)
-                    .stream()
-                    .flatMap(aptInfo -> {
-                        List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
-
-                        return danjiIdList.stream()
-                                .map(danjiId -> recommendResponseMap.get(danjiId))
-                                .filter(Objects::nonNull)
-                                .map(response -> Map.entry(response, aptInfo)); // aptInfo와 함께 매핑
-                    })
-                    .sorted(Comparator.comparing((Map.Entry<RecommendResponse, AptInfo> entry) -> entry.getKey().getSimilarity()).reversed())
-                    .map(entry -> new SearchResponse(
-                            SimilarityScore.classify(entry.getKey().getSimilarity()),
-                            entry.getValue(),
-                            likeService.viewLike(entry.getValue().getAptSeq()))
-                    )
+            // Sort based on similarity
+            aptInfos = aptInfos.stream()
+                    .sorted(Comparator.comparing(
+                            aptInfo -> {
+                                List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
+                                return danjiIdList.stream()
+                                        .map(danjiId -> recommendResponseMap.get(danjiId))
+                                        .filter(Objects::nonNull)
+                                        .mapToDouble(RecommendResponse::getSimilarity)
+                                        .max()
+                                        .orElse(0.0);
+                            },
+                            Comparator.reverseOrder()
+                    ))
                     .toList();
-
-
         }
 
+        // Apply pagination before processing likes
+        int totalResults = aptInfos.size();
+        int startIndex = page * size;
+        int endIndex = Math.min(startIndex + size, totalResults);
+
+        if (startIndex >= totalResults) {
+            return new ArrayList<>();
+        }
+
+        List<AptInfo> paginatedAptInfos = aptInfos.subList(startIndex, endIndex);
+
+        // Process likes for the paginated results
+        List<SearchResponse> searchResponses = paginatedAptInfos.stream()
+                .map(aptInfo -> new SearchResponse(
+                        SimilarityScore.NONE, // Replace with appropriate similarity score if needed
+                        aptInfo,
+                        likeService.viewLike(aptInfo.getAptSeq()))
+                )
+                .toList();
+
+        // Track search history
         trackSearchHistory(searchRequest);
 
         return searchResponses;
     }
+
+
 
     @Override
     public SearchDetailResponse viewSearched(String aptSeq) throws Exception {

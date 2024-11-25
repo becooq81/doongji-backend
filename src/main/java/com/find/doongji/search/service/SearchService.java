@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SearchService {
 
-    List<SearchResponse> search(SearchRequest searchRequest) throws Exception;
+    List<SearchResponse> search(SearchRequest searchRequest, int page, int size) throws Exception;
 
     SearchDetailResponse viewSearched(String aptSeq) throws Exception;
 }

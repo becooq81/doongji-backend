@@ -15,9 +15,11 @@ public class BasicSearchController {
     private final SearchService searchService;
 
     @PostMapping
-    public ResponseEntity<?> search(@Valid @RequestBody SearchRequest searchRequest) {
+    public ResponseEntity<?> search(@Valid @RequestBody SearchRequest searchRequest,
+                                    @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                    @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         try {
-            return ResponseEntity.ok(searchService.search(searchRequest));
+            return ResponseEntity.ok(searchService.search(searchRequest, page, size));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("An error occurred while processing the search request.");
