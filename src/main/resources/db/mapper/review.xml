@@ -7,14 +7,14 @@
 
     <select id="checkIfTableExists" resultType="int">
         SELECT CASE
-        WHEN EXISTS (SELECT 1 FROM review LIMIT 1) THEN 1
+        WHEN EXISTS (SELECT 1 FROM reviews LIMIT 1) THEN 1
         ELSE 0
         END;
     </select>
 
 
     <insert id="bulkInsertReview" parameterType="list">
-        INSERT INTO review (apt_seq, content)
+        INSERT INTO reviews (apt_seq, content)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (#{item.aptSeq}, #{item.content})
@@ -22,12 +22,12 @@
     </insert>
 
     <insert id="insertReview" parameterType="com.find.doongji.review.payload.request.ReviewCreateRequest">
-        INSERT INTO review (apt_seq, content)
+        INSERT INTO reviews (apt_seq, content)
         VALUES (#{aptSeq}, #{content})
     </insert>
 
     <select id="selectReviewsByAptSeq" resultType="string">
-        SELECT description
+        SELECT content
         FROM review
         WHERE apt_seq = #{aptSeq}
     </select>
