@@ -58,12 +58,12 @@ public class BasicReviewService implements ReviewService {
     public ReviewSummaryResponse getReviewsByAptSeq(String aptSeq) throws Exception {
         List<ReviewResponse> reviews =  reviewRepository.selectReviewsByAptSeq(aptSeq);
 
-        if (reviews.isEmpty()) {
-            throw new Exception("No reviews found for aptSeq: " + aptSeq);
+        if (reviews == null || reviews.isEmpty()) {
+            return null;
         }
 
         String summaryPrompt = "다음 리뷰들에 대해 예의있는 말투로 250자 이내로 요약해주십시오." + reviews.stream()
-                .map(ReviewResponse::getDescription) // Extract description
+                .map(ReviewResponse::getDescription)
                 .collect(Collectors.joining(", "));
 
         String overview = openAIClient.chat(summaryPrompt);
