@@ -68,10 +68,4 @@ public interface AptRepository {
      */
     List<AptInfo> selectAptInfoByRoadComponents(@Param("roadNm") String roadNm, @Param("roadNmBonbun") String roadNmBonbun, @Param("roadNmBubun") String roadNmBubun);
 
-
-    /**
-     * 모든 아파트 정보 반환
-     * @return
-     */
-    List<AptInfo> findAllAptInfos();
 }
