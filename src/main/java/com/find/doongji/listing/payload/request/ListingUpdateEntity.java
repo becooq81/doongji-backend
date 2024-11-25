@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ListingUpdateEntity {
     private Long id;
-    private Long addressMappingId;
     private String username;
 
     private String imagePath;

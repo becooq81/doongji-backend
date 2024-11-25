@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ListingEntity {
-    private Long addressMappingId;
     private String username;
+    private String aptSeq;
 
     private String imagePath;
     private int isOptical;

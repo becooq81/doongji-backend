@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewResponse {
 
-    private String danjiId;
     private String description;
     private String aptSeq;
 

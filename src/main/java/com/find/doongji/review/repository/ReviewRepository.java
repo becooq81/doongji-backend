@@ -1,7 +1,6 @@
 package com.find.doongji.review.repository;
 
-import com.find.doongji.review.payload.request.ReviewEntity;
-import com.find.doongji.review.payload.response.ReviewResponse;
+import com.find.doongji.review.payload.request.ReviewCreateRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,15 +16,15 @@ public interface ReviewRepository {
 
     /**
      * review 레코드 한 번에 여러 개씩 추가
-     * @param reviewEntities
+     * @param requests
      */
-    void bulkInsertReview(@Param("list") List<ReviewEntity> reviewEntities);
+    void bulkInsertReview(@Param("list") List<ReviewCreateRequest> requests);
 
     /**
      * review 추가
-     * @param reviewEntity
+     * @param request
      */
-    void insertReview(ReviewEntity reviewEntity);
+    void insertReview(ReviewCreateRequest request);
 
     /**
      * @param aptSeq 아파트 시퀀스

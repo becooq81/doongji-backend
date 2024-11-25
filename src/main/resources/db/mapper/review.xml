@@ -14,16 +14,16 @@
 
 
     <insert id="bulkInsertReview" parameterType="list">
-        INSERT INTO review (danji_id, description, apt_seq)
+        INSERT INTO review (apt_seq, content)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.danjiId}, #{item.description}, #{item.aptSeq})
+            (#{item.aptSeq}, #{item.content})
         </foreach>
     </insert>
 
-    <insert id="insertReview" parameterType="com.find.doongji.review.payload.request.ReviewEntity">
-        INSERT INTO review (danji_id, description, apt_seq)
-        VALUES (#{danjiId}, #{description}, #{aptSeq});
+    <insert id="insertReview" parameterType="com.find.doongji.review.payload.request.ReviewCreateRequest">
+        INSERT INTO review (apt_seq, content)
+        VALUES (#{aptSeq}, #{content})
     </insert>
 
     <select id="selectReviewsByAptSeq" resultType="string">

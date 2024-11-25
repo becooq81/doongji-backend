@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecommendResponse {
-    private Long danjiId;
+    private String aptSeq;
     private float similarity;
 
     @Override
     public String toString() {
         return "RecommendResponse{" +
-                "danjiId=" + danjiId +
+                "aptSeq=" + aptSeq +
                 ", similarity=" + similarity +
                 '}';
     }

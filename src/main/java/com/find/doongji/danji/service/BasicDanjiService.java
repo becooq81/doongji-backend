@@ -1,6 +1,6 @@
 package com.find.doongji.danji.service;
 
-import com.find.doongji.address.util.AddressUtil;
+import com.find.doongji.common.util.AddressUtil;
 import com.find.doongji.danji.client.DanjiClient;
 import com.find.doongji.danji.payload.request.DanjiEntity;
 import com.find.doongji.danji.repository.DanjiRepository;

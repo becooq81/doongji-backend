@@ -1,9 +1,7 @@
 package com.find.doongji.listing.service;
 
-import com.find.doongji.address.payload.response.AddressMappingResponse;
-import com.find.doongji.address.repository.AddressRepository;
-import com.find.doongji.address.service.AddressService;
-import com.find.doongji.address.util.AddressUtil;
+import com.find.doongji.apt.payload.response.AptInfo;
+import com.find.doongji.common.util.AddressUtil;
 import com.find.doongji.apt.client.AptClient;
 import com.find.doongji.apt.repository.AptRepository;
 import com.find.doongji.danji.repository.DanjiRepository;
@@ -32,10 +30,8 @@ public class BasicListingService implements ListingService {
 
     private final ListingRepository listingRepository;
     private final AptRepository aptRepository;
-    private final AddressRepository addressRepository;
     private final LocationRepository locationRepository;
 
-    private final AddressService addressService;
 
     private final AptClient aptClient;
     private final DanjiRepository danjiRepository;
@@ -46,25 +42,27 @@ public class BasicListingService implements ListingService {
     @Override
     public void addListing(ListingCreateRequest request, MultipartFile image) throws Exception {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<AddressMappingResponse> addressMappings = addressRepository.selectAddressMappingByJibunAddress(request.getJibunAddress());
 
-        List<Long> danjiIds = new ArrayList<>();
-        if (addressMappings.isEmpty()) {
-            danjiIds.add(addressService.createAddressMapping(request.getJibunAddress(), request.getRoadAddress()));
-        } else {
-            for (AddressMappingResponse addressMapping : addressMappings) {
-                danjiIds.add(addressMapping.getDanjiId());
-            }
-        }
 
         String imagePath = FileUploadUtil.uploadFile(image, "./uploads");
+        AddressUtil.AddressComponents components = AddressUtil.parseAddress(request.getRoadAddress());
+        AddressUtil.OldAddressComponents oldComponents = AddressUtil.parseOldAddress(request.getJibunAddress());
 
-        for (Long id : danjiIds) {
-            AddressMappingResponse mapping = addressRepository.selectAddressMappingByDanjiId(id);
+        System.out.println("roadNm: " + components.getRoadNm()+", \nroadNmBonbun: "+components.getRoadNmBonbun()+", \nroadNmBubun: "+components.getRoadNmBubun()+", \njibunAddress: "+oldComponents.getJibunAddress());
+
+        List<AptInfo> aptInfos = aptRepository.selectAptInfoByRoadComponents(components.getRoadNm(), components.getRoadNmBonbun(), components.getRoadNmBubun());
+
+
+
+        if (aptInfos.isEmpty()) {
+            throw new IllegalArgumentException("해당 아파트 정보를 찾을 수 없습니다.");
+        }
+
+        for (AptInfo aptInfo : aptInfos) {
             ListingEntity entity = ListingEntity.builder()
-                    .addressMappingId(mapping.getId())
-                    .username(username)
-                    .imagePath(cleanPath(removeUploadsPrefix(imagePath)))
+                            .username(username)
+                            .aptSeq(aptInfo.getAptSeq())
+                            .imagePath(cleanPath(removeUploadsPrefix(imagePath)))
                     .isOptical(request.getResult())
                     .oldAddress(request.getJibunAddress())
                     .roadAddress(AddressUtil.cleanAddress(request.getRoadAddress()))
@@ -100,7 +98,6 @@ public class BasicListingService implements ListingService {
 
         ListingUpdateEntity entity = ListingUpdateEntity.builder()
                 .id(request.getId())
-                .addressMappingId(response.getAddressMappingId())
                 .username(response.getUsername())
                 .imagePath(response.getImagePath())
                 .oldAddress(request.getOldAddress() == null ? response.getOldAddress() : request.getOldAddress())
