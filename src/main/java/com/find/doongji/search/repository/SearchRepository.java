@@ -10,4 +10,6 @@ import java.util.List;
 @Mapper
 public interface SearchRepository {
     List<AptInfo> filterBySearchQuery(@Param("searchQuery") SearchQuery searchQuery);
+
+    int selectCountBySearchQuery(@Param("searchQuery") SearchQuery searchQuery);
 }

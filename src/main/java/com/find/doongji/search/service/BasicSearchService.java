@@ -82,12 +82,9 @@ public class BasicSearchService implements SearchService {
                     .build();
             aptInfos = searchRepository.filterBySearchQuery(query);
 
-            totalSize = aptInfos.size();
-            endIndex = Math.min(endIndex, totalSize);
+            totalSize = searchRepository.selectCountBySearchQuery(query);
 
-            List<AptInfo> paginatedAptInfos = aptInfos.subList(startIndex, endIndex);
-
-            List<SearchResponse> responses = paginatedAptInfos.stream().map(
+            List<SearchResponse> responses = aptInfos.stream().map(
                     aptInfo -> new SearchResponse(
                             SimilarityScore.NONE,
                             aptInfo,
@@ -171,6 +168,7 @@ public class BasicSearchService implements SearchService {
                     .sorted(Comparator.comparingDouble(aptInfo -> -similarityMap.get(aptInfo.getAptSeq())))
                     .toList();
 
+            totalSize = searchRepository.selectCountBySearchQuery(query);
             List<SearchResponse> searchResponses = aptInfos.stream()
                     .map(aptInfo -> {
                         float similarityScore = similarityMap.getOrDefault(aptInfo.getAptSeq(), 0.0f);
@@ -179,7 +177,7 @@ public class BasicSearchService implements SearchService {
                                 similarity,
                                 aptInfo,
                                 likeService.viewLike(aptInfo.getAptSeq()),
-                                0
+                                totalSize
                         );
                     })
                     .toList();
