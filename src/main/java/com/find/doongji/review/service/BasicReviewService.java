@@ -2,12 +2,11 @@ package com.find.doongji.review.service;
 
 import com.find.doongji.address.payload.response.AddressMappingResponse;
 import com.find.doongji.address.repository.AddressRepository;
+import com.find.doongji.address.service.AddressService;
 import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.openai.client.OpenAIClient;
 import com.find.doongji.review.payload.request.ReviewCreateRequest;
 import com.find.doongji.review.payload.request.ReviewEntity;
-import com.find.doongji.review.payload.response.ReviewResponse;
-import com.find.doongji.review.payload.response.ReviewSummaryResponse;
 import com.find.doongji.review.repository.ReviewRepository;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +30,7 @@ public class BasicReviewService implements ReviewService {
     private final AddressRepository addressRepository;
 
     private final AuthService authService;
+    private final AddressService addressService;
 
     private final OpenAIClient openAIClient;
 
@@ -55,24 +55,29 @@ public class BasicReviewService implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReviewSummaryResponse getReviewsByAptSeq(String aptSeq) throws Exception {
-        List<ReviewResponse> reviews =  reviewRepository.selectReviewsByAptSeq(aptSeq);
+    public List<String> getReviewsByAptSeq(String aptSeq) throws Exception {
+        List<String> reviews = reviewRepository.selectReviewsByAptSeq(aptSeq);
 
         if (reviews == null || reviews.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
+        return reviews;
 
-        String summaryPrompt = "다음 리뷰들에 대해 예의있는 말투로 250자 이내로 요약해주십시오." + reviews.stream()
-                .map(ReviewResponse::getDescription)
-                .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public String summarize(String aptSeq) throws Exception {
+        List<String> reviews = getReviewsByAptSeq(aptSeq);
+        if (reviews.isEmpty()) {
+            throw new Exception("No reviews found for the given aptSeq.");
+        }
+        String summaryPrompt = "다음 리뷰들에 대해 예의있는 말투로 250자 이내로 요약해주십시오." + String.join(", ", reviews);
 
         String overview = openAIClient.chat(summaryPrompt);
-
-        return ReviewSummaryResponse.builder()
-                .summary(overview)
-                .reviews(reviews)
-                .build();
-
+        if (overview.isEmpty()) {
+            throw new Exception("ChatGPT failed to summarize reviews.");
+        }
+        return overview;
     }
 
     @Override
