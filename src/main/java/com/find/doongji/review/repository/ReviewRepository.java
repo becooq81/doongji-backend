@@ -31,5 +31,5 @@ public interface ReviewRepository {
      * @param aptSeq 아파트 시퀀스
      * @return 아파트 시퀀스에 해당하는 리뷰 조회
      */
-    List<ReviewResponse> selectReviewsByAptSeq(@Param("aptSeq") String aptSeq);
+    List<String> selectReviewsByAptSeq(@Param("aptSeq") String aptSeq);
 }

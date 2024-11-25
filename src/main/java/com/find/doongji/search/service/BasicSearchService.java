@@ -63,7 +63,7 @@ public class BasicSearchService implements SearchService {
     @Override
     @Transactional
     public List<SearchResponse> search(SearchRequest searchRequest, int page, int size) throws Exception {
-        List<AptInfo> aptInfos;
+        List<SearchResponse> searchResponses;
         page--;
 
         int totalSize;
@@ -71,6 +71,7 @@ public class BasicSearchService implements SearchService {
         int endIndex = startIndex + size;
 
         if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
+
             SearchQuery query = SearchQuery.builder()
                     .minPrice(searchRequest.getMinPrice())
                     .maxPrice(searchRequest.getMaxPrice())
@@ -80,96 +81,64 @@ public class BasicSearchService implements SearchService {
                     .offset(startIndex)
                     .size(size)
                     .build();
-            aptInfos = searchRepository.filterBySearchQuery(query);
 
-            totalSize = searchRepository.selectCountBySearchQuery(query);
+            List<AptInfo> aptInfos = searchRepository.filterBySearchQuery(query);
 
-            List<SearchResponse> responses = aptInfos.stream().map(
-                    aptInfo -> new SearchResponse(
+            endIndex = Math.min(endIndex, aptInfos.size());
+
+            searchResponses = aptInfos.subList(startIndex, endIndex).stream()
+                    .map(aptInfo -> new SearchResponse(
                             SimilarityScore.NONE,
                             aptInfo,
                             likeService.viewLike(aptInfo.getAptSeq()),
-                            totalSize
-                    )
-            ).toList();
-
-            return responses;
+                            aptInfos.size()
+                    ))
+                    .toList();
 
         } else {
+
             List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K).stream()
                     .filter(distinctByKey(RecommendResponse::getDanjiId))
                     .toList();
 
-            Map<Long, RecommendResponse> recommendResponseMap = recommendResponses.stream()
-                    .collect(Collectors.toMap(RecommendResponse::getDanjiId, Function.identity()));
+            List<AddressMappingResponse> mappings = addressRepository.selectAddressMappingByDanjiIdList(
+                    recommendResponses.stream()
+                            .map(RecommendResponse::getDanjiId)
+                            .toList()
+            );
 
-            List<Long> danjiIds = new ArrayList<>(recommendResponseMap.keySet());
-
-            List<AddressMappingResponse> mappings = addressRepository.selectAddressMappingByDanjiIdList(danjiIds);
-
-            Map<String, List<Long>> aptSeqToDanjiIdsMap = mappings.stream()
+            Map<String, Float> similarityMap = mappings.stream()
                     .filter(Objects::nonNull)
                     .collect(Collectors.toMap(
                             AddressMappingResponse::getAptSeq,
-                            mapping -> new ArrayList<>(List.of(mapping.getDanjiId())),
-                            (existing, replacement) -> {
-                                existing.addAll(replacement);
-                                return existing;
-                            }
+                            mapping -> recommendResponses.stream()
+                                    .filter(response -> mapping.getDanjiId().equals(response.getDanjiId()))
+                                    .findFirst()
+                                    .map(RecommendResponse::getSimilarity)
+                                    .orElse(0.0f),
+                            (existing, replacement) -> existing // Resolve conflicts
                     ));
 
-            Map<String, Float> similarityMap = aptSeqToDanjiIdsMap.entrySet().stream()
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            entry -> {
-                                List<Long> danjiIdList = entry.getValue();
-                                return danjiIdList.stream()
-                                        .map(danjiId -> recommendResponses.stream()
-                                                .filter(response -> response.getDanjiId().equals(danjiId))
-                                                .findFirst()
-                                                .map(RecommendResponse::getSimilarity)
-                                                .orElse(0.0f))
-                                        .max(Float::compare)
-                                        .orElse(0.0f);
-                            }
-                    ));
-
-            List<String> aptSeqList = mappings.stream()
-                    .map(AddressMappingResponse::getAptSeq)
-                    .collect(Collectors.toList());
-
-            SearchQuery query = SearchQuery.builder()
-                    .aptSeqList(aptSeqList)
+            List<AptInfo> aptInfos = searchRepository.filterBySearchQuery(SearchQuery.builder()
+                    .aptSeqList(mappings.stream().map(AddressMappingResponse::getAptSeq).toList())
                     .minPrice(searchRequest.getMinPrice())
                     .maxPrice(searchRequest.getMaxPrice())
                     .locationFilter(searchRequest.getLocationFilter())
                     .minArea(searchRequest.getMinArea())
                     .maxArea(searchRequest.getMaxArea())
-                    .offset(startIndex)
-                    .size(size)
-                    .build();
-            aptInfos = searchRepository.filterBySearchQuery(query);
-
-            Map<String, Double> aptSeqToMaxSimilarity = aptInfos.stream()
-                    .collect(Collectors.toMap(
-                            AptInfo::getAptSeq,
-                            aptInfo -> {
-                                List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
-                                return danjiIdList.stream()
-                                        .map(recommendResponseMap::get)
-                                        .filter(Objects::nonNull)
-                                        .mapToDouble(RecommendResponse::getSimilarity)
-                                        .max()
-                                        .orElse(0.0);
-                            }
-                    ));
+                    .build());
 
             aptInfos = aptInfos.stream()
-                    .sorted(Comparator.comparingDouble(aptInfo -> -aptSeqToMaxSimilarity.getOrDefault(aptInfo.getAptSeq(), 0.0)))
+                    .sorted((aptInfo1, aptInfo2) -> Float.compare(
+                            similarityMap.getOrDefault(aptInfo2.getAptSeq(), 0.0f),
+                            similarityMap.getOrDefault(aptInfo1.getAptSeq(), 0.0f)
+                    ))
                     .toList();
 
-            totalSize = searchRepository.selectCountBySearchQuery(query);
-            List<SearchResponse> searchResponses = aptInfos.stream()
+            totalSize = aptInfos.size();
+            endIndex = Math.min(endIndex, totalSize);
+
+            searchResponses = aptInfos.subList(startIndex, endIndex).stream()
                     .map(aptInfo -> {
                         float similarityScore = similarityMap.getOrDefault(aptInfo.getAptSeq(), 0.0f);
                         SimilarityScore similarity = SimilarityScore.classify(similarityScore);
@@ -183,9 +152,9 @@ public class BasicSearchService implements SearchService {
                     .toList();
 
             trackSearchHistory(searchRequest);
-
-            return searchResponses;
         }
+
+        return searchResponses;
     }
 
 
@@ -211,7 +180,7 @@ public class BasicSearchService implements SearchService {
         return SearchDetailResponse.builder()
                 .searchResult(searchResult)
                 .isLiked(likeService.viewLike(aptSeq))
-                .overview(reviewService.getReviewsByAptSeq(aptSeq))
+                .reviews(reviewService.getReviewsByAptSeq(aptSeq))
                 .build();
     }
 

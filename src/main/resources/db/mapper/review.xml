@@ -26,8 +26,8 @@
         VALUES (#{danjiId}, #{description}, #{aptSeq});
     </insert>
 
-    <select id="selectReviewsByAptSeq" resultType="com.find.doongji.review.payload.response.ReviewResponse">
-        SELECT danji_id, description, apt_seq
+    <select id="selectReviewsByAptSeq" resultType="string">
+        SELECT description
         FROM review
         WHERE apt_seq = #{aptSeq}
     </select>
