@@ -28,4 +28,20 @@ public class AptInfo {
     private String maxExcluUseAr;
     private String minDealAmount;
     private String maxDealAmount;
+
+    @Override
+    public String toString() {
+        return "AptInfo{" +
+                "aptSeq='" + aptSeq + '\'' +
+                ", sggCd='" + sggCd + '\'' +
+                ", umdCd='" + umdCd + '\'' +
+                ", umdNm='" + umdNm + '\'' +
+                ", jibun='" + jibun + '\'' +
+                ", roadNmSggCd='" + roadNmSggCd + '\'' +
+                ", roadNm='" + roadNm + '\'' +
+                ", roadNmBonbun='" + roadNmBonbun + '\'' +
+                ", roadNmBubun='" + roadNmBubun + '\'' +
+                ", aptNm='" + aptNm + '\'' +
+                '}';
+    }
 }

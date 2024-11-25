@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.find.doongji.search.repository.SearchRepository">
+
+    <select id="filterBySearchQuery" parameterType="com.find.doongji.search.payload.request.SearchQuery" resultType="com.find.doongji.apt.payload.response.AptInfo">
+        SELECT *
+        FROM
+        houseinfos ai
+        LEFT JOIN
+        dongcodes dc
+        ON
+        CONCAT(ai.sgg_cd, ai.umd_cd) = dc.dong_code
+        WHERE
+        1=1
+        <!-- Apt Seq List Filter -->
+        <if test="searchQuery.aptSeqList != null and searchQuery.aptSeqList.size > 0">
+            AND ai.apt_seq IN
+            <foreach item="aptSeq" collection="searchQuery.aptSeqList" open="(" separator="," close=")">
+                #{aptSeq}
+            </foreach>
+        </if>
+        AND
+        <!-- Price overlap filter -->
+        (
+            (#{searchQuery.minPrice} IS NULL AND #{searchQuery.maxPrice} IS NULL)
+                OR
+            (ai.min_deal_amount IS NOT NULL AND ai.max_deal_amount IS NOT NULL
+                AND ai.min_deal_amount &lt;= #{searchQuery.maxPrice}
+                AND ai.max_deal_amount &gt;= #{searchQuery.minPrice}
+            )
+        )
+        <!-- Area overlap filter -->
+            AND
+            (
+                (#{searchQuery.minArea} IS NULL AND #{searchQuery.maxArea} IS NULL)
+            OR
+                (ai.min_exclu_use_ar IS NOT NULL AND ai.max_exclu_use_ar IS NOT NULL
+                AND ai.min_exclu_use_ar &lt;= #{searchQuery.maxArea}
+                AND ai.max_exclu_use_ar &gt;= #{searchQuery.minArea}
+            )
+        )
+        <!-- Location filter -->
+        AND
+        (
+            #{searchQuery.locationFilter} IS NULL
+                OR
+            (CONCAT_WS(' ', dc.sido_name, dc.gugun_name, dc.dong_name) LIKE CONCAT(#{searchQuery.locationFilter}, '%'))
+        )
+        ORDER BY
+        ai.apt_seq DESC
+        LIMIT #{searchQuery.size} OFFSET #{searchQuery.offset};
+    </select>
+
+</mapper>
