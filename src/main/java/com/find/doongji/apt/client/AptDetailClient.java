@@ -1,5 +1,6 @@
 package com.find.doongji.apt.client;
 
+import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.util.HttpUtils;
 import com.find.doongji.apt.util.ParseUtils;
 import com.find.doongji.search.payload.response.SearchResult;
@@ -53,7 +54,7 @@ public class AptDetailClient implements AptClient {
         String latitude = null;
         String longitude = null;
         if (address != null && !address.isEmpty()) {
-            Map<String, String> geocoderResult = getCoordinatesFromDoroJuso(address);
+            Map<String, String> geocoderResult = getCoordinatesFromDoroJuso(AddressUtil.helpSeongnam(address));
             latitude = geocoderResult.get("y");
             longitude = geocoderResult.get("x");
         }
