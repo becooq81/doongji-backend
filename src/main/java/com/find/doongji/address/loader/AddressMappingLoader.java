@@ -59,9 +59,9 @@ public class AddressMappingLoader implements CommandLineRunner {
 
                 List<AptInfo> aptInfoList = aptRepository.selectAptInfoByUmdNmAndJibun(umdNm, jibun);
                 for (AptInfo aptInfo : aptInfoList) {
-                    String aptInfoRoadAddress = aptInfo.getRoadNm() + " " + aptInfo.getRoadNmBonbun();
-                    if (!aptInfo.getRoadNmBubun().equals("0")) {
-                        aptInfoRoadAddress += "-" + aptInfo.getRoadNmBubun();
+                    String aptInfoRoadAddress = aptInfo.getRoadNm().trim() + " " + aptInfo.getRoadNmBonbun().trim();
+                    if (!aptInfo.getRoadNmBubun().trim().equals("0")) {
+                        aptInfoRoadAddress += "-" + aptInfo.getRoadNmBubun().trim();
                     }
                     AddressMapping addressMapping = AddressMapping.builder()
                             .oldAddress(oldAddress)
