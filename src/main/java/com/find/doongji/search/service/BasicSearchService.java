@@ -6,7 +6,6 @@ import com.find.doongji.address.util.AddressUtil;
 import com.find.doongji.apt.client.AptDetailClient;
 import com.find.doongji.apt.payload.response.AptInfo;
 import com.find.doongji.apt.repository.AptRepository;
-import com.find.doongji.apt.service.AptService;
 import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.danji.payload.response.DanjiCode;
 import com.find.doongji.danji.repository.DanjiRepository;
@@ -18,11 +17,13 @@ import com.find.doongji.location.repository.LocationRepository;
 import com.find.doongji.review.service.ReviewService;
 import com.find.doongji.search.client.RecommendClient;
 import com.find.doongji.search.enums.SimilarityScore;
+import com.find.doongji.search.payload.request.SearchQuery;
 import com.find.doongji.search.payload.request.SearchRequest;
 import com.find.doongji.search.payload.response.RecommendResponse;
 import com.find.doongji.search.payload.response.SearchDetailResponse;
 import com.find.doongji.search.payload.response.SearchResponse;
 import com.find.doongji.search.payload.response.SearchResult;
+import com.find.doongji.search.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BasicSearchService implements SearchService {
 
-    private static final int TOP_K = 10000;
+    private static final int TOP_K = 15000;
 
     private final RecommendClient recClient;
     private final AptDetailClient aptClient;
@@ -47,6 +48,7 @@ public class BasicSearchService implements SearchService {
     private final AptRepository aptRepository;
     private final LocationRepository locationRepository;
     private final DanjiRepository danjiRepository;
+    private final SearchRepository searchRepository;
 
     private final HistoryService historyService;
     private final AuthService authService;
@@ -61,23 +63,76 @@ public class BasicSearchService implements SearchService {
     @Override
     @Transactional
     public List<SearchResponse> search(SearchRequest searchRequest, int page, int size) throws Exception {
-        // Handle empty query case
+        long startTime = System.nanoTime(); // Start overall timer
         List<AptInfo> aptInfos;
         page--;
 
+        int totalSize;
+        int startIndex = page * size;
+        int endIndex = startIndex + size;
+
         if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
-            aptInfos = filterAptInfosByOverlap(aptRepository.findAllAptInfos(), searchRequest);
+            SearchQuery query = SearchQuery.builder()
+                    .minPrice(searchRequest.getMinPrice())
+                    .maxPrice(searchRequest.getMaxPrice())
+                    .locationFilter(searchRequest.getLocationFilter())
+                    .minArea(searchRequest.getMinArea())
+                    .maxArea(searchRequest.getMaxArea())
+                    .offset(startIndex)
+                    .size(size)
+                    .build();
+            long filterStart = System.nanoTime(); // Timer for filtering
+            aptInfos = searchRepository.filterBySearchQuery(query);
+            long filterEnd = System.nanoTime();
+            System.out.println("Filter overlap took: " + (filterEnd - filterStart) / 1_000_000 + " ms");
+
+            totalSize = aptInfos.size();
+            endIndex = Math.min(endIndex, totalSize);
+
+            if (startIndex >= totalSize) {
+                System.out.println("Empty result due to pagination. Total size: " + totalSize);
+                return new ArrayList<>();
+            }
+
+            List<AptInfo> paginatedAptInfos = aptInfos.subList(startIndex, endIndex);
+
+            long responseStart = System.nanoTime(); // Timer for response mapping
+            List<SearchResponse> responses = paginatedAptInfos.stream().map(
+                    aptInfo -> new SearchResponse(
+                            SimilarityScore.NONE,
+                            aptInfo,
+                            likeService.viewLike(aptInfo.getAptSeq()),
+                            totalSize
+                    )
+            ).toList();
+            long responseEnd = System.nanoTime();
+            System.out.println("Mapping responses took: " + (responseEnd - responseStart) / 1_000_000 + " ms");
+
+            return responses;
+
         } else {
-            // Query is not empty, use recommendation client
+            long recommendationStart = System.nanoTime(); // Timer for recommendation client
             List<RecommendResponse> recommendResponses = recClient.getRecommendation(searchRequest.getQuery(), TOP_K).stream()
                     .filter(distinctByKey(RecommendResponse::getDanjiId))
                     .toList();
+            long recommendationEnd = System.nanoTime();
+            List<Long> answers = new ArrayList<>();
+            answers.add(37367L);
+            answers.add(38391L);
+            answers.add(36751L);
+            answers.add(36969L);
+            System.out.println("Recommendation fetch took: " + (recommendationEnd - recommendationStart) / 1_000_000 + " ms");
 
+            long mappingStart = System.nanoTime();
             Map<Long, RecommendResponse> recommendResponseMap = recommendResponses.stream()
                     .collect(Collectors.toMap(RecommendResponse::getDanjiId, Function.identity()));
 
             List<Long> danjiIds = new ArrayList<>(recommendResponseMap.keySet());
-
+            for (Long danjiId : danjiIds) {
+                if (danjiId==1035L) {
+                    System.out.println("danjiId: " + danjiId);
+                }
+            }
             List<AddressMappingResponse> mappings = addressRepository.selectAddressMappingByDanjiIdList(danjiIds);
 
             Map<String, List<Long>> aptSeqToDanjiIdsMap = mappings.stream()
@@ -90,58 +145,89 @@ public class BasicSearchService implements SearchService {
                                 return existing;
                             }
                     ));
+            long mappingEnd = System.nanoTime();
+            System.out.println("Mapping danji IDs took: " + (mappingEnd - mappingStart) / 1_000_000 + " ms");
 
-            List<String> aptSeqList = new ArrayList<>(aptSeqToDanjiIdsMap.keySet());
-            aptInfos = filterAptInfosByOverlap(
-                    aptRepository.selectAptInfoByAptSeqList(aptSeqList),
-                    searchRequest
-            );
+            long similarityStart = System.nanoTime(); // Timer for similarity map creation
+            Map<String, Float> similarityMap = aptSeqToDanjiIdsMap.entrySet().stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            entry -> {
+                                List<Long> danjiIdList = entry.getValue();
+                                return danjiIdList.stream()
+                                        .map(danjiId -> recommendResponses.stream()
+                                                .filter(response -> response.getDanjiId().equals(danjiId))
+                                                .findFirst()
+                                                .map(RecommendResponse::getSimilarity)
+                                                .orElse(0.0f))
+                                        .max(Float::compare)
+                                        .orElse(0.0f);
+                            }
+                    ));
+            long similarityEnd = System.nanoTime();
+            System.out.println("Building similarity map took: " + (similarityEnd - similarityStart) / 1_000_000 + " ms");
+            System.out.println("PAGE: " + page + " SIZE: " + size);
 
-            int totalSize = aptInfos.size();
+            long filteringStart = System.nanoTime(); // Timer for filtering aptInfos
+            List<String> aptSeqList = mappings.stream()
+                    .map(AddressMappingResponse::getAptSeq)
+                    .collect(Collectors.toList());
+            SearchQuery query = SearchQuery.builder()
+                    .aptSeqList(aptSeqList)
+                    .minPrice(searchRequest.getMinPrice())
+                    .maxPrice(searchRequest.getMaxPrice())
+                    .locationFilter(searchRequest.getLocationFilter())
+                    .minArea(searchRequest.getMinArea())
+                    .maxArea(searchRequest.getMaxArea())
+                    .offset(startIndex)
+                    .size(size)
+                    .build();
+            aptInfos = searchRepository.filterBySearchQuery(query);
+            long filteringEnd = System.nanoTime();
+            System.out.println("Filtering aptInfos took: " + (filteringEnd - filteringStart) / 1_000_000 + " ms");
 
-            // Sort based on similarity
-            aptInfos = aptInfos.stream()
-                    .sorted(Comparator.comparing(
+            long sortingStart = System.nanoTime(); // Timer for sorting
+            Map<String, Double> aptSeqToMaxSimilarity = aptInfos.stream()
+                    .collect(Collectors.toMap(
+                            AptInfo::getAptSeq,
                             aptInfo -> {
                                 List<Long> danjiIdList = aptSeqToDanjiIdsMap.getOrDefault(aptInfo.getAptSeq(), List.of());
                                 return danjiIdList.stream()
-                                        .map(danjiId -> recommendResponseMap.get(danjiId))
+                                        .map(recommendResponseMap::get)
                                         .filter(Objects::nonNull)
                                         .mapToDouble(RecommendResponse::getSimilarity)
                                         .max()
                                         .orElse(0.0);
-                            },
-                            Comparator.reverseOrder()
-                    ))
+                            }
+                    ));
+
+            aptInfos = aptInfos.stream()
+                    .sorted(Comparator.comparingDouble(aptInfo -> -aptSeqToMaxSimilarity.getOrDefault(aptInfo.getAptSeq(), 0.0)))
                     .toList();
+            long sortingEnd = System.nanoTime();
+            System.out.println("Sorting aptInfos took: " + (sortingEnd - sortingStart) / 1_000_000 + " ms");
+
+            long responseStart = System.nanoTime(); // Timer for response mapping
+            List<SearchResponse> searchResponses = aptInfos.stream()
+                    .map(aptInfo -> {
+                        float similarityScore = similarityMap.getOrDefault(aptInfo.getAptSeq(), 0.0f);
+                        SimilarityScore similarity = SimilarityScore.classify(similarityScore);
+                        return new SearchResponse(
+                                similarity,
+                                aptInfo,
+                                likeService.viewLike(aptInfo.getAptSeq()),
+                                0
+                        );
+                    })
+                    .toList();
+            long responseEnd = System.nanoTime();
+            System.out.println("Mapping responses took: " + (responseEnd - responseStart) / 1_000_000 + " ms");
+
+            trackSearchHistory(searchRequest);
+            System.out.println("Total execution time: " + (System.nanoTime() - startTime) / 1_000_000 + " ms");
+
+            return searchResponses;
         }
-
-        // Apply pagination before processing likes
-        int totalResults = aptInfos.size();
-        int startIndex = page * size;
-        int endIndex = Math.min(startIndex + size, totalResults);
-
-        if (startIndex >= totalResults) {
-            return new ArrayList<>();
-        }
-
-        List<AptInfo> paginatedAptInfos = aptInfos.subList(startIndex, endIndex);
-
-        // Process likes for the paginated results
-        List<SearchResponse> searchResponses = paginatedAptInfos.stream()
-                .map(aptInfo -> new SearchResponse(
-                        SimilarityScore.NONE, // Replace with appropriate similarity score if needed
-                        aptInfo,
-                        likeService.viewLike(aptInfo.getAptSeq()),
-                        totalResults
-                        )
-                )
-                .toList();
-
-        // Track search history
-        trackSearchHistory(searchRequest);
-
-        return searchResponses;
     }
 
 
@@ -250,6 +336,7 @@ public class BasicSearchService implements SearchService {
             startAddress += " " + dongCode.getDongName();
 
             startAddress = AddressUtil.cleanAddress(startAddress);
+
             String cleaned = AddressUtil.cleanAddress(searchRequest.getLocationFilter());
             return startAddress.startsWith(cleaned);
         }
