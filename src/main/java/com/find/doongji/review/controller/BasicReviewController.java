@@ -2,12 +2,10 @@ package com.find.doongji.review.controller;
 
 import com.find.doongji.review.payload.request.ReviewCreateRequest;
 import com.find.doongji.review.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,7 +16,7 @@ public class BasicReviewController implements ReviewController{
 
     @Override
     @PostMapping
-    public ResponseEntity<?> createReview(ReviewCreateRequest request) {
+    public ResponseEntity<?> createReview(@Valid @RequestBody ReviewCreateRequest request) {
         try {
             reviewService.createReview(request);
             return ResponseEntity.ok("Review created successfully");
