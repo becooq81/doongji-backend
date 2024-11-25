@@ -63,6 +63,7 @@ public class BasicSearchService implements SearchService {
     public List<SearchResponse> search(SearchRequest searchRequest, int page, int size) throws Exception {
         // Handle empty query case
         List<AptInfo> aptInfos;
+        page--;
 
         if (searchRequest.getQuery() == null || searchRequest.getQuery().trim().isEmpty()) {
             aptInfos = filterAptInfosByOverlap(aptRepository.findAllAptInfos(), searchRequest);
@@ -198,11 +199,7 @@ public class BasicSearchService implements SearchService {
         }
 
         // Check location filter
-        if (!checkLocationFilter(aptInfo, searchRequest)) {
-            return false;
-        }
-
-        return true;
+        return checkLocationFilter(aptInfo, searchRequest);
     }
 
     private boolean checkPriceOverlap(AptInfo aptInfo, SearchRequest searchRequest) {
@@ -251,10 +248,9 @@ public class BasicSearchService implements SearchService {
                 startAddress+= " " + dongCode.getGugunName();
             }
             startAddress += " " + dongCode.getDongName();
+
             startAddress = AddressUtil.cleanAddress(startAddress);
-
             String cleaned = AddressUtil.cleanAddress(searchRequest.getLocationFilter());
-
             return startAddress.startsWith(cleaned);
         }
 
