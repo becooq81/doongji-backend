@@ -96,6 +96,8 @@ public class BasicSearchService implements SearchService {
                     searchRequest
             );
 
+            int totalSize = aptInfos.size();
+
             // Sort based on similarity
             aptInfos = aptInfos.stream()
                     .sorted(Comparator.comparing(
@@ -129,7 +131,9 @@ public class BasicSearchService implements SearchService {
                 .map(aptInfo -> new SearchResponse(
                         SimilarityScore.NONE, // Replace with appropriate similarity score if needed
                         aptInfo,
-                        likeService.viewLike(aptInfo.getAptSeq()))
+                        likeService.viewLike(aptInfo.getAptSeq()),
+                        totalResults
+                        )
                 )
                 .toList();
 
