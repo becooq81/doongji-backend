@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,22 +76,23 @@ public class BasicReviewService implements ReviewService {
 
         System.out.println("Table of crawled reviews does not exist. Creating table..." + System.currentTimeMillis());
 
-        try (CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charset.forName("EUC-KR"))))) {
+        try (CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8)))) {
             String[] columns;
             List<ReviewCreateRequest> requests = new ArrayList<>();
             reader.readNext(); // Skip header
 
             while ((columns = reader.readNext()) != null) {
                 try {
+                    System.out.println("Processing line: " + Arrays.toString(columns));
                     String aptSeq = columns[0];
-                    String totalDesc = columns[3];
-                    String trafficDesc = columns[4];
-                    String aroundDesc = columns[5];
-                    String careDesc = columns[6];
-                    String residentDesc = columns[7];
+                    String totalDesc = columns[1];
+                    String trafficDesc = columns[2];
+                    String aroundDesc = columns[3];
+                    String careDesc = columns[4];
+                    String residentDesc = columns[5];
 
 
-                    String[] descriptions = {totalDesc, trafficDesc, aroundDesc, careDesc, residentDesc};
+                    String[] descriptions = {trafficDesc, aroundDesc, careDesc, residentDesc};
 
                     for (String desc : descriptions) {
                         requests.add(createEntity(aptSeq, desc));
