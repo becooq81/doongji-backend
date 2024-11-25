@@ -6,4 +6,6 @@ import org.springframework.http.ResponseEntity;
 public interface ReviewController {
 
     ResponseEntity<?> createReview(ReviewCreateRequest request);
+
+    ResponseEntity<?> summarizeReview(String aptSeq);
 }
