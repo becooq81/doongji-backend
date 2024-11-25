@@ -34,6 +34,11 @@ public interface AddressRepository {
     List<AddressMappingResponse> selectAddressMappingByRoadAddress(@Param("roadAddress") String roadAddress);
 
     /**
+     * @param jibunAddress
+     * @return
+     */
+    List<AddressMappingResponse> selectAddressMappingByJibunAddress(@Param("jibunAddress") String jibunAddress);
+    /**
      * @param danjiId 단지 ID
      * @return
      */

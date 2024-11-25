@@ -102,8 +102,7 @@ public class BasicReviewService implements ReviewService {
                     AddressMappingResponse addressMapping = addressRepository.selectAddressMappingByDanjiId(danjiId);
 
                     if (addressMapping == null) {
-                        System.out.println("Address mapping not found for danjiId: " + danjiId);
-                        continue;
+                        addressService.createAddressMapping(columns[1], columns[2]);
                     }
 
                     String aptSeq = addressMapping.getAptSeq();

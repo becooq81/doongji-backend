@@ -168,7 +168,7 @@ public class BasicSearchService implements SearchService {
                     ));
 
             aptInfos = aptInfos.stream()
-                    .sorted(Comparator.comparingDouble(aptInfo -> -aptSeqToMaxSimilarity.getOrDefault(aptInfo.getAptSeq(), 0.0)))
+                    .sorted(Comparator.comparingDouble(aptInfo -> -similarityMap.get(aptInfo.getAptSeq())))
                     .toList();
 
             List<SearchResponse> searchResponses = aptInfos.stream()

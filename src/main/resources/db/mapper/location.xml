@@ -28,9 +28,9 @@
     <select id="selectDongCode" resultType="String">
         SELECT dong_code
         FROM dongcodes
-        WHERE sido_name = #{si}
-        AND gugun_name = #{gugun}
-        AND dong_name = #{dong}
+        WHERE sido_name like CONCAT(#{si}, '%')
+        AND gugun_name like CONCAT(#{gugun}, '%')
+        AND dong_name like CONCAT('%', #{dong}, '%')
     </select>
 
     <!-- Method 4: Select distinct sido names -->
