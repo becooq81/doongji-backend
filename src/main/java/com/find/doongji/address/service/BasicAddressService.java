@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class BasicAddressService implements AddressService {
         AptInfo aptInfo = aptInfoList.get(0);
         Long danjiId = null;
         for (DanjiCode danjiCode : danjiCodes) {
-            danjiId = (aptInfo.getAptSeq() + danjiCode.getKaptCode()).hashCode() & 0xffffffffL;
+            danjiId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
             if (!AddressUtil.cleanAddress(jibunAddress).startsWith(AddressUtil.cleanAddress(danjiCode.getSiGugunDong())))
                 continue;
             AddressUtil.OldAddressComponents oldAddressComponents = AddressUtil.parseOldAddress(jibunAddress);
