@@ -48,6 +48,7 @@ public class BasicLikeService implements LikeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AptInfo> getAllLikes() {
         if (!authService.isAuthenticated()) {
             throw new AccessDeniedException("You must be logged in to view likes.");
