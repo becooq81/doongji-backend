@@ -1,5 +1,6 @@
 package com.find.doongji.openai.payload.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 public class ChatGPTRequest {
 
+    @NotBlank(message = "ChatGPT model is required")
     private String model;
     private List<Message> messages;
 

@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewCreateRequest {
 
-    @NotBlank
+    @NotBlank(message = "리뷰에 아파트 번호는 필수 입력 값입니다.")
     private String aptSeq;
 
-    @NotBlank
+    @NotBlank(message = "리뷰 내용은 필수 입력 값입니다.")
     private String content;
 
     @Override

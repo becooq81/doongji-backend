@@ -12,19 +12,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ListingCreateRequest {
 
-    @NotNull
+    @NotNull(message = "도로명 주소는 필수 입력 값입니다.")
     private String roadAddress;
 
-    @NotNull
+    @NotNull(message = "지번 주소는 필수 입력 값입니다.")
     private String jibunAddress;
 
     private String aptDong;
     private String aptHo;
     private String description;
 
-    @NotNull
+    @NotNull(message = "광각 분류 결과는 필수 입력 값입니다.")
     private int result;
 
+    @NotNull(message = "가격은 필수 입력 값입니다.")
     private String price;
 
     @Override
