@@ -1,6 +1,7 @@
 package com.find.doongji.listing.payload.request;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +27,8 @@ public class ListingCreateRequest {
     private Integer result;
 
     @NotNull(message = "가격은 필수 입력 값입니다.")
-    private String price;
+    @Positive(message = "가격은 0보다 커야 합니다.")
+    private Integer price;
 
     @Override
     public String toString() {
