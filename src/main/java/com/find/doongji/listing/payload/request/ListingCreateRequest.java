@@ -23,7 +23,7 @@ public class ListingCreateRequest {
     private String description;
 
     @NotNull(message = "광각 분류 결과는 필수 입력 값입니다.")
-    private int result;
+    private Integer result;
 
     @NotNull(message = "가격은 필수 입력 값입니다.")
     private String price;
