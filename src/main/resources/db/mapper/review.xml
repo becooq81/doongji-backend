@@ -28,7 +28,7 @@
 
     <select id="selectReviewsByAptSeq" resultType="string">
         SELECT content
-        FROM review
+        FROM reviews
         WHERE apt_seq = #{aptSeq}
     </select>
 
