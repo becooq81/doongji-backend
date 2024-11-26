@@ -10,7 +10,7 @@ import lombok.Setter;
 @Builder
 public class ListingResponse {
     private Long id;
-    private Long addressMappingId;
+    private String aptSeq;
     private String username;
 
     @Setter
