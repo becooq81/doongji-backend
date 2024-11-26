@@ -83,7 +83,7 @@ public class BasicReviewService implements ReviewService {
 
             while ((columns = reader.readNext()) != null) {
                 try {
-                    System.out.println("Processing line: " + Arrays.toString(columns));
+
                     String aptSeq = columns[0];
                     String totalDesc = columns[1];
                     String trafficDesc = columns[2];
