@@ -3,6 +3,7 @@ package com.find.doongji.listing.payload.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -12,6 +13,7 @@ public class ListingResponse {
     private Long addressMappingId;
     private String username;
 
+    @Setter
     private String imagePath;
     private int isOptical;
 
@@ -23,10 +25,6 @@ public class ListingResponse {
 
     private String description;
 
-    private String price;
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+    private Integer price;
 
 }

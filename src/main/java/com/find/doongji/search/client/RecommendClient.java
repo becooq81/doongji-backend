@@ -35,10 +35,10 @@ public class RecommendClient {
             for (int i = 0; i < resultDataArray.length(); i++) {
                 JSONObject item = resultDataArray.getJSONObject(i);
 
-                Long danjiId = item.getLong("danji_id");
+                String aptSeq = item.getString("apt_seq");
                 float similarity = (float) item.getDouble("similarity");
 
-                result.add(new RecommendResponse(danjiId, similarity));
+                result.add(new RecommendResponse(aptSeq, similarity));
             }
         } catch (Exception e) {
             e.printStackTrace();

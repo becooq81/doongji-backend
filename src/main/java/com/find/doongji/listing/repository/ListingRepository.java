@@ -20,10 +20,10 @@ public interface ListingRepository {
     /**
      * 매물 조회
      *
-     * @param addressMappingId
+     * @param id
      * @return ListingResponse
      */
-    ListingResponse selectListing(Long addressMappingId);
+    ListingResponse selectListing(Long id);
 
     /**
      * 매물 삭제

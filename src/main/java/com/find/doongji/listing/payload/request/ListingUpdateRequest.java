@@ -22,7 +22,7 @@ public class ListingUpdateRequest {
     private String aptHo;
     private String description;
 
-    private String price;
+    private Integer price;
 
 
 }

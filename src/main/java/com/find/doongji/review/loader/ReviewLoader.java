@@ -15,7 +15,7 @@ public class ReviewLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        reviewService.loadReviewsFromData("src/main/resources/reviews_data.csv");
+        reviewService.loadReviewsFromData("src/main/resources/apt_seq_final.csv");
 
     }
 }

@@ -1,12 +1,8 @@
 package com.find.doongji.review.service;
 
-import com.find.doongji.address.payload.response.AddressMappingResponse;
-import com.find.doongji.address.repository.AddressRepository;
-import com.find.doongji.address.service.AddressService;
 import com.find.doongji.auth.service.AuthService;
 import com.find.doongji.openai.client.OpenAIClient;
 import com.find.doongji.review.payload.request.ReviewCreateRequest;
-import com.find.doongji.review.payload.request.ReviewEntity;
 import com.find.doongji.review.repository.ReviewRepository;
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
@@ -17,20 +13,18 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BasicReviewService implements ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final AddressRepository addressRepository;
 
     private final AuthService authService;
-    private final AddressService addressService;
 
     private final OpenAIClient openAIClient;
 
@@ -41,16 +35,8 @@ public class BasicReviewService implements ReviewService {
             throw new Exception("User must be authenticated to write reviews.");
         }
 
-        // TODO: 단지 ID와 apt seq 관계 재정의
-        List<AddressMappingResponse> addressMappings = addressRepository.selectAddressMappingByAptSeq(request.getAptSeq());
-        for (AddressMappingResponse addressMapping: addressMappings) {
-            ReviewEntity entity = ReviewEntity.builder()
-                    .danjiId(addressMapping.getDanjiId())
-                    .description(request.getContent())
-                    .aptSeq(request.getAptSeq())
-                    .build();
-            reviewRepository.insertReview(entity);
-        }
+        reviewRepository.insertReview(request);
+
     }
 
     @Override
@@ -90,36 +76,31 @@ public class BasicReviewService implements ReviewService {
 
         System.out.println("Table of crawled reviews does not exist. Creating table..." + System.currentTimeMillis());
 
-        try (CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charset.forName("EUC-KR"))))) {
+        try (CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8)))) {
             String[] columns;
-            List<ReviewEntity> entities = new ArrayList<>();
+            List<ReviewCreateRequest> requests = new ArrayList<>();
             reader.readNext(); // Skip header
 
             while ((columns = reader.readNext()) != null) {
                 try {
-                    Long danjiId = Long.parseLong(columns[0]);
-                    String totalDesc = columns[3];
-                    String trafficDesc = columns[4];
-                    String aroundDesc = columns[5];
-                    String careDesc = columns[6];
-                    String residentDesc = columns[7];
 
-                    AddressMappingResponse addressMapping = addressRepository.selectAddressMappingByDanjiId(danjiId);
+                    String aptSeq = columns[0];
+                    String totalDesc = columns[1];
+                    String trafficDesc = columns[2];
+                    String aroundDesc = columns[3];
+                    String careDesc = columns[4];
+                    String residentDesc = columns[5];
 
-                    if (addressMapping == null) {
-                        addressService.createAddressMapping(columns[1], columns[2]);
-                    }
 
-                    String aptSeq = addressMapping.getAptSeq();
-                    String[] descriptions = {totalDesc, trafficDesc, aroundDesc, careDesc, residentDesc};
+                    String[] descriptions = {trafficDesc, aroundDesc, careDesc, residentDesc};
 
                     for (String desc : descriptions) {
-                        entities.add(createEntity(danjiId, desc, aptSeq));
+                        requests.add(createEntity(aptSeq, desc));
                     }
 
-                    if (entities.size() >= 100) {
-                        reviewRepository.bulkInsertReview(entities);
-                        entities.clear();
+                    if (requests.size() >= 100) {
+                        reviewRepository.bulkInsertReview(requests);
+                        requests.clear();
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing line: " + Arrays.toString(columns) + " | Error: " + e.getMessage());
@@ -127,8 +108,8 @@ public class BasicReviewService implements ReviewService {
             }
 
             // Insert remaining entities
-            if (!entities.isEmpty()) {
-                reviewRepository.bulkInsertReview(entities);
+            if (!requests.isEmpty()) {
+                reviewRepository.bulkInsertReview(requests);
             }
         }
 
@@ -136,11 +117,10 @@ public class BasicReviewService implements ReviewService {
         System.out.println("Table of crawled reviews created." + System.currentTimeMillis());
     }
 
-    private ReviewEntity createEntity(Long danjiId,String description, String aptSeq) {
-        return ReviewEntity.builder()
-                .danjiId(danjiId)
-                .description(description)
+    private ReviewCreateRequest createEntity(String aptSeq, String content) {
+        return ReviewCreateRequest.builder()
                 .aptSeq(aptSeq)
+                .content(content)
                 .build();
     }
 }

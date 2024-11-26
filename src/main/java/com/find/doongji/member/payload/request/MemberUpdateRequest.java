@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberUpdateRequest {
 
-    @Size(min = 1, max = 50, message = "Email must be between 1 and 50 characters")
     @Pattern(regexp = "^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$", message = "Email must be a valid email address")
     private String email;
     private String name;

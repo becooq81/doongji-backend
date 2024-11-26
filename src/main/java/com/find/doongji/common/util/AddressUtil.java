@@ -1,4 +1,4 @@
-package com.find.doongji.address.util;
+package com.find.doongji.common.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

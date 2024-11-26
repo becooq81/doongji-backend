@@ -1,6 +1,6 @@
 package com.find.doongji.apt.client;
 
-import com.find.doongji.address.util.AddressUtil;
+import com.find.doongji.common.util.AddressUtil;
 import com.find.doongji.apt.util.HttpUtils;
 import com.find.doongji.apt.util.ParseUtils;
 import com.find.doongji.search.payload.response.SearchResult;
