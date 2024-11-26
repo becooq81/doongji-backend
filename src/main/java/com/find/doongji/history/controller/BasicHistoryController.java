@@ -21,7 +21,6 @@ public class BasicHistoryController implements HistoryController {
     private final HistoryService service;
 
     @Override
-    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping
     public ResponseEntity<?> getHistoryByUsername() {
         try {
