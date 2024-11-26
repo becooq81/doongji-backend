@@ -7,30 +7,26 @@
 
     <select id="checkIfTableExists" resultType="int">
         SELECT CASE
-        WHEN EXISTS (SELECT 1 FROM danji LIMIT 1) THEN 1
+        WHEN EXISTS (SELECT 1 FROM danjis LIMIT 1) THEN 1
         ELSE 0
         END;
     </select>
 
 
     <insert id="bulkInsertDanji" parameterType="list">
-        INSERT INTO danji (as1, as2, as3, bjd_code, kapt_code, kapt_name)
+        INSERT INTO danjis (bjd_code, kapt_code, kapt_name)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.as1}, #{item.as2}, #{item.as3}, #{item.bjdCode}, #{item.kaptCode}, #{item.kaptName})
+            (#{item.bjdCode}, #{item.kaptCode}, #{item.kaptName})
         </foreach>
     </insert>
 
-    <select id="selectAllByBjdCode" resultType="com.find.doongji.danji.payload.response.DanjiCode">
-        SELECT *, CONCAT(as1, " ", as2, " ", as3) AS si_gugun_dong
-        FROM danji
-        WHERE bjd_code = #{bjdCode}
-    </select>
+    <select id="selectByAptNmAndDongcode" resultType="com.find.doongji.danji.payload.response.DanjiCode">
+        SELECT *
+        FROM danjis
+        WHERE bjd_code = #{dongcode}
+        AND kapt_name LIKE CONCAT('%', #{aptNm}, '%')
 
-    <select id="selectByAptNm" parameterType="string" resultType="com.find.doongji.danji.payload.response.DanjiCode">
-        SELECT *, CONCAT(as1, " ", as2, " ", as3) AS si_gugun_dong
-        FROM danji
-        WHERE kapt_name LIKE CONCAT('%', #{aptNm}, '%')
     </select>
 
 </mapper>

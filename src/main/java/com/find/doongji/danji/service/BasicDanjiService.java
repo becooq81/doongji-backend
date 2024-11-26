@@ -34,9 +34,6 @@ public class BasicDanjiService implements DanjiService {
 
         List<DanjiEntity> entities = responses.stream()
                 .map(item -> DanjiEntity.builder()
-                        .as1(AddressUtil.cleanAddress(item.getAs1()))
-                        .as2(item.getAs2())
-                        .as3(item.getAs3())
                         .bjdCode(item.getBjdCode())
                         .kaptCode(item.getKaptCode())
                         .kaptName(item.getKaptName())

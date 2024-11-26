@@ -8,28 +8,28 @@
 
     <!-- 좋아요 등록 -->
     <update id="toggleLike">
-        INSERT INTO likes (username, apt_seq, liked, created_at)
+        INSERT INTO apt_likes (username, apt_seq, is_liked, created_at)
         VALUES (#{username}, #{aptSeq}, 1, CURRENT_TIMESTAMP)
         ON DUPLICATE KEY UPDATE
-        liked = 1 - liked,
+        is_liked = 1 - is_liked,
         created_at = CURRENT_TIMESTAMP;
     </update>
 
     <!-- 좋아요 여부 조회 -->
     <select id="selectLike" resultType="java.lang.Integer">
         SELECT COALESCE(
-        (SELECT liked
-        FROM likes
+        (SELECT is_liked
+        FROM apt_likes
         WHERE username = #{username} AND apt_seq = #{aptSeq}
-        ), 0) AS liked;
+        ), 0) AS is_liked;
     </select>
 
     <!-- 좋아요 목록 조회 -->
     <select id="selectAllLikes" resultType="string">
         SELECT apt_seq
-        FROM likes
+        FROM apt_likes
         WHERE username = #{username}
-        AND liked = 1;
+        AND is_liked = 1;
     </select>
 
 

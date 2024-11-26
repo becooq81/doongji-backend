@@ -7,7 +7,7 @@
 
     <!-- Insert a search history record -->
     <insert id="insertHistory" parameterType="com.find.doongji.history.payload.request.HistoryRequest">
-        INSERT INTO history (username, query, created_at)
+        INSERT INTO histories (username, query, created_at)
         VALUES (#{username}, #{query}, NOW());
     </insert>
 
@@ -15,7 +15,7 @@
     <select id="getHistoryByUsername" parameterType="string"
             resultType="com.find.doongji.history.payload.response.HistoryResponse">
         SELECT id, username, query, created_at
-        FROM history
+        FROM histories
         WHERE username = #{username}
         ORDER BY created_at DESC;
     </select>
@@ -23,7 +23,7 @@
     <!-- Delete search history by username and ID -->
     <delete id="deleteHistoryByUsernameAndId" parameterType="map">
         DELETE
-        FROM history
+        FROM histories
         WHERE username = #{username}
           AND id = #{id};
     </delete>
@@ -32,7 +32,7 @@
     <select id="findDuplicateHistory" parameterType="map"
             resultType="com.find.doongji.history.payload.response.HistoryResponse">
         SELECT id, username, query, created_at
-        FROM history
+        FROM histories
         WHERE username = #{username}
           AND query = #{query} LIMIT 1;
     </select>

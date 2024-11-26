@@ -22,16 +22,9 @@ public interface DanjiRepository {
     void bulkInsertDanji(@Param("list") List<DanjiEntity> danjis);
 
     /**
-     * 법정동 코드로 단지 코드 조회
-     * @param bjdCode
-     * @return
-     */
-    List<DanjiCode> selectAllByBjdCode(@Param("bjdCode") String bjdCode);
-
-    /**
      * 아파트 명으로 단지 코드 조회
      * @param aptNm
      * @return
      */
-    List<DanjiCode> selectByAptNm(@Param("aptNm") String aptNm);
+    List<DanjiCode> selectByAptNmAndDongcode(@Param("aptNm") String aptNm, @Param("dongcode") String dongcode);
 }
