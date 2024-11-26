@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DanjiEntity {
 
-    private String as1;
-    private String as2;
-    private String as3;
     private String bjdCode;
     private String kaptCode;
     private String kaptName;

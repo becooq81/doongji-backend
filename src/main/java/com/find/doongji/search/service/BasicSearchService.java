@@ -9,6 +9,7 @@ import com.find.doongji.danji.repository.DanjiRepository;
 import com.find.doongji.history.payload.request.HistoryRequest;
 import com.find.doongji.history.service.HistoryService;
 import com.find.doongji.like.service.LikeService;
+import com.find.doongji.location.payload.response.DongCode;
 import com.find.doongji.location.repository.LocationRepository;
 import com.find.doongji.review.service.ReviewService;
 import com.find.doongji.search.client.RecommendClient;
@@ -148,10 +149,17 @@ public class BasicSearchService implements SearchService {
         if (aptInfo == null) {
             throw new Exception("viewSearched: No matching apt seq found: " + aptSeq);
         }
-        List<DanjiCode> danjiCodes = danjiRepository.selectByAptNm(aptInfo.getAptNm());
+        List<DanjiCode> danjiCodes = danjiRepository.selectByAptNmAndDongcode(aptInfo.getAptNm(), aptInfo.getSggCd() + aptInfo.getUmdCd());
+        danjiCodes.forEach(danjiCode -> {
+            DongCode dongCode = locationRepository.selectDongCodeByDongcode(danjiCode.getBjdCode());
+            danjiCode.setSidoGugunDong(dongCode.getSidoName() + " " + dongCode.getGugunName() + " " + dongCode.getDongName());
+        });
+
+
         SearchResult searchResult= null;
         for (DanjiCode danjiCode : danjiCodes) {
-            if (danjiCode.getAs3().trim().equals(aptInfo.getUmdNm().trim())) {
+            String dongName = danjiCode.getSidoGugunDong().split(" ")[2];
+            if (dongName.trim().equals(aptInfo.getUmdNm().trim())) {
                 searchResult = aptClient.getAptDetail(danjiCode.getKaptCode());
                 if (!searchResult.getKaptName().isEmpty()) {
                     break;

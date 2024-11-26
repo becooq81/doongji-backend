@@ -7,18 +7,15 @@ import com.find.doongji.danji.repository.DanjiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class DanjiClient {
 
-    private final RestTemplate restTemplate;
     private final DanjiRepository danjiRepository;
 
     @Value("${apt.danji-code-url}")
@@ -30,9 +27,8 @@ public class DanjiClient {
     public List<DanjiEntity> fetchItemsForBjdCodes(List<String> bjdCodes) throws Exception {
         List<DanjiEntity> allEntities = new ArrayList<>();
 
-        String requestUrl = new StringBuilder(DANJI_CODE_URL)
-                .append("?ServiceKey=").append(PUBLIC_DATA_KEY)
-                .toString();
+        String requestUrl = DANJI_CODE_URL +
+                "?ServiceKey=" + PUBLIC_DATA_KEY;
 
         for (String bjdCode : bjdCodes) {
             int pageNo = 1;
@@ -52,15 +48,12 @@ public class DanjiClient {
 
                 List<DanjiEntity> entities = result.stream()
                         .map(map -> DanjiEntity.builder()
-                                .as1(map.get("as1"))
-                                .as2(map.get("as2"))
-                                .as3(map.get("as3"))
                                 .bjdCode(map.get("bjdCode"))
                                 .kaptCode(map.get("kaptCode"))
                                 .kaptName(map.get("kaptName"))
                                 .build()
                         )
-                        .collect(Collectors.toList());
+                        .toList();
                 allEntities.addAll(entities);
 
                 if (allEntities.size() >= 100) {
